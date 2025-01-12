@@ -1,0 +1,25 @@
+* {
+	font-family: 'Meslo LGM Nerd Font', 'Courier New', Courier, monospace;
+	background-color: #111111;
+	color: white;
+}
+
+div.main {
+	text-align: center;
+}
+
+div.main p {
+	font-size: large;
+}
+
+.rounded {
+	border-radius: 50%;
+}
+.socials *{
+	font-size: 1.2em;
+	color: white;
+	text-decoration: none;
+}
+
+
+
