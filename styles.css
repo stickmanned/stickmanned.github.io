@@ -16,10 +16,14 @@ div.main p {
 	border-radius: 50%;
 }
 .socials *{
-	font-size: 1.2em;
+	font-size: 1.25em;
 	color: white;
 	text-decoration: none;
 }
+.socials *:hover, a:hover {
+	color: #999999;
+}
+
 
 
 
