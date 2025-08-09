@@ -1,7 +1,16 @@
+@font-face {
+    font-family: 'SF Pro Rounded';
+    src: url('fonts/SF-Pro-Rounded.woff2') format('woff2'),
+         url('fonts/SF-Pro-Rounded.woff') format('woff'),
+         url('fonts/SF-Pro-Rounded.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
 * {
-	font-family: 'Meslo LGM Nerd Font', 'Courier New', Courier, monospace;
-	background-color: #111111;
-	color: white;
+    font-family: 'SF Pro Rounded', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color: #111111;
+    color: white;
 }
 
 div.main {
