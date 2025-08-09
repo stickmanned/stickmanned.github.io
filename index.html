@@ -36,58 +36,94 @@
             outline: none;
             border-radius: 24px;
             transition: background 0.2s;
+            /* Remove hover effect */
         }
+        /* Remove hover effect on dropbtn */
         .navbar .dropbtn:hover {
-            background-color: #222222;
+            background: #000000;
         }
         .dropdown-content {
-            display: none;
+            display: block;
+            opacity: 0;
+            pointer-events: none;
             position: absolute;
-            background-color: #000000;
+            background: rgba(0,0,0,0.7);
             min-width: 180px;
             box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
             z-index: 1;
             border-radius: 12px;
             margin-top: 6px;
+            transform: translateY(-20px) scaleY(0.95);
+            transition: opacity 0.25s cubic-bezier(.4,0,.2,1), transform 0.25s cubic-bezier(.4,0,.2,1);
         }
         .dropdown-content a {
             color: white;
             padding: 14px 20px;
             text-decoration: none;
             display: block;
-            background-color: #0d0d0d;
+            background: transparent;
             border-radius: 8px;
         }
         .dropdown-content a:hover {
             background-color: #222222;
         }
-        .dropdown:hover .dropdown-content {
-            display: block;
+        /* Show dropdown when .show class is added */
+        .dropdown.show .dropdown-content {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0) scaleY(1);
         }
     </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Close all dropdowns when clicking outside
+            document.addEventListener('click', function (e) {
+                document.querySelectorAll('.dropdown').forEach(function (dropdown) {
+                    if (!dropdown.contains(e.target)) {
+                        dropdown.classList.remove('show');
+                    }
+                });
+            });
+            // Toggle dropdown on button click
+            document.querySelectorAll('.navbar .dropbtn').forEach(function (btn) {
+                btn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    // Close other dropdowns
+                    document.querySelectorAll('.dropdown').forEach(function (dropdown) {
+                        if (dropdown !== btn.parentElement) {
+                            dropdown.classList.remove('show');
+                        }
+                    });
+                    btn.parentElement.classList.toggle('show');
+                });
+            });
+        });
+    </script>
 </head>
 <body>
     <div class="navbar">
         <div class="dropdown">
-            <button class="dropbtn">Projects</button>
+            <button class="dropbtn">My Work</button>
             <div class="dropdown-content">
-                <a href="#">Project 1</a>
-                <a href="#">Project 2</a>
-                <a href="#">Project 3</a>
+                <a href="projects.html">Projects</a>
+                <a href="arts.html">Arts</a>
+                <a href="writing.html">Writing</a>
             </div>
         </div>
         <div class="dropdown">
             <button class="dropbtn">About Me</button>
             <div class="dropdown-content">
-                <a href="#">Bio</a>
-                <a href="#">Resume</a>
+                <a href="bio.html">Biography</a>
+                <a href="resume.html">Resumé</a>
+								<a href="events.html">My Events</a>
             </div>
         </div>
         <div class="dropdown">
-            <button class="dropbtn">Contact</button>
+            <button class="dropbtn">Achievements</button>
             <div class="dropdown-content">
-                <a href="mailto:williamwen25+support@gmail.com">Email</a>
-                <a href="https://github.com/stickmanned" target="_blank">GitHub</a>
+                <a href="awards.html">Awards</a>
+								<a href="achievements.html">My Achievements</a>
+                <a href="timeline.html">Timeline</a>
             </div>
         </div>
     </div>
