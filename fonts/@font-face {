@@ -1,6 +1,12 @@
 @font-face {
     font-family: 'SF Pro Rounded';
-    src: url('fonts/SF-Pro-Rounded-regular.otf') format('opentype');
+    src: url('fonts/SF-Pro-Rounded.woff2') format('woff2'),
+         url('fonts/SF-Pro-Rounded.woff') format('woff');
     font-weight: normal;
     font-style: normal;
+}
+* {
+    font-family: 'SF Pro Rounded', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color: #111111;
+    color: white;
 }
