@@ -1,160 +1,168 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.15.4/css/all.css" />
-    <link rel="stylesheet" href="./styles.css" />
-    <link rel="shortcut icon" href="./favicon.ico" />
-    <link rel="icon" type="image/png" href="./img/websitelogo.png" />
-    <title>William Wen</title>
-    <style>
-        /* Menu bar styles */
-        .navbar {
-            background: none;
-            font-family: inherit;
-            display: flex;
-            justify-content: center;
-            gap: 24px; /* space between buttons */
-            margin: 24px auto 0 auto;
-            width: fit-content;
-            padding: 0;
-        }
-        .navbar .dropdown {
-            position: relative;
-            display: inline-block;
-        }
-        .navbar .dropbtn {
-            font-family: inherit;
-            font-size: 1em;
-            color: white;
-            padding: 14px 28px;
-            text-decoration: none;
-            background: #0a0a0a;
-            border: 1px solid #ffffff; /* added white border */
-            box-sizing: border-box;     /* prevent size shift from border */
-            cursor: pointer;
-            outline: none;
-            border-radius: 24px;
-            transition: background 0.2s, border-color 0.2s;
-        }
-        /* On hover, make translucent but keep white border */
-        .navbar .dropbtn:hover, .navbar .dropbtn:focus {
-            background: #222222;
-            border-color: #ffffff;
-        }
-        .dropdown-content {
-            display: block;
-            opacity: 0;
-            pointer-events: none;
-            position: absolute;
-            background: rgba(0,0,0,0.7);
-            min-width: 180px;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-            z-index: 1;
-            border-radius: 12px;
-            margin-top: 6px;
-            transform: translateY(-20px) scaleY(0.95);
-            transition: opacity 0.25s cubic-bezier(.4,0,.2,1), transform 0.25s cubic-bezier(.4,0,.2,1);
-        }
-        .dropdown-content a {
-            color: white;
-            padding: 14px 20px;
-            text-decoration: none;
-            display: block;
-            background: transparent;
-            border-radius: 8px;
-        }
-        .dropdown-content a:hover {
-            background-color: #222222;
-        }
-        /* Show dropdown when .show class is added */
-        .dropdown.show .dropdown-content {
-            opacity: 1;
-            pointer-events: auto;
-            transform: translateY(0) scaleY(1);
-        }
-    </style>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Close all dropdowns when clicking outside
-            document.addEventListener('click', function (e) {
-                document.querySelectorAll('.dropdown').forEach(function (dropdown) {
-                    if (!dropdown.contains(e.target)) {
-                        dropdown.classList.remove('show');
-                    }
-                });
-            });
-            // Toggle dropdown on button click
-            document.querySelectorAll('.navbar .dropbtn').forEach(function (btn) {
-                btn.addEventListener('click', function (e) {
-                    e.stopPropagation();
-                    // Close other dropdowns
-                    document.querySelectorAll('.dropdown').forEach(function (dropdown) {
-                        if (dropdown !== btn.parentElement) {
-                            dropdown.classList.remove('show');
-                        }
-                    });
-                    btn.parentElement.classList.toggle('show');
-                });
-            });
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.15.4/css/all.css" />
+<link rel="stylesheet" href="./styles.css" />
+<link rel="shortcut icon" href="./favicon.ico" />
+<link rel="icon" type="image/png" href="./img/websitelogo.png" />
+<title>William Wen</title>
+<style>
+/* Menu bar */
+.navbar {
+    background: none;
+    font-family: inherit;
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin: 24px auto 0 auto;
+    width: fit-content;
+    padding: 0;
+    flex-wrap: wrap;            /* allow buttons to move to next row instead of wrapping text */
+}
+.navbar .dropdown { position: relative; display: inline-block; }
+
+.navbar .dropbtn {
+    font-family: inherit;
+    font-size: 1em;
+    color: #fff;
+    padding: 14px 28px;
+    background: #0a0a0a;
+    border: 1px solid #ffffff;
+    box-sizing: border-box;
+    cursor: pointer;
+    outline: none;
+    border-radius: 24px;
+    transition: background .25s, border-color .25s;
+    white-space: nowrap;        /* keep button label on one line */
+    display: inline-flex;
+    align-items: center;
+    line-height: 1;             /* tighten line box to reduce chance of wrap */
+}
+.navbar .dropbtn:hover,
+.navbar .dropbtn:focus {
+    background: rgba(0,0,0,0.5);
+}
+
+/* Dropdown panel (click to open) */
+/* Starts collapsed (scaleY) from top and expands downward WITHOUT overlapping the button */
+.dropdown-content {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 8px;             /* gap below button */
+    min-width: 180px;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+    border-radius: 12px;
+    padding: 6px 0;
+    opacity: 0;
+    transform: scaleY(0.6);
+    transform-origin: top;
+    pointer-events: none;
+    transition: opacity .3s cubic-bezier(.4,0,.2,1),
+                transform .3s cubic-bezier(.4,0,.2,1);
+    will-change: opacity, transform;
+}
+.dropdown.show .dropdown-content {
+    opacity: 1;
+    transform: scaleY(1);
+    pointer-events: auto;
+}
+
+.dropdown-content a {
+    color: #fff;
+    padding: 12px 20px;
+    text-decoration: none;
+    display: block;
+    background: transparent;
+    border-radius: 6px;
+    font-family: inherit;
+    transition: background .2s;
+    white-space: nowrap;  /* menu items also single line */
+}
+.dropdown-content a:hover {
+    background: rgba(255,255,255,0.08);
+}
+
+/* Small screens: tighten padding so text still fits on one line */
+@media (max-width: 540px) {
+    .navbar { gap: 12px; }
+    .navbar .dropbtn { padding: 12px 20px; font-size: .95em; }
+    .dropdown-content { min-width: 160px; }
+}
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Close on outside click
+    document.addEventListener('click', e => {
+        document.querySelectorAll('.dropdown.show').forEach(dd => {
+            if (!dd.contains(e.target)) dd.classList.remove('show');
         });
-    </script>
+    });
+    // Toggle on button click
+    document.querySelectorAll('.navbar .dropbtn').forEach(btn => {
+        btn.addEventListener('click', e => {
+            e.stopPropagation();
+            const parent = btn.parentElement;
+            document.querySelectorAll('.dropdown').forEach(d => {
+                if (d !== parent) d.classList.remove('show');
+            });
+            parent.classList.toggle('show');
+        });
+    });
+});
+</script>
 </head>
 <body>
-    <div class="navbar">
-        <div class="dropdown">
-            <button class="dropbtn">Projects</button>
-            <div class="dropdown-content">
-                <a href="/Arts.html">Arts</a>
-                <a href="/Writing.html">Writing</a>
-                <a href="/projects.html">My Projects</a>
-            </div>
-        </div>
-        <div class="dropdown">
-            <button class="dropbtn">About Me</button>
-            <div class="dropdown-content">
-                <a href="bio.html">Biography</a>
-                <a href="resume.html">Resumé</a>
-								<a href="events.html">My Events</a>
-            </div>
-        </div>
-        <div class="dropdown">
-            <button class="dropbtn">Achievements</button>
-            <div class="dropdown-content">
-                <a href="awards.html">Awards</a>
-								<a href="achievements.html">My Achievements</a>
-                <a href="achievementTimeline.html">Timeline</a>
-            </div>
+<div class="navbar">
+    <div class="dropdown">
+        <button class="dropbtn">Projects</button>
+        <div class="dropdown-content">
+            <a href="/Arts.html">Arts</a>
+            <a href="/Writing.html">Writing</a>
+            <a href="/projects.html">My Projects</a>
         </div>
     </div>
-    <div class="main" style="margin-top: 48px;">
-        <img src="img/william.png" alt="William Wen" width="300" height="300" class="rounded">
-        <h1 class="title">William Wen</h1>
-        <h2>Welcome to my website!</h2>
-        <p>
-            A high school student with a passion for technology. 
-            <br />
-            Co-founder of <a href="http://fraser.hackclub.com/" target="_blank">Fraser Hack Club</a>
-        </p>
-        <div class="socials">
-            <a href="https://github.com/stickmanned" target="_blank">
-                <i class="fab fa-github"></i>
-            </a>
-            <a href="http://discordapp.com/users/911011264120119336/" target="_blank">
-                <i class="fab fa-discord"></i>
-            </a>
-            <a href="https://www.youtube.com/@fhctech" target="_blank">
-                <i class="fab fa-youtube"></i>
-            </a>
+    <div class="dropdown">
+        <button class="dropbtn">About Me</button>
+        <div class="dropdown-content">
+            <a href="bio.html">Biography</a>
+            <a href="resume.html">Resumé</a>
+            <a href="events.html">My Events</a>
         </div>
-        <br />
-        <footer>
-            Contact: <a href="mailto:williamwen25+support@gmail.com">williamwen25@gmail.com</a>
-            <br />
-            <br />
-            <a href="./sitemap.xml"> Sitemap</a>
-        </footer>
-    </div> 
+    </div>
+    <div class="dropdown">
+        <button class="dropbtn">Achievements</button>
+        <div class="dropdown-content">
+            <a href="awards.html">Awards</a>
+            <a href="achievements.html">My Achievements</a>
+            <a href="achievementTimeline.html">Timeline</a>
+        </div>
+    </div>
+</div>
+
+<div class="main" style="margin-top:48px;">
+    <img src="img/william.png" alt="William Wen" width="300" height="300" class="rounded">
+    <h1 class="title">William Wen</h1>
+    <h2>Welcome to my website!</h2>
+    <p>
+        A high school student with a passion for technology.<br>
+        Co-founder of <a href="http://fraser.hackclub.com/" target="_blank">Fraser Hack Club</a>
+    </p>
+    <div class="socials">
+        <a href="https://github.com/stickmanned" target="_blank"><i class="fab fa-github"></i></a>
+        <a href="http://discordapp.com/users/911011264120119336/" target="_blank"><i class="fab fa-discord"></i></a>
+        <a href="https://www.youtube.com/@fhctech" target="_blank"><i class="fab fa-youtube"></i></a>
+    </div>
+    <br>
+    <footer>
+        Contact: <a href="mailto:williamwen25+support@gmail.com">williamwen25@gmail.com</a>
+        <br><br>
+        <a href="./sitemap.xml">Sitemap</a>
+    </footer>
+</div>
 </body>
 </html>
