@@ -1,13 +1,36 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
+/* Regular SF Pro Rounded */
 @font-face {
     font-family: 'SF Pro Rounded';
-    src: url('fonts/SF-Pro-Rounded-Regular.woff2') format('woff2'),
-         url('fonts/SF-Pro-Rounded-Regular.woff') format('woff'),
-         url('fonts/SF-Pro-Rounded.otf') format('opentype');
-    font-weight: normal;
+    src: url('fonts/SFRounded-Regular.woff2') format('woff2'),
+         url('fonts/SFRounded-Regular.woff') format('woff'),
+         url('fonts/SF-Pro-Rounded-Regular.otf') format('opentype');
+    font-weight: 400;
     font-style: normal;
-    font-display: swap; /* Improves loading performance */
+    font-display: swap;
+}
+
+/* Medium SF Pro Rounded */
+@font-face {
+    font-family: 'SF Pro Rounded';
+    src: url('fonts/SFRounded-Medium.woff2') format('woff2'),
+         url('fonts/SFRounded-Medium.woff') format('woff'),
+         url('fonts/SF-Pro-Rounded-Medium.otf') format('opentype');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Bold SF Pro Rounded */
+@font-face {
+    font-family: 'SF Pro Rounded';
+    src: url('fonts/SFRounded-Bold.woff2') format('woff2'),
+         url('fonts/SFRounded-Bold.woff') format('woff'),
+         url('fonts/SF-Pro-Rounded-Bold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
 }
 
 * {
@@ -15,18 +38,20 @@
     color: white;
 }
 
-/* Headings use SF Pro Rounded */
-h1, h2, h3, h4, h5, h6 {
+/* h1 and h2: SF Pro Rounded Bold */
+h1, h2 {
     font-family: 'SF Pro Rounded', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 700;
 }
 
-/* Paragraphs use Inter */
-p {
-    font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+/* h3-h6: SF Pro Rounded Medium */
+h3, h4, h5, h6 {
+    font-family: 'SF Pro Rounded', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 500;
 }
 
-/* Default fallback for other elements */
-body {
+/* All other text: Inter */
+body, p, li, a, button, input, textarea, select, th, td, span, div {
     font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
