@@ -36,11 +36,10 @@
             outline: none;
             border-radius: 24px;
             transition: background 0.2s;
-            /* Remove hover effect */
         }
-        /* Remove hover effect on dropbtn */
-        .navbar .dropbtn:hover {
-            background: #000000;
+        /* On hover, match the background color (#111111) */
+        .navbar .dropbtn:hover, .navbar .dropbtn:focus {
+            background: rgba(0, 0, 0, 0.5);
         }
         .dropdown-content {
             display: block;
