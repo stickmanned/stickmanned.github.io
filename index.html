@@ -30,16 +30,18 @@
             color: white;
             padding: 14px 28px;
             text-decoration: none;
-            background: #000000;
-            border: none;
+            background: #0a0a0a;
+            border: 1px solid #ffffff; /* added white border */
+            box-sizing: border-box;     /* prevent size shift from border */
             cursor: pointer;
             outline: none;
             border-radius: 24px;
-            transition: background 0.2s;
+            transition: background 0.2s, border-color 0.2s;
         }
-        /* On hover, match the background color (#111111) */
+        /* On hover, make translucent but keep white border */
         .navbar .dropbtn:hover, .navbar .dropbtn:focus {
-            background: rgba(0, 0, 0, 0.5);
+            background: #222222;
+            border-color: #ffffff;
         }
         .dropdown-content {
             display: block;
@@ -122,7 +124,7 @@
             <div class="dropdown-content">
                 <a href="awards.html">Awards</a>
 								<a href="achievements.html">My Achievements</a>
-                <a href="timeline.html">Timeline</a>
+                <a href="achievementTimeline.html">Timeline</a>
             </div>
         </div>
     </div>
