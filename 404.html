@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <title>404 — Page Not Found</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <style>
+    /* Page-specific layout (works with your global styles) */
+    .not-found {
+      min-height: 100dvh;
+      display: grid;
+      place-items: center;
+      padding: 48px 16px;
+    }
+    .card {
+      width: 100%;
+      max-width: 820px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(0,0,0,0.35);
+      backdrop-filter: blur(6px);
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+    .title {
+      font-size: clamp(40px, 6vw, 72px);
+      line-height: 1;
+      margin: 0 0 12px 0;
+      letter-spacing: 2px;
+    }
+    .subtitle {
+      opacity: 0.9;
+      margin: 0 0 20px 0;
+      font-size: 1.1rem;
+    }
+    .path {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      background: rgba(255,255,255,0.06);
+      padding: 6px 10px;
+      border-radius: 8px;
+      word-break: break-all;
+    }
+    .grid {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .grid.two { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+    .grid.links { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+
+    .hint {
+      opacity: 0.9;
+      margin: 10px 0 0 0;
+      font-size: 0.95rem;
+    }
+    .list {
+      margin: 8px 0 0 18px;
+      opacity: 0.92;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: #000000;
+      color: #fff;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background .2s ease, border-color .2s ease, transform .08s ease;
+      user-select: none;
+    }
+    .btn:hover { background: rgba(0,0,0,0.6); border-color: rgba(255,255,255,0.2); }
+    .btn:active { transform: translateY(1px); }
+
+    .suggestions { margin-top: 8px; display: grid; gap: 8px; }
+    .muted { opacity: 0.75; }
+    footer {
+      margin-top: 18px;
+      opacity: 0.7;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <main class="not-found">
+    <section class="card">
+      <h1 class="title">404</h1>
+      <p class="subtitle">We couldn't find the page you requested.</p>
+
+      <div class="grid two">
+        <div>
+          <strong>Requested URL</strong>
+          <div id="requestedPath" class="path">/</div>
+
+          <p class="hint">Common reasons</p>
+          <ul class="list">
+            <li>URL capitalization mismatch (GitHub Pages is case-sensitive).</li>
+            <li>Missing .html extension (e.g. use /Arts.html not /Arts).</li>
+            <li>Trailing slash needs an index (e.g. /events/ → /events.html).</li>
+            <li>File was moved or renamed, or the link is outdated/cached.</li>
+          </ul>
+        </div>
+
+        <div>
+          <strong>Try these fixes</strong>
+          <div class="grid">
+            <a class="btn" href="/" title="Go to homepage">Go Home</a>
+            <a class="btn" href="/sitemap.xml" title="See all URLs">View Sitemap</a>
+            <a class="btn" id="tryHtml" href="#" style="display:none">Try with .html</a>
+            <a class="btn" id="tryIndex" href="#" style="display:none">Try index.html</a>
+            <a class="btn" id="tryLower" href="#" style="display:none">Try lowercase URL</a>
+          </div>
+          <p class="hint muted">Still stuck? Email <a href="mailto:williamwen25+support@gmail.com">williamwen25+support@gmail.com</a></p>
+        </div>
+      </div>
+
+      <div style="margin-top:20px">
+        <strong>Quick links</strong>
+        <div class="grid links">
+          <a class="btn" href="/Arts.html">Arts</a>
+          <a class="btn" href="/Writing.html">Writing</a>
+          <a class="btn" href="/events.html">Events</a>
+          <a class="btn" href="/">Home</a>
+          <a class="btn" href="https://github.com/stickmanned/stickmanned.github.io" target="_blank" rel="noopener">Repository</a>
+        </div>
+      </div>
+
+      <div style="margin-top:18px">
+        <strong>Did you mean</strong>
+        <div id="suggestions" class="suggestions muted">No suggestions yet.</div>
+      </div>
+
+      <footer>
+        If you typed the address, check the spelling and capitalization. If you followed a link here, it may be broken.
+      </footer>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      const loc = window.location;
+      const path = loc.pathname + (loc.search || '');
+      document.getElementById('requestedPath').textContent = path || '/';
+
+      // Build helpful “Try …” links
+      const basePath = loc.pathname.replace(/\/+$/, ''); // drop trailing slash
+      const last = basePath.split('/').filter(Boolean).pop() || '';
+      const parent = basePath.slice(0, -(last.length)).replace(/\/+$/, '');
+
+      // Try with .html
+      if (last && !/\.html?$/i.test(basePath)) {
+        const htmlHref = basePath + '.html' + loc.search;
+        const el = document.getElementById('tryHtml');
+        el.href = htmlHref;
+        el.style.display = '';
+      }
+
+      // Try index.html if URL ends with a slash
+      if (loc.pathname.endsWith('/')) {
+        const idxHref = basePath + '/index.html' + loc.search;
+        const el = document.getElementById('tryIndex');
+        el.href = idxHref;
+        el.style.display = '';
+      }
+
+      // Try lowercase
+      const lower = loc.pathname.toLowerCase();
+      if (lower !== loc.pathname) {
+        const el = document.getElementById('tryLower');
+        el.href = lower + (loc.search || '');
+        el.style.display = '';
+      }
+
+      // Simple suggestions based on known pages and the last segment
+      const knownPages = [
+        { path: '/', label: 'Home', key: 'home' },
+        { path: '/Arts.html', label: 'Arts', key: 'arts' },
+        { path: '/Writing.html', label: 'Writing', key: 'writing' },
+        { path: '/events.html', label: 'Events', key: 'events' },
+      ];
+      const targetKey = (last || '').replace(/\.(html?)$/i, '').toLowerCase();
+
+      function distance(a, b) {
+        // Levenshtein distance
+        const dp = Array.from({ length: a.length + 1 }, () => new Array(b.length + 1).fill(0));
+        for (let i = 0; i <= a.length; i++) dp[i][0] = i;
+        for (let j = 0; j <= b.length; j++) dp[0][j] = j;
+        for (let i = 1; i <= a.length; i++) {
+          for (let j = 1; j <= b.length; j++) {
+            const cost = a[i-1] === b[j-1] ? 0 : 1;
+            dp[i][j] = Math.min(
+              dp[i-1][j] + 1,
+              dp[i][j-1] + 1,
+              dp[i-1][j-1] + cost
+            );
+          }
+        }
+        return dp[a.length][b.length];
+      }
+
+      const sugg = document.getElementById('suggestions');
+      const candidates = knownPages
+        .map(p => ({ ...p, score: targetKey ? distance(targetKey, p.key) : 99 }))
+        .sort((a, b) => a.score - b.score)
+        .slice(0, 3);
+
+      if (targetKey && candidates.length && candidates[0].score < 4) {
+        sugg.classList.remove('muted');
+        sugg.innerHTML = candidates.map(c =>
+          `<a class="btn" href="${c.path}">${c.label}</a>`
+        ).join(' ');
+      } else {
+        sugg.textContent = 'No close matches found.';
+      }
+    })();
+  </script>
+</body>
