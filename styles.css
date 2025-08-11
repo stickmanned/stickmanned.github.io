@@ -1,38 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
 @font-face {
     font-family: 'SF Pro Rounded';
-    src: url('fonts/SF-Pro-Rounded.otf') format('opentype');
+    src: url('fonts/SF-Pro-Rounded-Regular.woff2') format('woff2'),
+         url('fonts/SF-Pro-Rounded-Regular.woff') format('woff'),
+         url('fonts/SF-Pro-Rounded.otf') format('opentype');
     font-weight: normal;
     font-style: normal;
+    font-display: swap; /* Improves loading performance */
 }
 
 * {
-    font-family: 'SF Pro Rounded', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     background-color: #0a0a0a;
     color: white;
 }
 
+/* Headings use SF Pro Rounded */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'SF Pro Rounded', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+/* Paragraphs use Inter */
+p {
+    font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+/* Default fallback for other elements */
+body {
+    font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
 div.main {
-	text-align: center;
+    text-align: center;
 }
 
 div.main p {
-	font-size: large;
+    font-size: large;
 }
 
 .rounded {
-	border-radius: 50%;
+    border-radius: 50%;
 }
 .socials *{
-	font-size: 1.25em;
-	color: white;
-	text-decoration: none;
+    font-size: 1.25em;
+    color: white;
+    text-decoration: none;
 }
 .socials *:hover, a:hover {
-	color: #999999;
+    color: #999999;
 }
 
 footer {
-	font-size: small;
+    font-size: small;
 }
 
 
