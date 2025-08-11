@@ -35,14 +35,16 @@
     outline: none;
     border-radius: 24px;
     transition: background .25s, border-color .25s;
-    white-space: nowrap;        /* keep button label on one line */
+    white-space: nowrap;
     display: inline-flex;
     align-items: center;
-    line-height: 1;             /* tighten line box to reduce chance of wrap */
+    line-height: 1;
 }
 .navbar .dropbtn:hover,
-.navbar .dropbtn:focus {
-    background: rgba(0,0,0,0.5);
+.navbar .dropbtn:focus,
+.navbar .dropbtn:active {
+    background: rgba(255,255,255,0.08);
+    border-color: #ffffff;
 }
 
 /* Dropdown panel (click to open) */
@@ -84,7 +86,7 @@
     white-space: nowrap;  /* menu items also single line */
 }
 .dropdown-content a:hover {
-    background: rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.08); /* same color used above */
 }
 
 /* Small screens: tighten padding so text still fits on one line */
