@@ -212,6 +212,46 @@
     font-size: 1.25rem;
     font-weight: 700;
 }
+/* UPDATED gallery styles for bigger, uniform, fully clickable cards */
+.hobby-gallery {
+    display:flex;
+    flex-wrap:wrap;
+    gap:24px;
+    justify-content:center;
+    margin-top:18px;
+}
+.hobby-gallery figure {
+    margin:0;
+    width:260px;              /* card width */
+}
+.hobby-gallery a.game-link {
+    display:block;
+    text-decoration:none;
+    color:inherit;
+    background:#0a0a0a;
+    border:1px solid #ffffff;
+    border-radius:16px;
+    padding:12px 12px 14px;
+    transition:background .25s, transform .25s, border-color .25s;
+}
+.hobby-gallery a.game-link:hover {
+    background:rgba(255,255,255,0.08);
+    transform:translateY(-4px);
+}
+.hobby-gallery img {
+    width:100%;
+    aspect-ratio:16/9;        /* uniform size */
+    object-fit:cover;
+    display:block;
+    border-radius:10px;
+    margin:0 0 10px;
+}
+.hobby-gallery figcaption {
+    font-size:.8rem;
+    text-align:center;
+    opacity:.85;
+    line-height:1.2;
+}
 </style>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -290,6 +330,20 @@ document.addEventListener('DOMContentLoaded', () => {
             <a href="https://scratch.mit.edu/projects/585019016" target="_blank" rel="noopener">here</a>
             and a game jam project
             <a href="https://fraserhackclub.itch.io/spacegoose" target="_blank" rel="noopener">SpaceGoose</a>.</p>
+            <div class="hobby-gallery">
+                <figure>
+                    <a class="game-link" href="https://scratch.mit.edu/projects/585019016" target="_blank" rel="noopener">
+                        <img src="img/petsimulator.png" alt="Pet Simulator Scratch project screenshot">
+                        <figcaption>Pet Simulator (Scratch)</figcaption>
+                    </a>
+                </figure>
+                <figure>
+                    <a class="game-link" href="https://fraserhackclub.itch.io/spacegoose" target="_blank" rel="noopener">
+                        <img src="img/spacegoose.png" alt="SpaceGoose game jam project screenshot">
+                        <figcaption>SpaceGoose (Game Jam)</figcaption>
+                    </a>
+                </figure>
+            </div>
         `,
         pcs: `
             <h3 class="hobby-title">Building PCs</h3>
