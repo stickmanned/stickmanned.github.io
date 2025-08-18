@@ -38,6 +38,31 @@
     color: white;
 }
 
+/* Global comfortable line spacing */
+body {
+    line-height: 1.25;
+}
+
+/* Headings a bit tighter */
+h1, h2 {
+    line-height: 1;
+}
+h3, h4, h5, h6 {
+    line-height: 1.25;
+}
+
+/* Paragraphs slightly more spacing for readability */
+p {
+    line-height: 1.7;
+    margin-top: 0.9em;
+    margin-bottom: 1.1em;
+}
+
+/* Optional: tighter spacing inside footer, keep it compact */
+footer {
+    line-height: 1.4;
+}
+
 /* h1 and h2: SF Pro Rounded Bold */
 h1, h2 {
     font-family: 'SF Pro Rounded', 'Helvetica Neue', Helvetica, Arial, sans-serif;

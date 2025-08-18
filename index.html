@@ -9,21 +9,10 @@
 <link rel="icon" type="image/png" href="./img/websitelogo.png" />
 <title>William Wen</title>
 <style>
-/* Menu bar */
-.navbar {
-    background: none;
-    font-family: inherit;
-    display: flex;
-    justify-content: center;
-    gap: 24px;
-    margin: 24px auto 0 auto;
-    width: fit-content;
-    padding: 0;
-    flex-wrap: wrap;            /* allow buttons to move to next row instead of wrapping text */
-}
-.navbar .dropdown { position: relative; display: inline-block; }
+/* ===== unify button styling so ALL (menu + hobbies) match ===== */
 
-.navbar .dropbtn {
+/* (Remove/replace the old `.navbar .dropbtn { ... }` block) */
+.dropbtn {
     font-family: inherit;
     font-size: 1em;
     color: #fff;
@@ -34,26 +23,54 @@
     cursor: pointer;
     outline: none;
     border-radius: 24px;
-    transition: background .25s, border-color .25s;
+    transition: background .25s, border-color .25s, box-shadow .25s, transform .15s;
     white-space: nowrap;
     display: inline-flex;
     align-items: center;
     line-height: 1;
+    position: relative;
 }
-.navbar .dropbtn:hover,
-.navbar .dropbtn:focus,
-.navbar .dropbtn:active {
+
+.dropbtn:hover,
+.dropbtn:focus {
     background: rgba(255,255,255,0.08);
     border-color: #ffffff;
 }
 
-/* Dropdown panel (click to open) */
-/* Starts collapsed (scaleY) from top and expands downward WITHOUT overlapping the button */
+.dropbtn:active {
+    background: rgba(255,255,255,0.12);
+    transform: translateY(2px);
+}
+
+/* Optional visual for a “toggled” (selected) hobby button */
+.hobby-btn[aria-pressed="true"] {
+    background: rgba(255,255,255,0.12);
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.15) inset;
+}
+
+/* Remove old hobby active style (previous .hobby-btn.active) if present */
+.hobbies .hobby-btn.active { background: unset; box-shadow: unset; }
+
+/* Keep navbar layout */
+.navbar {
+    background: none;
+    font-family: inherit;
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin: 24px auto 0 auto;
+    width: fit-content;
+    padding: 0;
+    flex-wrap: wrap;
+}
+.navbar .dropdown { position: relative; display: inline-block; }
+
+/* Dropdown content unchanged */
 .dropdown-content {
     position: absolute;
     top: 100%;
     left: 0;
-    margin-top: 8px;             /* gap below button */
+    margin-top: 8px;
     min-width: 180px;
     background: rgba(0,0,0,0.7);
     backdrop-filter: blur(4px);
@@ -73,7 +90,6 @@
     transform: scaleY(1);
     pointer-events: auto;
 }
-
 .dropdown-content a {
     color: #fff;
     padding: 12px 20px;
@@ -83,16 +99,46 @@
     border-radius: 6px;
     font-family: inherit;
     transition: background .2s;
-    white-space: nowrap;  /* menu items also single line */
+    white-space: nowrap;
 }
 .dropdown-content a:hover {
-    background: rgba(255,255,255,0.08); /* same color used above */
+    background: rgba(255,255,255,0.08);
 }
 
-/* Small screens: tighten padding so text still fits on one line */
+/* Hobbies layout; buttons now inherit identical styling via .dropbtn */
+.hobbies .hobby-buttons{
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    justify-content:center;
+    margin:12px 0 18px;
+}
+
+/* REPLACE the current .hobby-content animation block with this SLIDE (top→down) version */
+.hobby-content{
+    max-width:640px;
+    margin:0 auto 8px;
+    line-height:1.6;
+    font-size:1rem;
+    padding:0 12px;
+    min-height:70px;
+    opacity:0;
+    transform: translateY(-14px);      /* start slightly above */
+    transition: opacity .30s cubic-bezier(.4,0,.2,1),
+                transform .30s cubic-bezier(.4,0,.2,1);
+    will-change: opacity, transform;
+}
+.hobby-content.show{
+    opacity:1;
+    transform: translateY(0);          /* slides down into place */
+}
+
+/* Remove old hobby fade css (hobbyFadeIn keyframes & .hobby-content.hobby-animate) */
+
+/* Responsive tweak */
 @media (max-width: 540px) {
     .navbar { gap: 12px; }
-    .navbar .dropbtn { padding: 12px 20px; font-size: .95em; }
+    .dropbtn { padding: 12px 20px; font-size: .95em; }
     .dropdown-content { min-width: 160px; }
 }
 
@@ -146,37 +192,67 @@
 .secret-actions button:hover {
     background: rgba(255,255,255,0.08);
 }
+
+/* Hobbies section: buttons already use .dropbtn so they inherit identical styling */
+.hobbies .hobby-buttons{
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    justify-content:center;
+    margin:12px 0 18px;
+}
+.hobbies .hobby-btn {
+    /* No extra styling so they exactly match menu bar buttons */
+}
+.hobbies .hobby-btn.active {
+    background: rgba(255,255,255,0.18); /* active state highlight */
+}
+.hobby-content h3 {
+    margin: 0 0 8px;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
 </style>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // Close on outside click
+    /* Dropdown buttons */
     document.addEventListener('click', e => {
         document.querySelectorAll('.dropdown.show').forEach(dd => {
-            if (!dd.contains(e.target)) dd.classList.remove('show');
+            if (!dd.contains(e.target)) {
+                dd.classList.remove('show');
+                const btn = dd.querySelector('.dropbtn');
+                if (btn) btn.blur(); // reset color on close
+            }
         });
     });
-    // Toggle on button click
+
     document.querySelectorAll('.navbar .dropbtn').forEach(btn => {
         btn.addEventListener('click', e => {
             e.stopPropagation();
             const parent = btn.parentElement;
+            if (!parent.classList.contains('dropdown')) return;
+            const wasOpen = parent.classList.contains('show');
+
+            // close others
             document.querySelectorAll('.dropdown').forEach(d => {
-                if (d !== parent) d.classList.remove('show');
+                if (d !== parent) {
+                    d.classList.remove('show');
+                    const b = d.querySelector('.dropbtn');
+                    if (b) b.blur();
+                }
             });
+
             parent.classList.toggle('show');
+
+            // If we just closed the same one (second click), remove focus so it returns to dark grey
+            if (wasOpen) btn.blur();
         });
     });
 
+    /* Easter egg (unchanged) */
     const img = document.querySelector('img[src="img/william.png"]');
-    let clickCount = 0;
-    let lastClickTime = 0;
-    const thresholdMs = 1500; // max gap between clicks to keep streak
-
-    function resetCount() {
-        clickCount = 0;
-    }
-
-    // Create popup elements
+    let clickCount = 0, lastClickTime = 0;
+    const thresholdMs = 1500;
     const overlay = document.createElement('div');
     overlay.className = 'secret-overlay';
     overlay.innerHTML = `
@@ -186,35 +262,73 @@ document.addEventListener('DOMContentLoaded', () => {
                 <button type="button" id="yesCapy">Yes</button>
                 <button type="button" id="noCapy">No</button>
             </div>
-        </div>
-    `;
+        </div>`;
     document.body.appendChild(overlay);
-
-    overlay.addEventListener('click', (e) => {
-        if (e.target === overlay) overlay.classList.remove('show');
-    });
+    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('show'); });
     overlay.querySelector('#yesCapy').addEventListener('click', () => {
         window.location.href = 'https://stickmanned.github.io/site';
     });
-    overlay.querySelector('#noCapy').addEventListener('click', () => {
-        overlay.classList.remove('show');
-        resetCount();
-    });
-
+    overlay.querySelector('#noCapy').addEventListener('click', () => overlay.classList.remove('show'));
     if (img) {
         img.addEventListener('click', () => {
             const now = Date.now();
-            if (now - lastClickTime > thresholdMs) {
-                clickCount = 0; // timeout gap resets streak
-            }
+            if (now - lastClickTime > thresholdMs) clickCount = 0;
             lastClickTime = now;
-            clickCount++;
-            if (clickCount >= 10) {
-                overlay.classList.add('show');
-                resetCount();
-            }
+            if (++clickCount >= 10) { overlay.classList.add('show'); clickCount = 0; }
         });
     }
+
+    /* Hobbies interactive section */
+    const defaultHobbyText = 'Select a hobby to learn more.';
+    const hobbyTexts = {
+        coding: `
+            <h3 class="hobby-title">Coding</h3>
+            <p>I started coding in Grade 2 with Scratch and have since explored
+            Python, Java, HTML, CSS, JavaScript, TypeScript, and C++. I completed
+            AP Computer Science A in Grade 9 (2025) and now focus on full‑stack web development.</p>
+            <p>Current interests: building web apps (HTML, CSS, JS/TS, React), and making games using Godot, Unity, and Roblox. Check out my best Scratch project (Pet Simulator)
+            <a href="https://scratch.mit.edu/projects/585019016" target="_blank" rel="noopener">here</a>
+            and a game jam project
+            <a href="https://fraserhackclub.itch.io/spacegoose" target="_blank" rel="noopener">SpaceGoose</a>.</p>
+        `,
+        pcs: `
+            <h3 class="hobby-title">Building PCs</h3>
+            <p>I love selecting balanced parts, optimizing thermals, cable‑managing clean builds,
+            and benchmarking performance. Hardware tinkering teaches me practical troubleshooting skills.</p>
+
+        `,
+        golf: `<h3 class="hobby-title">Golf</h3><p>Golf teaches patience, precision, and consistency—skills I apply to tech projects too.</p>`,
+        gaming: `<h3 class="hobby-title">Gaming</h3><p>I enjoy strategy and simulation games that challenge problem‑solving and creativity.</p>`,
+        '3d': `<h3 class="hobby-title">3D Modelling / 3D Printing</h3><p>Designing models and watching them become physical objects is incredibly rewarding.</p>`,
+        art: `<h3 class="hobby-title">Art</h3><p>Drawing and digital art help me explore visual communication and design aesthetics.</p>`
+    };
+
+    const hobbyContent = document.getElementById('hobbyContent');
+    requestAnimationFrame(()=>hobbyContent.classList.add('show'));
+
+    function swapContent(html){
+        hobbyContent.classList.remove('show');
+        const swapDelay = 160;
+        setTimeout(()=>{
+            hobbyContent.innerHTML = html;
+            requestAnimationFrame(()=>hobbyContent.classList.add('show'));
+        }, swapDelay);
+    }
+
+    document.querySelectorAll('.hobby-btn').forEach(btn => {
+        btn.setAttribute('aria-pressed','false');
+        btn.addEventListener('click', () => {
+            const isActive = btn.getAttribute('aria-pressed') === 'true';
+            document.querySelectorAll('.hobby-btn').forEach(b => b.setAttribute('aria-pressed','false'));
+            if (isActive) {
+                swapContent(defaultHobbyText);
+                btn.blur();
+                return;
+            }
+            btn.setAttribute('aria-pressed','true');
+            swapContent(hobbyTexts[btn.dataset.hobby] || defaultHobbyText);
+        });
+    });
 });
 </script>
 </head>
@@ -230,9 +344,8 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>
   </div>
   <div class="dropdown">
-    <button class="dropbtn">About Me</button>
+    <button class="dropbtn">Experience</button>
     <div class="dropdown-content">
-      <a href="/bio/">Biography</a>
       <a href="/resume/">Resumé</a>
       <a href="/events/">My Events</a>
     </div>
@@ -250,11 +363,24 @@ document.addEventListener('DOMContentLoaded', () => {
 <div class="main" style="margin-top:48px;">
     <img src="img/william.png" alt="William Wen" width="300" height="300" class="rounded">
     <h1 class="title">William Wen</h1>
-    <h2>Welcome to my website!</h2>
+    <h2>My digital portfolio</h2>
+    <h2>About Me:</h2>
     <p>
-        A high school student with a passion for technology.<br>
-        Co-founder of <a href="http://fraser.hackclub.com/" target="_blank">Fraser Hack Club</a>
+        <strong>Hey there!</strong> My name is William Wen, I am a high school student with a passion for technology.<br>
+        I am the co-founder of <a href="http://fraser.hackclub.com/" target="_blank">Fraser Hack Club</a>, the LARGEST coding club in Coquitlam, BC!
     </p>
+    <h2>Here are some of my hobbies:</h2>
+    <div class="hobbies">
+        <div class="hobby-buttons">
+            <button class="dropbtn hobby-btn" data-hobby="coding">Coding</button>
+            <button class="dropbtn hobby-btn" data-hobby="pcs">Building PCs</button>
+            <button class="dropbtn hobby-btn" data-hobby="golf">Golf</button>
+            <button class="dropbtn hobby-btn" data-hobby="gaming">Gaming</button>
+            <button class="dropbtn hobby-btn" data-hobby="3d">3D Modelling / 3D Printing</button>
+            <button class="dropbtn hobby-btn" data-hobby="art">Art</button>
+        </div>
+        <div id="hobbyContent" class="hobby-content">Select a hobby to learn more.</div>
+    </div>
     <div class="socials">
         <a href="https://github.com/stickmanned" target="_blank"><i class="fab fa-github"></i></a>
         <a href="http://discordapp.com/users/911011264120119336/" target="_blank"><i class="fab fa-discord"></i></a>
