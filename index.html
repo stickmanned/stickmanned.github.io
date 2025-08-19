@@ -9,6 +9,49 @@
 <link rel="icon" type="image/png" href="./img/websitelogo.png" />
 <title>William Wen</title>
 <style>
+/* REMOVE old absolute-position logo styles (.navbar-wrapper, .site-logo with border) and REPLACE with below */
+
+/* Unified nav bar with logo participating in the same gap spacing */
+.navbar {
+    background:none;
+    font-family:inherit;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:24px;              /* equal spacing between ALL items (logo + buttons) */
+    margin:24px auto 0 auto;
+    width:fit-content;
+    padding:0;
+    flex-wrap:wrap;
+}
+
+/* Logo acts like a button but WITHOUT border/outline */
+.site-logo{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:0;
+    background:none;
+    border:none;            /* no outline/border */
+    border-radius:50%;
+    cursor:pointer;
+    transition:background .25s, transform .15s;
+}
+.site-logo:hover,
+.site-logo:focus{
+    background:rgba(255,255,255,0.08);
+}
+.site-logo:active{
+    background:rgba(255,255,255,0.12);
+    transform:translateY(2px);
+}
+.site-logo img{
+    width:56px;
+    height:56px;
+    display:block;
+    border-radius:50%;
+}
+
 /* ===== unify button styling so ALL (menu + hobbies) match ===== */
 
 /* (Remove/replace the old `.navbar .dropbtn { ... }` block) */
@@ -252,6 +295,21 @@
     opacity:.85;
     line-height:1.2;
 }
+
+/* Small screens: shrink logo */
+@media (max-width:540px){
+    .site-logo img{ width:48px; height:48px; }
+}
+.fhc-download-row{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-top:6px;
+}
+.fhc-download-row .dropbtn{
+    padding:8px 20px; /* slightly smaller so it sits nicely inline */
+}
 </style>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -347,14 +405,34 @@ document.addEventListener('DOMContentLoaded', () => {
         `,
         pcs: `
             <h3 class="hobby-title">Building PCs</h3>
-            <p>I love selecting balanced parts, optimizing thermals, cable‑managing clean builds,
-            and benchmarking performance. Hardware tinkering teaches me practical troubleshooting skills.</p>
-
+            <p>I enjoy building PCs, from selecting all the right parts to putting them together and benchmarking—it's satisfying and enjoyable.</p>
+            <p>I particularly enjoy SFF (Small Form Factor) builds: fitting powerful components in a compact case is challenging (cable management!) but rewarding.</p>
+            <p>If you ever need help with building or upgrading a PC, feel free to reach out!</p>
+            <div class="hobby-gallery">
+                <figure>
+                    <a class="game-link" href="img/pc1.jpg" target="_blank" rel="noopener">
+                        <img src="img/pc1.jpg" alt="Daily driver PC exterior">
+                        <figcaption>Building my daily driver PC</figcaption>
+                    </a>
+                </figure>
+                <figure>
+                    <a class="game-link" href="img/pc2.jpg" target="_blank" rel="noopener">
+                        <img src="img/pc2.jpg" alt="Daily driver PC interior during build">
+                        <figcaption>Finished Build</figcaption>
+                    </a>
+                </figure>
+            </div>
         `,
-        golf: `<h3 class="hobby-title">Golf</h3><p>Golf teaches patience, precision, and consistency—skills I apply to tech projects too.</p>`,
-        gaming: `<h3 class="hobby-title">Gaming</h3><p>I enjoy strategy and simulation games that challenge problem‑solving and creativity.</p>`,
-        '3d': `<h3 class="hobby-title">3D Modelling / 3D Printing</h3><p>Designing models and watching them become physical objects is incredibly rewarding.</p>`,
-        art: `<h3 class="hobby-title">Art</h3><p>Drawing and digital art help me explore visual communication and design aesthetics.</p>`
+        golf: `<h3 class="hobby-title">Golf</h3><p>I like to play Golf for fun as it is my favorite sport, and I joined multiple golf competitions. <br> I hope to get better at the game and play at amazing golf courses! </p>`,
+        gaming: `<h3 class="hobby-title">Gaming</h3><p>My favorite games are Roblox and BeamNG Drive. My favorite game on Roblox is TDS (Tower Defense Simulator).</p>`,
+        '3d': `
+            <h3 class="hobby-title">3D Modelling / 3D Printing</h3>
+            <p>I am currently learning how to 3D Model since I have a 3D printer. I like 3D printing various objects that help me with my projects and daily life.</p>
+            <h3 style="margin-top:14px;">Here are some of my 3D Designs:</h3>
+            <p><strong>FHC Tag —</strong>    <a href="/files/FHC%20tag%20v2.3mf" download>Download (.3mf)</a></p>
+            <p><strong>FHC Swirl Ice Cream —</strong>    <a href="/files/swirl V1.3.3mf" download>Download (.3mf)</a></p>
+        `,
+        art: `<h3 class="hobby-title">Art</h3><p>I like Digital Art since there are a plethora more ways to express creativity. I enjoy using Procreate on iPad to draw.<br> For more of my artwork and Art information, check out the <a href="/arts/">Art</a> page.</p>`
     };
 
     const hobbyContent = document.getElementById('hobbyContent');
@@ -387,11 +465,14 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </head>
 <body>
+<!-- REPLACED wrapper: logo now first item inside .navbar so spacing is uniform -->
 <div class="navbar">
+  <a class="site-logo" href="/" aria-label="Home">
+    <img src="/img/websitelogo.png" alt="WW Logo">
+  </a>
   <div class="dropdown">
     <button class="dropbtn">Projects</button>
     <div class="dropdown-content">
-      <!-- was /Arts.html and /Writing.html -->
       <a href="/arts/">Arts</a>
       <a href="/writing/">Writing</a>
       <a href="/projects/">My Projects</a>
