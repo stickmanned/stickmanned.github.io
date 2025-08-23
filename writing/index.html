@@ -1,16 +1,266 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="/styles.css" />
-  <title>Arts</title>
+  <title>Writing</title>
+  <style>
+    /* Reuse global .dropbtn styling from index (add here if not already in styles.css) */
+    .dropbtn {
+      font-family: inherit;
+      font-size: 1em;
+      color: #fff;
+      padding: 14px 28px;
+      background: #0a0a0a;
+      border: 1px solid #ffffff;
+      box-sizing: border-box;
+      cursor: pointer;
+      outline: none;
+      border-radius: 24px;
+      transition: background .25s, border-color .25s, box-shadow .25s, transform .15s;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      line-height: 1;
+      position: relative;
+    }
+    .dropbtn:hover,
+    .dropbtn:focus { background: rgba(255,255,255,0.08); }
+    .dropbtn:active { background: rgba(255,255,255,0.12); transform: translateY(2px); }
+
+    /* Writing section layout */
+    .writing-buttons {
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      justify-content:center;
+      margin:12px 0 18px;
+    }
+
+    /* Content area (slide in like hobby text) */
+    .writing-content {
+      max-width:900px;
+      margin:0 auto 8px;
+      line-height:1.6;
+      font-size:1rem;
+      padding:0 12px;
+      opacity:0;
+      transform:translateY(-14px);
+      transition: opacity .30s cubic-bezier(.4,0,.2,1),
+                  transform .30s cubic-bezier(.4,0,.2,1);
+      will-change:opacity,transform;
+      min-height:120px;
+    }
+    .writing-content.show {
+      opacity:1;
+      transform:translateY(0);
+    }
+
+    /* Gallery cards (match hobby gallery formatting) */
+    .writing-gallery {
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+      gap:32px;
+      justify-items:center;
+      align-items:start;
+      margin-top:24px;
+      max-width:1200px;
+      margin-left:auto;
+      margin-right:auto;
+    }
+    .writing-gallery figure {
+      margin:0;
+      width:100%;
+    }
+    .writing-gallery a.card-link {
+      display:flex;
+      flex-direction:column;
+      text-decoration:none;
+      color:inherit;
+      background:#0a0a0a;
+      border:1px solid #ffffff;
+      border-radius:20px;
+      padding:16px 16px 18px;
+      transition:background .25s, transform .25s;
+      height:100%;
+    }
+    .writing-gallery a.card-link:hover {
+      background:rgba(255,255,255,0.08);
+      transform:translateY(-4px);
+    }
+
+    /* Image wrapper auto-sizes to intrinsic aspect ratio; no cropping */
+    .writing-gallery img {
+      display:block;
+      width:100%;
+      height:auto;              /* preserve aspect ratio */
+      object-fit:contain;       /* ensure full image always visible */
+      border-radius:12px;
+      margin:0 0 14px;
+      background:#000;          /* fallback behind transparent PNGs */
+    }
+
+    /* Caption */
+    .writing-gallery figcaption {
+      font-size:.85rem;
+      text-align:center;
+      opacity:.9;
+      line-height:1.3;
+    }
+
+    /* Transparent inner elems so hover background is uniform */
+    .writing-gallery a.card-link,
+    .writing-gallery a.card-link * {
+      background:transparent !important;
+    }
+
+    /* Responsive tweaks */
+    @media (max-width:780px){
+      .writing-gallery { gap:24px; }
+    }
+    @media (max-width:540px){
+      .dropbtn { padding:12px 20px; font-size:.95em; }
+      .writing-gallery { grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); }
+    }
+  </style>
 </head>
 <body>
   <div class="main" style="margin-top:48px; text-align:center;">
-    <h1>content soon...</h1>
+    <h1>Writing</h1>
+    <h2>I like writing during my free time. <br> I mostly write books, stories, and essays.</h2>
+    <h1>Here are some of my writing:</h1>
+
+    <!-- NEW interactive writing section -->
+    <div class="writing-section">
+      <div class="writing-buttons">
+        <button class="dropbtn writing-btn" data-category="books">Books</button>
+        <button class="dropbtn writing-btn" data-category="essays">Essays</button>
+        <button class="dropbtn writing-btn" data-category="other">Other</button>
+      </div>
+      <div id="writingContent" class="writing-content">Select a category to view my writing samples.</div>
+    </div>
   </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const defaultWritingText = 'Select a category to view my writing.';
+      /* Placeholder data: replace later */
+      const writingData = {
+        books: `
+          <div class="writing-gallery">
+            <figure>
+              <a class="card-link"
+                href="https://www.amazon.ca/Penciled-William-Wen/dp/B0BTRRB4NT?crid=825TCTVFLGCD&dib=eyJ2IjoiMSJ9.EV4eqMUW7I0QxfLWVIXVrTSm94JKI40ym19P4_1_RwEQWbcnITu7GyI6O7lm3nYxw7p8EiN96c6tmiZaM77rBr36iH1ohSAdCOS6YbyJe_oBY3QQUk6EubQBO3QqGmjDvhSt2CPzwRnLYOLJzdu8v3_EZ-sNdNTmhhhIFeYhf0TEt9Ig4msTYR93bTYzBzcRP9vYWusJoDSJcox9kuxVptWNiMa2a1lAVecBawgQY2Pnq1Gs_BucnMcLW1fP4v3e5jYVXLGW5zt0DBRCaJd0I3V4n29Dx5JZAGifymTUv5s.s1TNpErQvd_nV9CdCxvROc489a4eJqlGZHU3OHX6csI&dib_tag=se&keywords=penciled&qid=1755904876&sprefix=pencile%2Caps%2C195&sr=8-5"
+                target="_blank" rel="noopener"
+                aria-label="Penciled">
+                <img src="/img/writing/penciled.png" alt="Penciled">
+                <figcaption><strong>Penciled</strong><br>
+                  A young man (Jeff) and an obese old man fight to the death because of pencils?<br>
+                  <em>February 2, 2023</em>
+                </figcaption>
+              </a>
+            </figure>
+            <figure>
+              <a class="card-link" href="#" aria-label="Sharpened">
+                <img src="/img/writing/sharpened-preview.png" alt="Sharpened">
+                <figcaption><strong>Sharpened</strong><br>
+                  John discovers that the infamous "Old Man" is his dad, and he's up to no good again.<br>
+                  <em>Releasing 2026</em>
+                </figcaption>
+              </a>
+            </figure>
+            <figure>
+              <a class="card-link"
+                href="/files/writing/Skibidi%20Toilet%20and%20Me.pdf"
+                target="_blank" rel="noopener"
+                aria-label="Skibidi Toilet and Me">
+                <img src="/img/writing/skibidi.png" alt="Skibidi Toilet and Me">
+                <figcaption><strong>Skibidi Toilet and Me</strong><br>
+                  It is Little John's first time going to the toilet, but there was a giant head sticking out of it... <br>
+                  <em>August 2024</em>
+                </figcaption>
+              </a>
+            </figure>
+          </div>
+        `,
+        essays: `
+          <div class="writing-gallery">
+            <figure>
+              <a class="card-link" href="#" aria-label="Placeholder essay 1">
+                <img src="/img/placeholder.png" alt="Placeholder essay image 1">
+                <figcaption><strong>Essay Topic Placeholder 1</strong><br>
+                  Brief essay blurb placeholder text here.<br>
+                  <em>Date: Mar 3, 2025</em>
+                </figcaption>
+              </a>
+            </figure>
+            <figure>
+              <a class="card-link" href="#" aria-label="Placeholder essay 2">
+                <img src="/img/placeholder.png" alt="Placeholder essay image 2">
+                <figcaption><strong>Essay Topic Placeholder 2</strong><br>
+                  Another essay summary line placeholder content.<br>
+                  <em>Date: Mar 28, 2025</em>
+                </figcaption>
+              </a>
+            </figure>
+          </div>
+        `,
+        other: `
+          <div class="writing-gallery">
+            <figure>
+              <a class="card-link" href="#" aria-label="Placeholder writing other 1">
+                <img src="/img/placeholder.png" alt="Placeholder image other 1">
+                <figcaption><strong>Misc Writing Placeholder 1</strong><br>
+                  Placeholder description for a story / poem / article.<br>
+                  <em>Date: Apr 10, 2025</em>
+                </figcaption>
+              </a>
+            </figure>
+            <figure>
+              <a class="card-link" href="#" aria-label="Placeholder writing other 2">
+                <img src="/img/placeholder.png" alt="Placeholder image other 2">
+                <figcaption><strong>Misc Writing Placeholder 2</strong><br>
+                  Additional placeholder description for later use.<br>
+                  <em>Date: Apr 23, 2025</em>
+                </figcaption>
+              </a>
+            </figure>
+          </div>
+        `
+      };
+
+      const contentEl = document.getElementById('writingContent');
+
+      function swapContent(html) {
+        contentEl.classList.remove('show');
+        const delay = 160;
+        setTimeout(() => {
+          contentEl.innerHTML = html;
+          requestAnimationFrame(() => contentEl.classList.add('show'));
+        }, delay);
+      }
+
+      document.querySelectorAll('.writing-btn').forEach(btn => {
+        btn.setAttribute('aria-pressed', 'false');
+        btn.addEventListener('click', () => {
+          const isActive = btn.getAttribute('aria-pressed') === 'true';
+            // reset all
+            document.querySelectorAll('.writing-btn').forEach(b => b.setAttribute('aria-pressed','false'));
+            if (isActive) {
+              swapContent(defaultWritingText);
+              btn.blur();
+              return;
+            }
+            btn.setAttribute('aria-pressed','true');
+            const key = btn.dataset.category;
+            swapContent(writingData[key] || defaultWritingText);
+        });
+      });
+
+      // Initial state visible
+      requestAnimationFrame(()=>contentEl.classList.add('show'));
+    });
+  </script>
 </body>
 </html>
