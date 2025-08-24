@@ -59,23 +59,22 @@
 
     /* Gallery cards (match hobby gallery formatting) */
     .writing-gallery {
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-      gap:32px;
-      justify-items:center;
-      align-items:start;
-      margin-top:24px;
+      column-width: 280px;         /* target card width; browser decides count */
+      column-gap: 24px;
       max-width:1200px;
-      margin-left:auto;
-      margin-right:auto;
+      margin:24px auto 0;
+      padding:0 8px;
+    }
+    @media (max-width:620px){
+      .writing-gallery { column-width: 220px; column-gap:20px; }
     }
     .writing-gallery figure {
-      margin:0;
+      break-inside: avoid;
+      margin:0 0 24px;
       width:100%;
     }
     .writing-gallery a.card-link {
-      display:flex;
-      flex-direction:column;
+      display:block;
       text-decoration:none;
       color:inherit;
       background:#0a0a0a;
@@ -83,49 +82,59 @@
       border-radius:20px;
       padding:16px 16px 18px;
       transition:background .25s, transform .25s;
-      height:100%;
     }
     .writing-gallery a.card-link:hover {
       background:rgba(255,255,255,0.08);
       transform:translateY(-4px);
     }
-
-    /* Image wrapper auto-sizes to intrinsic aspect ratio; no cropping */
     .writing-gallery img {
       display:block;
       width:100%;
-      height:auto;              /* preserve aspect ratio */
-      object-fit:contain;       /* ensure full image always visible */
+      height:auto;
+      object-fit:contain;
       border-radius:12px;
       margin:0 0 14px;
-      background:#000;          /* fallback behind transparent PNGs */
+      background:#000;
     }
-
-    /* Caption */
     .writing-gallery figcaption {
       font-size:.85rem;
       text-align:center;
       opacity:.9;
       line-height:1.3;
     }
-
-    /* Transparent inner elems so hover background is uniform */
     .writing-gallery a.card-link,
-    .writing-gallery a.card-link * {
-      background:transparent !important;
-    }
+    .writing-gallery a.card-link * { background:transparent !important; }
 
-    /* Responsive tweaks */
-    @media (max-width:780px){
-      .writing-gallery { gap:24px; }
-    }
+    /* Site logo (top-left home link) */
+.site-logo {
+    position: absolute;
+    top: 25px; /* Adjusted to match the y-position of the writing h1 heading */
+    left: 30px; /* Set a consistent width space from the left edge */
+    z-index: 100;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 4px;
+    transition: background .25s, transform .15s;
+}
+    .site-logo:hover,
+    .site-logo:focus{ background:rgba(255,255,255,0.08); }
+    .site-logo:active{ background:rgba(255,255,255,0.12); transform:translateY(2px); }
+    .site-logo img{ width:65px; height:65px; border-radius:50%; display:block; }
     @media (max-width:540px){
-      .dropbtn { padding:12px 20px; font-size:.95em; }
-      .writing-gallery { grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); }
+      .site-logo img{ width:48px; height:48px; }
+      .site-logo{ top:10px; left:10px; }
     }
   </style>
 </head>
 <body>
+  <!-- NEW: home logo -->
+  <a class="site-logo" href="/" aria-label="Home">
+    <img src="/img/websitelogo.png" alt="WW Logo">
+  </a>
+
   <div class="main" style="margin-top:48px; text-align:center;">
     <h1>Writing</h1>
     <h2>I like writing during my free time. <br> I mostly write books, stories, and essays.</h2>
@@ -138,216 +147,163 @@
         <button class="dropbtn writing-btn" data-category="essays">Essays</button>
         <button class="dropbtn writing-btn" data-category="shortstories">Short Stories</button>
         <button class="dropbtn writing-btn" data-category="other">Other</button>
+        <button id="sortBtn" class="dropbtn" style="display:none;" aria-label="Change sort order">Sort: Date ↑</button>
       </div>
       <div id="writingContent" class="writing-content">Select a category to view my writing samples.</div>
     </div>
   </div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const defaultWritingText = 'Select a category to view my writing.';
-      /* Placeholder data: replace later */
-      const writingData = {
-        books: `
-          <div class="writing-gallery">
-            <figure>
-              <a class="card-link"
-                href="https://www.amazon.ca/Penciled-William-Wen/dp/B0BTRRB4NT?crid=825TCTVFLGCD&dib=eyJ2IjoiMSJ9.EV4eqMUW7I0QxfLWVIXVrTSm94JKI40ym19P4_1_RwEQWbcnITu7GyI6O7lm3nYxw7p8EiN96c6tmiZaM77rBr36iH1ohSAdCOS6YbyJe_oBY3QQUk6EubQBO3QqGmjDvhSt2CPzwRnLYOLJzdu8v3_EZ-sNdNTmhhhIFeYhf0TEt9Ig4msTYR93bTYzBzcRP9vYWusJoDSJcox9kuxVptWNiMa2a1lAVecBawgQY2Pnq1Gs_BucnMcLW1fP4v3e5jYVXLGW5zt0DBRCaJd0I3V4n29Dx5JZAGifymTUv5s.s1TNpErQvd_nV9CdCxvROc489a4eJqlGZHU3OHX6csI&dib_tag=se&keywords=penciled&qid=1755904876&sprefix=pencile%2Caps%2C195&sr=8-5"
-                target="_blank" rel="noopener"
-                aria-label="Penciled">
-                <img src="/img/writing/penciled.png" alt="Penciled">
-                <figcaption><strong>Penciled</strong><br>
-                  A young man (Jeff) and an obese old man fight to the death because of pencils?<br>
-                  <br>
-                  <em>February 2, 2023</em>
-                </figcaption>
-              </a>
-            </figure>
-            <figure>
-              <a class="card-link" href="#" aria-label="Sharpened">
-                <img src="/img/writing/sharpened-preview.png" alt="Sharpened">
-                <figcaption><strong>Sharpened</strong><br>
-                  John discovers that the infamous "Old Man" is his dad, and he's up to no good again.<br>
-                  <br>
-                  <em>Releasing 2026</em>
-                </figcaption>
-              </a>
-            </figure>
-            <figure>
-              <a class="card-link"
-                href="/files/writing/Skibidi%20Toilet%20and%20Me.pdf"
-                target="_blank" rel="noopener"
-                aria-label="Skibidi Toilet and Me">
-                <img src="/img/writing/skibidi.png" alt="Skibidi Toilet and Me">
-                <figcaption><strong>Skibidi Toilet and Me</strong><br>
-                  It is Little John's first time going to the toilet, but there was a giant head sticking out of it... <br>
-                  <br>
-                  <em>August 2024</em>
-                </figcaption>
-              </a>
-            </figure>
-          </div>
-        `,
-        essays: `
-          <div class="writing-gallery">
-            <figure>
-              <a class="card-link" href="https://docs.google.com/document/d/1c-AUoPV66tazLVt0BZleZdRnMP1A3e2SayAHJJnd7mw/edit?tab=t.0" aria-label="RobotOrPet">
-                <img src="/img/writing/RobotOrPet.png" alt="Robot or Pet">
-                <figcaption><strong>Robot or Pet</strong><br>
-                  My first essay! Would you prefer a robot or a pet?<br>
-                  <br>
-                  <em>2021</em>
-                </figcaption>
-              </a>
-            </figure>
-            <figure>
-              <a class="card-link" href="https://docs.google.com/document/d/1IbFCpA5Z_EapKIu-6FtjLQOTsPazfwwokKnuBDPPaTg/edit?usp=sharing" aria-label="MachineWar">
-                <img src="/img/writing/MachineWar.png" alt="Machine War">
-                <figcaption><strong>How to Win a Machine War</strong><br>
-                <br>"How to Win a Machine War" is a fast-paced guide that outlines strategies, weapons, defenses, and programming tactics to outsmart and overpower enemy machines in an all-robot battlefield.
-                  <br>
-                <br><em>2021</em>
-                </figcaption>
-              </a>
-            </figure>
-            <figure>
-              <a class="card-link" href="https://docs.google.com/document/d/1dYbIF7R_OrczupnDycO5JvvUmW42PunIz5b-NtZyW1c/edit?usp=sharing" aria-label="isitoktolie">
-                <img src="/img/writing/oktolie.png" alt="Is it Okay to Lie?">
-                <figcaption><strong>Is it Okay to Lie?</strong><br>
-                <br>Is it okay to lie? is lying good? is lying bad?
-                <br>
-                  <br><em>2021</em>
-                </figcaption>
-              </a>
-            </figure>
-            <figure>
-              <a class="card-link" href="https://docs.google.com/document/d/1rxHmTZHcjXJBjcG0S16C1nAXT45stf9QE2IORg5yoSM/edit?usp=sharing" aria-label="homeworkorgames">
-                <img src="/img/writing/homeworkorgames.png" alt="Homework or Video Games?">
-                <figcaption><strong>Homework or Video Games?</strong><br>
-                <br>Should you play video games or do homework?
-                  <br><em>2022</em>
-                </figcaption>
-              </a>
-            </figure>
-            <figure>
-              <a class="card-link" href="https://docs.google.com/document/d/1EfWTIWS07nuw1z1l95KM0w_du6T3bwBfK2fF9ov0B9A/edit?usp=sharing" aria-label="studyonlineoratschool">
-                <img src="/img/writing/studyonlineoratschool.png" alt="Study Online or at School?">
-                <figcaption><strong>Comparing studying online with going to study at school</strong><br>
-                <br>Should you study online or at school?
-                <br>
-                  <br><em>2022</em>
-                </figcaption>
-              </a>
-            </figure>
-            <figure>
-              <a class="card-link" href="https://docs.google.com/document/d/12TNl3uMhbY0dmiGk38JT2xSm3MyuzoGeW0bixqIu0WY/edit?usp=sharing" aria-label="benefits of healthy eating">
-                <img src="/img/writing/healthyeating.png" alt="Benefits of Healthy Eating">
-                <figcaption><strong>Benefits of Healthy Eating</strong><br>
-                <br>What should you eat to stay healthy? Are there any benefits to healthy eating?
-                <br>
-                  <br><em>2022</em>
-                </figcaption>
-              </a>
-            </figure>
-            <figure>
-              <a class="card-link" href="https://docs.google.com/document/d/1B8_fqtBB6syTfwRa7onj1b2DC2OD5KXrqmdZbahBRJc/edit?usp=sharing" aria-label="schooluniforms">
-                <img src="/img/writing/schooluniforms.png" alt="Why I Hate School Uniforms">
-                <figcaption><strong>Why I Hate School Uniforms</strong><br>
-                <br>Here are some of the reasons why I hate school uniforms.
-                <br>
-                  <br><em>2022</em>
-                </figcaption>
-              </a>
-            </figure>
-            <figure>
-              <a class="card-link" href="https://docs.google.com/document/d/1Vtma3LEy_y-qq45k7uxVAibg2ioBEaOpEtTiAmvGl2I/edit?usp=sharing" aria-label="driverslicense">
-                <img src="/img/writing/driverslicense.png" alt="driver's license">
-                <figcaption><strong>Should you get your driver's license at or after 16 years old?</strong><br>
-                <br>Here are some of the reasons why I think you should get your driver's license AFTER 16 years old.
-                <br>
-                  <br><em>2022</em>
-                </figcaption>
-              </a>
-            </figure>
-          </div>
-        `,
-        shortstories: `
-          <div class="writing-gallery">
-            <figure>
-              <a class="card-link" href="#" aria-label="Placeholder writing story 1">
-                <img src="/img/placeholder.png" alt="Placeholder image story 1">
-                <figcaption><strong>Short Story Placeholder 1</strong><br>
-                  Placeholder description for a short story.<br>
-                  <em>Date: Mar 15, 2025</em>
-                </figcaption>
-              </a>
-            </figure>
-            <figure>
-              <a class="card-link" href="#" aria-label="Placeholder writing story 2">
-                <img src="/img/placeholder.png" alt="Placeholder image story 2">
-                <figcaption><strong>Short Story Placeholder 2</strong><br>
-                  Another placeholder description for a different short story.<br>
-                  <em>Date: Mar 28, 2025</em>
-                </figcaption>
-              </a>
-            </figure>
-          </div>
-        `,
-        other: `
-          <div class="writing-gallery">
-            <figure>
-              <a class="card-link" href="#" aria-label="Placeholder writing other 1">
-                <img src="/img/placeholder.png" alt="Placeholder image other 1">
-                <figcaption><strong>Misc Writing Placeholder 1</strong><br>
-                  Placeholder description for a story / poem / article.<br>
-                  <em>Date: Apr 10, 2025</em>
-                </figcaption>
-              </a>
-            </figure>
-            <figure>
-              <a class="card-link" href="#" aria-label="Placeholder writing other 2">
-                <img src="/img/placeholder.png" alt="Placeholder image other 2">
-                <figcaption><strong>Misc Writing Placeholder 2</strong><br>
-                  Additional placeholder description for later use.<br>
-                  <em>Date: Apr 23, 2025</em>
-                </figcaption>
-              </a>
-            </figure>
-          </div>
-        `
-      };
+document.addEventListener('DOMContentLoaded', () => {
+  const defaultWritingText = 'Select a category to view my writing.';
 
-      const contentEl = document.getElementById('writingContent');
-
-      function swapContent(html) {
-        contentEl.classList.remove('show');
-        const delay = 160;
-        setTimeout(() => {
-          contentEl.innerHTML = html;
-          requestAnimationFrame(() => contentEl.classList.add('show'));
-        }, delay);
+  // Data model: each entry has title, desc (HTML), dateISO (for sorting), dateDisplay, img, link, linkLabel
+  const data = {
+    books: [
+      {
+        title:'Penciled',
+        desc:'A young man (Jeff) and an obese old man fight to the death because of pencils?',
+        dateISO:'2023-02-02',
+        dateDisplay:'February 2, 2023',
+        img:'/img/writing/penciled.png',
+        link:'https://www.amazon.ca/Penciled-William-Wen/dp/B0BTRRB4NT?crid=825TCTVFLGCD&dib=eyJ2IjoiMSJ9.EV4eqMUW7I0QxfLWVIXVrTSm94JKI40ym19P4_1_RwEQWbcnITu7GyI6O7lm3nYxw7p8EiN96c6tmiZaM77rBr36iH1ohSAdCOS6YbyJe_oBY3QQUk6EubQBO3QqGmjDvhSt2CPzwRnLYOLJzdu8v3_EZ-sNdNTmhhhIFeYhf0TEt9Ig4msTYR93bTYzBzcRP9vYWusJoDSJcox9kuxVptWNiMa2a1lAVecBawgQY2Pnq1Gs_BucnMcLW1fP4v3e5jYVXLGW5zt0DBRCaJd0I3V4n29Dx5JZAGifymTUv5s.s1TNpErQvd_nV9CdCxvROc489a4eJqlGZHU3OHX6csI&dib_tag=se&keywords=penciled&qid=1755904876&sprefix=pencile%2Caps%2C195&sr=8-5',
+        linkLabel:'Penciled'
+      },
+      {
+        title:'Sharpened',
+        desc:'John discovers that the infamous "Old Man" is his dad, and he\'s up to no good again.',
+        dateISO:'2026-12-31',
+        dateDisplay:'Releasing 2026',
+        img:'/img/writing/sharpened-preview.png',
+        link:'#',
+        linkLabel:'Sharpened'
+      },
+      {
+        title:'Skibidi Toilet and Me',
+        desc:'It is Little John\'s first time going to the toilet, but there was a giant head sticking out of it...',
+        dateISO:'2024-08-01',
+        dateDisplay:'August 2024',
+        img:'/img/writing/skibidi.png',
+        link:'/files/writing/Skibidi%20Toilet%20and%20Me.pdf',
+        linkLabel:'Skibidi Toilet and Me'
       }
+    ],
+    essays: [
+      { title:'Robot or Pet', desc:'Would you prefer a robot or a pet?', dateISO:'2021-01-01', dateDisplay:'2021', img:'/img/writing/RobotOrPet.png', link:'https://docs.google.com/document/d/1c-AUoPV66tazLVt0BZleZdRnMP1A3e2SayAHJJnd7mw/edit?tab=t.0', linkLabel:'Robot or Pet'},
+      { title:'How to Win a Machine War', desc:'Fast-paced guide: strategies, weapons, defenses, programming tactics.', dateISO:'2021-02-01', dateDisplay:'2021', img:'/img/writing/MachineWar.png', link:'https://docs.google.com/document/d/1IbFCpA5Z_EapKIu-6FtjLQOTsPazfwwokKnuBDPPaTg/edit?usp=sharing', linkLabel:'Machine War'},
+      { title:'Is it Okay to Lie?', desc:'Is it okay to lie? Is lying good? Is lying bad?', dateISO:'2021-03-01', dateDisplay:'2021', img:'/img/writing/oktolie.png', link:'https://docs.google.com/document/d/1dYbIF7R_OrczupnDycO5JvvUmW42PunIz5b-NtZyW1c/edit?usp=sharing', linkLabel:'Is it Okay to Lie?' },
+      { title:'Homework or Video Games?', desc:'Should you play video games or do homework?', dateISO:'2022-01-05', dateDisplay:'2022', img:'/img/writing/homeworkorgames.png', link:'https://docs.google.com/document/d/1rxHmTZHcjXJBjcG0S16C1nAXT45stf9QE2IORg5yoSM/edit?usp=sharing', linkLabel:'Homework or Video Games?' },
+      { title:'Comparing studying online with going to study at school', desc:'Should you study online or at school?', dateISO:'2022-02-01', dateDisplay:'2022', img:'/img/writing/studyonlineoratschool.png', link:'https://docs.google.com/document/d/1EfWTIWS07nuw1z1l95KM0w_du6T3bwBfK2fF9ov0B9A/edit?usp=sharing', linkLabel:'Study Online or School' },
+      { title:'Benefits of Healthy Eating', desc:'What should you eat to stay healthy? Benefits explained.', dateISO:'2022-03-01', dateDisplay:'2022', img:'/img/writing/healthyeating.png', link:'https://docs.google.com/document/d/12TNl3uMhbY0dmiGk38JT2xSm3MyuzoGeW0bixqIu0WY/edit?usp=sharing', linkLabel:'Healthy Eating' },
+      { title:'Why I Hate School Uniforms', desc:'Reasons why I dislike school uniforms.', dateISO:'2022-04-01', dateDisplay:'2022', img:'/img/writing/schooluniforms.png', link:'https://docs.google.com/document/d/1B8_fqtBB6syTfwRa7onj1b2DC2OD5KXrqmdZbahBRJc/edit?usp=sharing', linkLabel:'School Uniforms' },
+      { title:'Should you get your driver\'s license at or after 16 years old?', desc:'Why I think you should get it after 16.', dateISO:'2022-05-01', dateDisplay:'2022', img:'/img/writing/driverslicense.png', link:'https://docs.google.com/document/d/1Vtma3LEy_y-qq45k7uxVAibg2ioBEaOpEtTiAmvGl2I/edit?usp=sharing', linkLabel:'Driver\'s License' },
+      { title:'Banff National Park', desc:'Places to visit in Banff National Park.', dateISO:'2022-06-01', dateDisplay:'2022', img:'/img/writing/banff.png', link:'https://docs.google.com/document/d/1ZfUnCeZV22DZqt4eYDUkLccXvwUeyzIOhA9DYORQ4oU/edit?usp=sharing', linkLabel:'Banff' },
+      { title:'Summer Heat or Winter Cold?', desc:'Why I prefer winter temperatures.', dateISO:'2022-07-01', dateDisplay:'2022', img:'/img/writing/hotorcold.png', link:'https://docs.google.com/document/d/10_87bPSMTCMfjUi7e5TZI7XXYsFi9Hxzm8HNNh5ySTI/edit?usp=sharing', linkLabel:'Summer Heat or Winter Cold?' },
+      { title:'Why Limiting TV Time Helps Kids Stay Healthy and Focused', desc:'Why I think there should be limits on TV time.', dateISO:'2022-08-01', dateDisplay:'2022', img:'/img/writing/tvlimits.png', link:'https://docs.google.com/document/d/1ykI2bkTIHwU0-VVBzfkrwT3EcZrlJTrswHoXEF8GFRI/edit?usp=sharing', linkLabel:'TV Limits' },
+      { title:'Orlando Destinations', desc:'Attractions and culture of Orlando, Florida.', dateISO:'2023-01-01', dateDisplay:'2023', img:'/img/writing/orlando.png', link:'https://docs.google.com/document/d/1LWFU0mNGcyg29CY84GZ6rSqLTjKQoGWsgM8H54eZS3g/edit?usp=sharing', linkLabel:'Orlando' },
+      { title:'Comparing Charlottetown and Coquitlam', desc:'Comparison of two Canadian cities.', dateISO:'2023-02-01', dateDisplay:'2023', img:'/img/writing/cc.png', link:'https://docs.google.com/document/d/1NWD2rPLPoiUccm0LLLPEMjOD4BXjt38fPVlz5lk7Eeo/edit?usp=sharing', linkLabel:'Charlottetown vs Coquitlam' },
+      { title:'Why Smartphones Are the Best Invention of Our Time', desc:'Arguing smartphones are the best invention.', dateISO:'2023-03-01', dateDisplay:'2023', img:'/img/writing/smartphones.png', link:'https://docs.google.com/document/d/13468pTSWeQlU2VsZ5nMdn2E1rL7hY00f7YplIlUnMpI/edit?usp=sharing', linkLabel:'Smartphones' },
+      { title:'How to Sell Stuff for a Profit', desc:'Tips and strategies for selling at a profit.', dateISO:'2023-04-01', dateDisplay:'2023', img:'/img/writing/selling.png', link:'https://docs.google.com/document/d/1elK6vyUkF7q_RvDrgXifpD2n65j7dusZlwly-JCAuck/edit?usp=sharing', linkLabel:'Sell for Profit' },
+      { title:'Amazon VS eBay', desc:'Platform comparison for selling/buying.', dateISO:'2023-05-01', dateDisplay:'2023', img:'/img/writing/amazon_vs_ebay.png', link:'https://docs.google.com/document/d/1omOXJ0S7QTP2UoPYWtkinHFym4tST4LP7QYzbeCJQsw/edit?usp=sharing', linkLabel:'Amazon vs eBay' },
+      { title:'Effects of Taking Notes', desc:'Benefits and techniques of note-taking.', dateISO:'2024-01-01', dateDisplay:'2024', img:'/img/writing/notes.png', link:'https://docs.google.com/document/d/133Gx530xCur-tqxwMq65CfT_cdxnfIQPvUEPgTGnytQ/edit?usp=sharing', linkLabel:'Taking Notes' },
+      { title:'Why You Should Disagree with Your Parents', desc:'Importance of independent thinking.', dateISO:'2024-02-01', dateDisplay:'2024', img:'/img/writing/parent.png', link:'https://docs.google.com/document/d/1JXCYJL_vJ5dl8R4_9WjVZYx3Qf9oFUA0tlJOw7y6sOo/edit?usp=sharing', linkLabel:'Disagree with Parents' },
+      { title:'Small Steps for a Climate Crisis', desc:'Small actions you can do to prevent Climate Change. (The Queen\'s Commonwealth Essay Competition 2024 Gold Winner)', dateISO:'2024-05-12', dateDisplay:'2024', img:'/img/writing/crisis.png', link:'https://docs.google.com/document/d/1kXjQNyiscQn2zaWMtxfgl-uwdmnqZ8j-wsJJY0dZCqQ/edit?usp=sharing', linkLabel:'Climate Crisis' },
+    ],
+    shortstories: [
+      { title:'The Hidden Library', desc:'Jeff discovers a secret library hidden in Port Coquitlam. (Poco Story Submission 2022)', dateISO:'2022-04-28', dateDisplay:'April 2022', img:'/img/writing/library.png', link:'https://docs.google.com/document/d/1Vg4WUR2eI49q6RSFtwnJ27lmEdM4v1OAHE1H1WW-8hU/edit?usp=sharing', linkLabel:'Hidden Library' },
+      { title:'Life Could be a Dream', desc:'A single night’s sleep unravels into a chain of surreal worlds — from a sunny picnic to a deadly snake, a high‑speed highway, and the streets of 1913. Each shift pulls the dreamer deeper into chaos, until waking feels just as uncertain as the dream.', dateISO:'2023-12-03', dateDisplay:'December 2023', img:'/img/writing/dream.png', link:'https://docs.google.com/document/d/17dOIWRotI5EKF77DqKtdoxq7Op_2cllZFmjrC1ceMIk/edit?usp=sharing', linkLabel:'Life Could be a Dream' }
+    ],
+    other: [
+      { title:'Terry Fox Marathon of Hope', desc:'A reflection on the impact of Terry Fox and his legacy. (English and French versions for school speech)', dateISO:'2023-10-11', dateDisplay:'October 2023', img:'/img/writing/terry.png', link:'https://docs.google.com/document/d/1_u3tNfh71rrF9q_yqp74NRPda8s0MoMKP-YbHv3xseM/edit?usp=sharing', linkLabel:'Terry Fox' },
+      { title:'Défis Virtels (résumé)', desc: 'Un résumé de livre français Défis Virtuels', dateISO:'9/24/2024', dateDisplay:'September 2024', img:'/img/writing/defis.png', link:'https://docs.google.com/document/d/1LhU0OHRdJamEYxheQblcrt3jBr310Bvm1aOIh27S3WA/edit?usp=sharing', linkLabel:'Défis Virtels (résumé)' },
+      { title:'7 Sacred Teachings - Wisdom', desc:'Why I chose wisdom for the 7 sacred teachings', dateISO:'2024-06-18', dateDisplay:'June 2024', img:'/img/writing/7.png', link:'https://docs.google.com/document/d/1l7KE96N9rypEU4dJZvAPA8ir8o3psyELJT1LHoV11z8/edit?usp=sharing', linkLabel:'7 Sacred Teachings - Wisdom' },
+      { title:'Lorax réponse (FR)', desc:'La réponse du question Lorax', dateISO:'2024-10-28', dateDisplay:'October 2024', img:'/img/writing/lorax.png', link:'https://docs.google.com/document/d/1eDEBmzAyvycNJM5827dQ3abUypLQ45qCCRE4fowWIw8/edit?usp=sharing', linkLabel:'Lorax réponse (FR)' }
+    ]
+  };
 
-      document.querySelectorAll('.writing-btn').forEach(btn => {
-        btn.setAttribute('aria-pressed', 'false');
-        btn.addEventListener('click', () => {
-          const isActive = btn.getAttribute('aria-pressed') === 'true';
-            // reset all
-            document.querySelectorAll('.writing-btn').forEach(b => b.setAttribute('aria-pressed','false'));
-            if (isActive) {
-              swapContent(defaultWritingText);
-              btn.blur();
-              return;
-            }
-            btn.setAttribute('aria-pressed','true');
-            const key = btn.dataset.category;
-            swapContent(writingData[key] || defaultWritingText);
-        });
-      });
+  const contentEl = document.getElementById('writingContent');
+  const sortBtn = document.getElementById('sortBtn');
+  let activeCategory = null;
+  let sortMode = 'date-asc'; // cycles: date-asc -> date-desc -> title-asc
 
-      // Initial state visible
+  function setSortButtonLabel() {
+    if (sortMode === 'date-asc') sortBtn.textContent = 'Sort: Date ↑';
+    else if (sortMode === 'date-desc') sortBtn.textContent = 'Sort: Date ↓';
+    else sortBtn.textContent = 'Sort: A-Z';
+  }
+
+  function cycleSortMode() {
+    if (sortMode === 'date-asc') sortMode = 'date-desc';
+    else if (sortMode === 'date-desc') sortMode = 'title-asc';
+    else sortMode = 'date-asc';
+    setSortButtonLabel();
+    if (activeCategory) renderCategory(activeCategory); // re-render
+  }
+
+  sortBtn.addEventListener('click', () => {
+    cycleSortMode();
+  });
+
+  function sortEntries(entries) {
+    const copy = entries.slice();
+    if (sortMode === 'date-asc') {
+      copy.sort((a,b)=> new Date(a.dateISO) - new Date(b.dateISO));
+    } else if (sortMode === 'date-desc') {
+      copy.sort((a,b)=> new Date(b.dateISO) - new Date(a.dateISO));
+    } else {
+      copy.sort((a,b)=> a.title.localeCompare(b.title,'en',{sensitivity:'base'}));
+    }
+    return copy;
+  }
+
+  function renderCategory(cat) {
+    const entries = data[cat] ? sortEntries(data[cat]) : [];
+    const html = `
+      <div class="writing-gallery">
+        ${entries.map(e => `
+          <figure>
+            <a class="card-link" href="${e.link}" ${e.link !== '#' ? 'target="_blank" rel="noopener"' : ''} aria-label="${e.title}">
+              <img src="${e.img}" alt="${e.title}">
+              <figcaption><strong>${e.title}</strong><br>${e.desc}<br><br><em>${e.dateDisplay}</em></figcaption>
+            </a>
+          </figure>
+        `).join('')}
+      </div>
+    `;
+    swapContent(html);
+  }
+
+  function swapContent(html) {
+    contentEl.classList.remove('show');
+    setTimeout(() => {
+      contentEl.innerHTML = html;
       requestAnimationFrame(()=>contentEl.classList.add('show'));
+    }, 160);
+  }
+
+  document.querySelectorAll('.writing-btn').forEach(btn => {
+    btn.setAttribute('aria-pressed','false');
+    btn.addEventListener('click', () => {
+      const isActive = btn.getAttribute('aria-pressed') === 'true';
+      document.querySelectorAll('.writing-btn').forEach(b => b.setAttribute('aria-pressed','false'));
+      if (isActive) {
+        activeCategory = null;
+        swapContent(defaultWritingText);
+        sortBtn.style.display='none';
+        btn.blur();
+        return;
+      }
+      activeCategory = btn.dataset.category;
+      btn.setAttribute('aria-pressed','true');
+      sortMode = 'date-asc';
+      setSortButtonLabel();
+      sortBtn.style.display='inline-flex';
+      renderCategory(activeCategory);
     });
-  </script>
-</body>
-</html>
+  });
+
+  requestAnimationFrame(()=>contentEl.classList.add('show'));
+  setSortButtonLabel();
+});
+</script>
+<!-- ...existing code... -->
