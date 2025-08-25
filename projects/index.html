@@ -1,16 +1,506 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="/styles.css" />
-  <title>Arts</title>
+  <title>Projects</title>
+  <style>
+    /* Reuse global .dropbtn styling from index (add here if not already in styles.css) */
+    .dropbtn {
+      font-family: inherit;
+      font-size: 1em;
+      color: #fff;
+      padding: 14px 28px;
+      background: #0a0a0a;
+      border: 1px solid #ffffff;
+      box-sizing: border-box;
+      cursor: pointer;
+      outline: none;
+      border-radius: 24px;
+      transition: background .25s, border-color .25s, box-shadow .25s, transform .15s;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      line-height: 1;
+      position: relative;
+    }
+    .dropbtn:hover,
+    .dropbtn:focus { background: rgba(255,255,255,0.08); }
+    .dropbtn:active { background: rgba(255,255,255,0.12); transform: translateY(2px); }
+
+    /* Writing section layout */
+    .writing-buttons {
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      justify-content:center;
+      margin:12px 0 18px;
+    }
+
+    /* Content area (slide in like hobby text) */
+    .writing-content {
+      max-width:900px;
+      margin:0 auto 8px;
+      line-height:1.6;
+      font-size:1rem;
+      padding:0 12px;
+      opacity:0;
+      transform:translateY(-14px);
+      transition: opacity .30s cubic-bezier(.4,0,.2,1),
+                  transform .30s cubic-bezier(.4,0,.2,1);
+      will-change:opacity,transform;
+      min-height:120px;
+    }
+    .writing-content.show {
+      opacity:1;
+      transform:translateY(0);
+    }
+
+    /* Gallery cards (match hobby gallery formatting) */
+    .writing-gallery {
+      column-width: 280px;         /* target card width; browser decides count */
+      column-gap: 24px;
+      max-width:1200px;
+      margin:24px auto 0;
+      padding:0 8px;
+    }
+    @media (max-width:620px){
+      .writing-gallery { column-width: 220px; column-gap:20px; }
+    }
+    .writing-gallery figure {
+      break-inside: avoid;
+      margin:0 0 24px;
+      width:100%;
+    }
+    .writing-gallery a.card-link {
+      display:block;
+      text-decoration:none;
+      color:inherit;
+      background:#0a0a0a;
+      border:1px solid #ffffff;
+      border-radius:20px;
+      padding:16px 16px 18px;
+      transition:background .25s, transform .25s;
+    }
+    .writing-gallery a.card-link:hover {
+      background:rgba(255,255,255,0.08);
+      transform:translateY(-4px);
+    }
+    .writing-gallery img {
+      display:block;
+      width:100%;
+      height:auto;
+      object-fit:contain;
+      border-radius:12px;
+      margin:0 0 14px;
+      background:#000;
+    }
+    .writing-gallery figcaption {
+      font-size:.85rem;
+      text-align:center;
+      opacity:.9;
+      line-height:1.3;
+    }
+    .writing-gallery a.card-link,
+    .writing-gallery a.card-link * { background:transparent !important; }
+
+    /* Site logo (top-left home link) */
+.site-logo {
+    position: absolute;
+    top: 25px; /* Adjusted to match the y-position of the writing h1 heading */
+    left: 30px; /* Set a consistent width space from the left edge */
+    z-index: 100;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 4px;
+    transition: background .25s, transform .15s;
+}
+    .site-logo:hover,
+    .site-logo:focus{ background:rgba(255,255,255,0.08); }
+    .site-logo:active{ background:rgba(255,255,255,0.12); transform:translateY(2px); }
+    .site-logo img{ width:65px; height:65px; border-radius:50%; display:block; }
+    @media (max-width:540px){
+      .site-logo img{ width:48px; height:48px; }
+      .site-logo{ top:10px; left:10px; }
+    }
+
+    /* --- Add below existing styles (or modify if already present) --- */
+.project-buttons {
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  justify-content:center;
+  margin:12px 0 18px;
+}
+.project-content {
+  max-width:1200px;
+  margin:0 auto 8px;
+  line-height:1.6;
+  font-size:1rem;
+  padding:0 12px;
+  opacity:0;
+  transform:translateY(-14px);
+  transition:opacity .30s cubic-bezier(.4,0,.2,1),
+  transform .30s cubic-bezier(.4,0,.2,1);
+  will-change:opacity,transform;
+  min-height:160px;
+}
+.project-content.show { opacity:1; transform:translateY(0); }
+
+/* Vertical timeline styling */
+.project-timeline{
+  --axis-x:34px;
+  position:relative;
+  margin:40px auto 0;
+  padding:0 0 0 88px;
+  max-width:880px;
+}
+.project-timeline::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:var(--axis-x);
+  width:4px;
+  height:100%;
+  background:linear-gradient(to bottom,#ffffff 0%,rgba(255,255,255,0.25) 100%);
+  border-radius:4px;
+}
+
+.timeline-item{
+  position:relative;
+  margin:0 0 46px;
+  padding:18px 20px 20px;
+  background:#0a0a0a;
+  border:1px solid #ffffff;
+  border-radius:20px;
+  color:#fff;
+  opacity:0;
+  transform:translateY(42px);
+  transition:opacity 1s cubic-bezier(.4,0,.2,1),
+            transform 1s cubic-bezier(.4,0,.2,1);
+  will-change:opacity,transform;
+}
+/* Reveal state */
+.timeline-item.show{ opacity:1; transform:translateY(0); }
+/* Lift on hover (no color change) */
+.timeline-item.show:hover{ transform:translateY(-4px); }
+/* Removed the marker circle (::before) */
+
+/* Image & text */
+.timeline-item figure{ margin:0 0 14px; }
+.timeline-item img{
+  display:block;
+  width:100%;
+  height:auto;
+  border-radius:14px;
+  object-fit:cover;
+  background:#000;
+}
+.timeline-item time{
+  display:inline-block;
+  font-size:.70rem;
+  letter-spacing:.6px;
+  text-transform:uppercase;
+  opacity:.65;
+  margin:0 0 6px;
+}
+.timeline-item h4{ margin:0 0 6px; font-size:1.08rem; }
+.timeline-item p{ margin:0; font-size:.9rem; line-height:1.45; }
+
+.empty-timeline-note{
+  text-align:center;
+  margin-top:24px;
+  font-size:.9rem;
+  opacity:.7;
+}
+
+@media (max-width:640px){
+  .project-timeline{
+    --axis-x:26px;
+    padding-left:72px;
+  }
+  .timeline-item{ padding:16px 16px 18px; }
+  .timeline-item::before{ top:32px; width:16px; height:16px; border-width:3px; }
+}
+/* --- END timeline CSS replacement --- */
+
+    /* Ensure gallery (masonry) still works for All Projects view */
+    .projects-gallery {
+      column-width: 280px;
+      column-gap: 24px;
+      max-width:1200px;
+      margin:24px auto 0;
+      padding:0 8px;
+    }
+    @media (max-width:620px){
+      .projects-gallery { column-width:220px; column-gap:20px; }
+    }
+    .projects-gallery figure {
+      break-inside:avoid;
+      margin:0 0 24px;
+      width:100%;
+    }
+    .projects-gallery a.card-link {
+      display:block;
+      text-decoration:none;
+      color:inherit;
+      background:#0a0a0a;
+      border:1px solid #ffffff;
+      border-radius:20px;
+      padding:16px 16px 18px;
+      transition:background .25s, transform .25s;
+    }
+    .projects-gallery a.card-link:hover {
+      background:rgba(255,255,255,0.08);
+      transform:translateY(-4px);
+    }
+    .projects-gallery img {
+      display:block;
+      width:100%;
+      height:auto;
+      object-fit:contain;
+      border-radius:12px;
+      margin:0 0 14px;
+      background:#000;
+    }
+    .projects-gallery figcaption {
+      font-size:.85rem;
+      text-align:center;
+      opacity:.9;
+      line-height:1.3;
+    }
+    .projects-gallery a.card-link,
+    .projects-gallery a.card-link * { background:transparent !important; }
+
+  </style>
 </head>
 <body>
+  <!-- NEW: home logo -->
+  <a class="site-logo" href="/" aria-label="Home">
+    <img src="/img/websitelogo.png" alt="WW Logo">
+  </a>
+
   <div class="main" style="margin-top:48px; text-align:center;">
-    <h1>content soon...</h1>
+    <h1>Projects</h1>
+    <h2>Here are a collection of my projects. <br>I am most interested in hardware projects.</h2>
+    <h1>Explore my projects:</h1>  <!-- FIX: missing closing > -->
+
+    <div class="project-section">
+      <div class="project-buttons">
+        <button class="dropbtn project-btn" data-category="projects">All Projects</button>
+        <button class="dropbtn project-btn" data-category="hardware">Hardware Projects</button>
+        <button class="dropbtn project-btn" data-category="games">Games</button>
+        <button class="dropbtn project-btn" data-category="timeline">Project Timeline</button>
+        <button id="sortBtn" class="dropbtn" style="display:none;" aria-label="Change sort order">Sort: Date ↑</button>
+      </div>
+      <div id="projectContent" class="project-content">Select a view to explore my projects.</div>
+    </div>
   </div>
+
+  <script>
+document.addEventListener('DOMContentLoaded', () => {
+  const contentEl = document.getElementById('projectContent');
+  const sortBtn   = document.getElementById('sortBtn');
+  const defaultText = 'Select a view to explore my projects.';
+  const placeholderImg = '/img/placeholder.png';
+
+  /* === DATA === */
+  // Existing game projects (unchanged descriptions)
+  const gameProjects = [
+    { title:'Ninja Legends (Scratch)', dateISO:'2019-10-10', dateDisplay:'2019', img:'/img/projects/ninja.png', link:'https://scratch.mit.edu/projects/379935320/', desc:'One of my first completed games on Scratch! A scrolling game inspired by Flappy Bird and Ninja Legends on Roblox.' },
+    { title:'Epic TONK Battles (Scratch)', dateISO:'2020-02-01', dateDisplay:'2020', img:'/img/projects/tonk.png', link:'https://scratch.mit.edu/projects/382982145/', desc:'You are a "TONK" trying to defeat the Battle Cats Base. Inspired by Battle Cats.' },
+    { title:'Shopping Simulator (Scratch)', dateISO:'2020-03-01', dateDisplay:'2021', img:'/img/projects/shopping.png', link:'https://scratch.mit.edu/projects/383212412/', desc:'A simulation game about clicking to earn money and buy items.' },
+    { title:'Car Racing EXTREME (Roblox)', dateISO:'2020-05-15', dateDisplay:'2020', img:'/img/projects/car.png', link:'https://www.roblox.com/games/5035555315/Car-Racing-EXTREME', desc:'Choose the right car, race with friends, explore the map!' },
+    { title:'Egg Hatching Template (Scratch)', dateISO:'2021-04-07', dateDisplay:'2021', img:'/img/projects/egg.png', link:'https://scratch.mit.edu/projects/512618597/', desc:'A Scratch game template for egg hatching mechanics.' },
+    { title:'Scratch Manhunt 2 (Scratch)', dateISO:'2021-08-16', dateDisplay:'2021', img:'/img/projects/man.png', link:'https://scratch.mit.edu/projects/561123051/', desc:'A manhunt where you are the black cat who is trying to escape from the white cats.' },
+    { title:'Beyblade Masters! (Scratch)', dateISO:'2021-08-25', dateDisplay:'2021', img:'/img/projects/bey1.png', link:'https://scratch.mit.edu/projects/558891308/', desc:'A fast paced game about beyblade battles!' },
+    { title:'Pet Simulator X/99 CLASSIC (Scratch)', dateISO:'2022-01-10', dateDisplay:'2022', img:'/img/projects/classicps.png', link:'https://scratch.mit.edu/projects/608004574/', desc:'Classic and barebones version of Pet Simulator on Scratch.' },
+    { title:'Save the Floppa (Roblox)', dateISO:'2022-06-13', dateDisplay:'2022', img:'/img/projects/floppa.png', link:'https://www.roblox.com/games/9904577356/Save-The-Floppa', desc:'A bad guy has your floppa! Complete the obby to save him!' },
+    { title:'BigWars! (Roblox)', dateISO:'2022-06-29', dateDisplay:'2022', img:'/img/projects/bed.png', link:'https://www.roblox.com/games/10069456821/HUGE-UPDATE-BigWars', desc:'A normal fighting game but everything is HUGE...' },
+    { title:'Pet Simulator X/99! (Scratch)', dateISO:'2021-11-17', dateDisplay:'2021', img:'/img/projects/petsim.png', link:'https://scratch.mit.edu/projects/585019016/', desc:'My biggest Scratch game - A Scratch version of the popular Pet Simulator franchise, but without lootboxes!.' },
+    { title:'Just Drive! (Scratch)', dateISO:'2021-09-01', dateDisplay:'2021', img:'/img/projects/drive.png', link:'https://scratch.mit.edu/projects/565507379/', desc:'Just Drive! is a 2D driving game where you collect coins when driving. Made during a scratch online class.' },
+    { title:'Ultimate Easy Obby! (Roblox)', dateISO:'2023-04-22', dateDisplay:'2023', img:'/img/projects/obby.png', link:'https://www.roblox.com/games/13222151199/Ultimate-Easy-Obby', desc:'A Simple, Colorful, Fun, and Easy Obby.' },
+    { title:'Chaotic War Simulator (Roblox)', dateISO:'2023-04-25', dateDisplay:'2023', img:'/img/projects/war.png', link:'https://www.roblox.com/games/13252286370/NEW-Chaotic-War-Simulator', desc:'Fight other players, drive tanks, tons of weapons to fight with!' },
+    { title:'Ontheground War! (Roblox)', dateISO:'2023-05-01', dateDisplay:'2023', img:'/img/projects/ontheground.png', link:'https://www.roblox.com/games/13321917161/RELEASE-Ontheground-War', desc:'A spin-off of popular Roblox game "The Underground War", but ON THE GROUND!' },
+    { title:'Climb Stairs and Reach new Heights (Roblox)', dateISO:'2023-02-04', dateDisplay:'2023', img:'/img/projects/stair.png', link:'https://www.roblox.com/games/12380151331/RAINBOW-Climb-Stairs-and-Reach-new-Heights', desc:'Climb Stairs and Reach New Heights is a F2P (free to play) game which has tons of unique stuff combined together and stairs, of course.' },
+    { title:'Pet Square Root Simulator', dateISO:'2023-05-09', dateDisplay:'2023', img:'/img/projects/pet.png', link:'https://scratch.mit.edu/projects/673941645/', desc:'A fun take on Pet Simulator and Pet Multiplication.' },
+    { title:'Superhero Story (Scratch School Project)', dateISO:'2023-11-05', dateDisplay:'2023', img:'/img/projects/superhero.png', link:'https://scratch.mit.edu/projects/789620634/', desc:'A Scratch Story about saving AMOGUS from Cyborg Cat.' },
+    { title:'Pet Simulator X/99 Hardcore! (Scratch)', dateISO:'2023-02-23', dateDisplay:'2023', img:'/img/projects/pshc.png', link:'https://scratch.mit.edu/projects/808938210/', desc:'My biggest Scratch game - A Scratch version of the popular Pet Simulator franchise, but without lootboxes. [HARDCORE EDITION]' },
+    { title:'Beyblade Masters 2! (Scratch)', dateISO:'2023-10-01', dateDisplay:'2023', img:'/img/projects/bey2.png', link:'https://scratch.mit.edu/projects/898648380/', desc:'A sequel to the original Beyblade Masters! Better graphics and gameplay.' },
+    { title:'Simple RNG Template (Scratch)', dateISO:'2024-09-15', dateDisplay:'2024', img:'/img/projects/rng.png', link:'https://scratch.mit.edu/projects/1032120179/', desc:'A simple Scratch RNG template. Inspired by Sol\'s RNG. ' },
+    { title:'Escape The Skibi The Toilet Obby! (Roblox)', dateISO:'2023-06-17', dateDisplay:'2023', img:'/img/projects/skibi.png', link:'https://www.roblox.com/games/13783874206/Escape-The-Skibi-The-Toilet-Obby', desc:'OH NO! You watched too many YoTub shorts on Skibi Toilet!!! Now your thoughts are real!' },
+    { title:'SpaceGoose', dateISO:'2025-02-19', dateDisplay:'2025', img:'/img/projects/spacegoose.png', link:'https://fraserhackclub.itch.io/spacegoose', desc:'You are a goose trying to retreive all-mighty <strong>Golden Egg</strong> from the D00M Duck. You wish to return it to the Golden Goose, but face many intergalactic obstacles.' },
+  ];
+
+  // Placeholder hardware projects (add real ones later)
+  const hardwareProjects = [
+    {
+      title:'Custom SFF PC Build - NCASE M2',
+      dateISO:'2025-05-18',
+      dateDisplay:'May 2025',
+      img:'/img/pc2.jpg',
+      link:'/projects/NCASEM2/',          // internal documentation page
+      desc:'small form factor high‑performance daily driver PC, built inside the NCASE M2. (In-depth process soon)'
+    },
+    {
+      title:'AMP Cover for IRGG Amplifier',
+      dateISO:'2025-08-22',
+      dateDisplay:'Aug 2025',
+      img:'/img/projects/amp.jpg',
+      link:'#',
+      desc:'A custom 3D-Printed cover for the IRGG amplifier, to close the screen since it is too bright.'
+    },
+    {
+      title:'AI Nerf Gun Aimbot',
+      dateISO:'2025-03-15',
+      dateDisplay:'Mar 2025',
+      img:'/img/projects/nerf.png',
+      link:'/projects/AINerfAimbot/',     // internal documentation page
+      desc:'An automatic Nerf gun aimbot using computer vision and machine learning. (Scrapyard 2025 Submission)'
+    }
+  ];
+
+  // Combined list for "All Projects"
+  const allProjects = [...hardwareProjects, ...gameProjects];
+
+  /* === STATE === */
+  let activeCategory = null;
+  let sortMode = 'date-asc'; // date-asc -> date-desc -> title-asc
+
+  /* === SORT BUTTON === */
+  function setSortButtonLabel(){
+    sortBtn.textContent = sortMode === 'date-asc' ? 'Sort: Date ↑'
+                    : sortMode === 'date-desc' ? 'Sort: Date ↓'
+                    : 'Sort: A-Z';
+  }
+  function cycleSort(){
+    sortMode = sortMode === 'date-asc' ? 'date-desc'
+            : sortMode === 'date-desc' ? 'title-asc'
+            : 'date-asc';
+    setSortButtonLabel();
+    if (['projects','hardware','games'].includes(activeCategory)) renderCategory(activeCategory);
+  }
+  sortBtn.addEventListener('click', cycleSort);
+
+  function sorted(list){
+    const arr = list.slice();
+    if (sortMode === 'date-asc')  arr.sort((a,b)=> new Date(a.dateISO)-new Date(b.dateISO));
+    else if (sortMode === 'date-desc') arr.sort((a,b)=> new Date(b.dateISO)-new Date(a.dateISO));
+    else arr.sort((a,b)=> a.title.localeCompare(b.title,'en',{sensitivity:'base'}));
+    return arr;
+  }
+
+  /* === RENDERERS === */
+  function isExternal(url){
+    return /^https?:\/\//i.test(url);
+  }
+
+  function renderCategory(cat){
+    let source;
+    if (cat === 'projects') source = allProjects;
+    else if (cat === 'hardware') source = hardwareProjects;
+    else if (cat === 'games') source = gameProjects;
+    else return;
+    const entries = sorted(source);
+    const html = `
+      <div class="projects-gallery">
+        ${entries.map(p=>`
+          <figure>
+            <a class="card-link" href="${p.link.startsWith('/') ? p.link : p.link.replace(/^\/+/, '')}" ${isExternal(p.link) ? 'target="_blank" rel="noopener"' : ''} aria-label="${p.title}">
+              <img src="${p.img}" alt="${p.title}" onerror="this.src='${placeholderImg}'">
+              <figcaption><strong>${p.title}</strong><br>${p.desc}<br><br><em>${p.dateDisplay}</em></figcaption>
+            </a>
+          </figure>
+        `).join('')}
+      </div>`;
+    swap(html);
+  }
+
+  function renderTimeline(){
+    const entries = allProjects.slice().sort((a,b)=> new Date(b.dateISO)-new Date(a.dateISO));
+    const html = `
+      <div class="project-timeline">
+        ${entries.map((p,i)=>`
+          <div class="timeline-item" style="--delay:${i*70}ms">
+            <figure>
+              <a href="${p.link.startsWith('/') ? p.link : p.link.replace(/^\/+/, '')}" ${isExternal(p.link) ? 'target="_blank" rel="noopener"' : ''} aria-label="${p.title}">
+                <img src="${p.img}" alt="${p.title}" onerror="this.src='${placeholderImg}'">
+              </a>
+            </figure>
+            <time datetime="${p.dateISO}">${p.dateDisplay}</time>
+            <h4>${p.title}</h4>
+            <p>${p.desc}</p>
+          </div>
+        `).join('')}
+        ${!entries.length ? '<div class="empty-timeline-note">Timeline coming soon.</div>' : ''}
+      </div>`;
+    swap(html, observeTimeline);
+  }
+
+  function observeTimeline(){
+    const items = document.querySelectorAll('.timeline-item');
+    if (!items.length) return;
+    if (!('IntersectionObserver' in window)){
+      items.forEach(i=> i.classList.add('show'));
+      return;
+    }
+    const io = new IntersectionObserver((ents)=>{
+      ents.forEach(e=>{
+        if (e.isIntersecting){
+          e.target.classList.add('show');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold:0.15, rootMargin:'0px 0px -10% 0px' });
+    items.forEach(i=> io.observe(i));
+    if (items[0]) items[0].classList.add('show');
+  }
+
+  /* === UTILS === */
+  function swap(html, after){
+    contentEl.classList.remove('show');
+    setTimeout(()=>{
+      contentEl.innerHTML = html;
+      if (after) after();
+      requestAnimationFrame(()=> contentEl.classList.add('show'));
+    },160);
+  }
+
+  /* === BUTTONS === */
+  document.querySelectorAll('.project-btn').forEach(btn=>{
+    btn.setAttribute('aria-pressed','false');
+    btn.addEventListener('click', ()=>{
+      const already = btn.getAttribute('aria-pressed')==='true';
+      document.querySelectorAll('.project-btn').forEach(b=> b.setAttribute('aria-pressed','false'));
+      if (already){
+        activeCategory = null;
+        sortBtn.style.display='none';
+        swap(defaultText);
+        return;
+      }
+      activeCategory = btn.dataset.category;
+      btn.setAttribute('aria-pressed','true');
+
+      if (['projects','hardware','games'].includes(activeCategory)){
+        sortMode = 'date-asc';
+        setSortButtonLabel();
+        sortBtn.style.display='inline-flex';
+        renderCategory(activeCategory);
+      } else { // timeline
+        sortBtn.style.display='none';
+        renderTimeline();
+      }
+    });
+  });
+
+  // Initial state
+  requestAnimationFrame(()=> contentEl.classList.add('show'));
+  setSortButtonLabel();
+});
+</script>
 </body>
 </html>

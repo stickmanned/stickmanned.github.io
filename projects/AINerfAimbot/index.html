@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>AI Nerf Gun Aimbot Project</title>
+<link rel="stylesheet" href="/styles.css">
+<link rel="icon" type="image/png" href="/img/websitelogo.png">
+<meta property="og:title" content="AI Nerf Gun Aimbot">
+<meta property="og:description" content="Documentation for my computer vision powered autonomous Nerf blaster aimbot.">
+<meta property="og:type" content="article">
+<meta property="og:image" content="https://stickmanned.github.io/img/projects/nerf.png">
+<meta property="og:url" content="https://stickmanned.github.io/projects/AINerfAimbot/">
+<style>
+.doc-container{
+  max-width:1000px;
+  margin:80px auto 60px;
+  padding:0 18px;
+  line-height:1.55;
+  font-size:1rem;
+}
+.doc-container h1{ margin-top:0; font-size:2.2rem; }
+.section{ margin:56px 0 0; }
+.section h2{ margin:0 0 12px; font-size:1.5rem; }
+.hero{ border:1px solid #fff; border-radius:22px; overflow:hidden; margin:24px 0 40px; }
+.hero img{ width:100%; display:block; object-fit:cover; }
+.code-box{
+  font-family:monospace;
+  font-size:.8rem;
+  background:#0a0a0a;
+  border:1px solid #fff;
+  border-radius:14px;
+  padding:14px 16px;
+  overflow:auto;
+  margin:18px 0;
+  line-height:1.4;
+}
+.todo{
+  background:rgba(255,255,255,.05);
+  padding:10px 14px;
+  border:1px dashed #fff;
+  border-radius:14px;
+  font-size:.8rem;
+  margin-top:12px;
+  line-height:1.4;
+}
+.nav-top{
+  position:fixed;
+  top:14px;left:14px;
+  z-index:100;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  transition:transform .35s ease, opacity .3s;
+}
+.nav-top a{
+  text-decoration:none;
+  font-size:.8rem;
+  padding:8px 16px;
+  border:1px solid #fff;
+  border-radius:22px;
+  background:#0a0a0a;
+  color:#fff;
+  transition:background .25s, transform .15s;
+}
+.nav-top a:hover{ background:rgba(255,255,255,.08); }
+.nav-top a:active{ background:rgba(255,255,255,.12); transform:translateY(2px); }
+.nav-top.nav-hidden{
+  transform:translateY(-140%);
+  opacity:0;
+  pointer-events:none;
+}
+body::before{
+  content:"";
+  position:fixed;
+  top:0;left:0;right:0;
+  height:60px;
+  z-index:99;
+  pointer-events:none;
+}
+
+@media (max-width:640px){
+  .doc-container{ margin-top:110px; }
+}
+</style>
+</head>
+<body>
+<div class="nav-top">
+  <a href="/">Home</a>
+  <a href="/projects/">Projects</a>
+  <a href="#overview">Overview</a>
+  <a href="#hardware">Hardware</a>
+  <a href="#vision">Vision</a>
+  <a href="#control">Control</a>
+  <a href="#future">Future</a>
+</div>
+<main class="doc-container">
+  <h1>AI Nerf Gun Aimbot</h1>
+  <div class="hero">
+    <img src="/img/projects/nerf.png" alt="AI Nerf Gun Aimbot prototype">
+  </div>
+  <p>This project aims to create an autonomous Nerf blaster that detects targets, predicts motion, and actuates aim at targets. (Scrapyard 2025 submission)</p>
+
+  <div id="overview" class="section">
+    <h2>Project Overview</h2>
+    <p>AI Nerf Aimbot system: camera feed → detection → tracking → motion prediction → control loop driving pan/tilt servos.</p>
+
+    <h2>Hardware Platform</h2>
+    <p>Arduino UNO as microcontroller, Tower Pro servos for panning up/down and rotating left/right, and 12V power supply.</p>
+    <ul>
+      <li>Compute: Arduino UNO microcontroller</li>
+      <li>Actuation: 2 Tower Pro servo motors driven</li>
+      <li>Power: 12V battery source</li>
+    </ul>
+  </div>
+
+  <div id="vision" class="section">
+    <h2>Coding</h2>
+    <p>We used Python and Arduino C++ for the AI Nerf Aimbot system. The face tracking API is provided in GitHub.</p>
+    <div class="code-box">
+(Pseudocode Arduino)
+serial.begin(9600)
+servoX.attach(pin=3)
+servoY.attach(pin=5)
+
+xAngle = 90
+yAngle = 90
+servoX.write(xAngle)
+servoY.write(yAngle)
+delay(1000)
+serial.send("DEFAULT," + xAngle + "," + yAngle)
+
+while true:
+    if serial.available():
+        input = serial.read_line().trim()
+
+        if input == "INIT":
+            serial.send("DEFAULT," + xAngle + "," + yAngle)
+        else:
+            newX, newY = parse_two_ints(input)
+            newX = constrain(newX, SERVO_X_MIN, SERVO_X_MAX)
+            newY = constrain(newY, SERVO_Y_MIN, SERVO_Y_MAX)
+
+            while xAngle != newX or yAngle != newY:
+                if xAngle < newX:
+                    step = 2 if (newX - xAngle) > 5 else 1
+                    xAngle = min(xAngle + step, newX)
+                elif xAngle > newX:
+                    step = 2 if (xAngle - newX) > 5 else 1
+                    xAngle = max(xAngle - step, newX)
+
+                if yAngle < newY:
+                    step = 2 if (newY - yAngle) > 5 else 1
+                    yAngle = min(yAngle + step, newY)
+                elif yAngle > newY:
+                    step = 2 if (yAngle - newY) > 5 else 1
+                    yAngle = max(yAngle - step, newY)
+
+                servoX.write(xAngle)
+                servoY.write(yAngle)
+                delay(10)
+
+    fire()
+    </div>
+  </div>
+	<p> Full code is on <a href="https://github.com/stickmanned/AI-Nerf-gun-Aimbot/">GitHub.</a></p>
+
+  <div id="future" class="section">
+    <h2>Future Improvements</h2>
+    <ul>
+      <li>Custom 3D printed shroud with cable routing.</li>
+      <li>On‑device quantized model for sub‑10ms inference.</li>
+      <li>Ballistic curve calibration / auto muzzle velocity measurement.</li>
+      <li>Web dashboard with live feed + manual override.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>Changelog</h2>
+    <ul>
+      <li><strong>2025‑08‑24:</strong> Documentation scaffold created.</li>
+    </ul>
+  </div>
+</main>
+<script>
+(function(){
+  const nav=document.querySelector('.nav-top');
+  let hideTimer;
+  function scheduleHide(){
+    if (hideTimer) clearTimeout(hideTimer);
+    if (window.scrollY>120){
+      hideTimer=setTimeout(()=>nav.classList.add('nav-hidden'),1600);
+    }
+  }
+  function reveal(){
+    if (hideTimer) clearTimeout(hideTimer);
+    nav.classList.remove('nav-hidden');
+    scheduleHide();
+  }
+  window.addEventListener('scroll', () => {
+    if (window.scrollY>120){
+      nav.classList.add('nav-hidden');
+    } else {
+      nav.classList.remove('nav-hidden');
+    }
+  }, { passive:true });
+  window.addEventListener('mousemove', e=>{
+    if (e.clientY < 60){
+      reveal();
+    }
+  }, { passive:true });
+})();
+</script>
+</body>
+</html>

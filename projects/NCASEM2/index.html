@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Custom SFF PC Build - NCASE M2</title>
+<link rel="stylesheet" href="/styles.css">
+<link rel="icon" type="image/png" href="/img/websitelogo.png">
+<meta property="og:title" content="Custom SFF PC Build - NCASE M2">
+<meta property="og:description" content="Documentation of my compact high-performance daily driver PC build in the NCASE M2.">
+<meta property="og:type" content="article">
+<meta property="og:image" content="https://stickmanned.github.io/img/pc2.jpg">
+<meta property="og:url" content="https://stickmanned.github.io/projects/NCASEM2/">
+<style>
+.doc-container{
+  max-width:1000px;
+  margin:80px auto 60px;
+  padding:0 18px;
+  line-height:1.55;
+  font-size:1rem;
+}
+.doc-container h1{ margin-top:0; font-size:2.2rem; }
+.section{ margin:56px 0 0; }
+.section h2{ margin:0 0 12px; font-size:1.5rem; }
+.hero{
+  border:1px solid #fff;
+  border-radius:22px;
+  overflow:hidden;
+  margin:24px 0 40px;
+}
+.hero img{
+  display:block;
+  width:100%;
+  height:auto;
+  object-fit:cover;
+}
+.inline-img{
+  max-width:460px;
+  width:100%;
+  border:1px solid #fff;
+  border-radius:16px;
+  margin:10px 0 18px;
+  display:block;
+}
+.meta{
+  font-size:.8rem;
+  opacity:.65;
+  text-transform:uppercase;
+  letter-spacing:.6px;
+  margin-top:4px;
+}
+.nav-top{
+  position:fixed;
+  top:14px;left:14px;
+  z-index:100;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  transition:transform .35s ease, opacity .3s;
+}
+.nav-top a{
+  text-decoration:none;
+  font-size:.8rem;
+  padding:8px 16px;
+  border:1px solid #fff;
+  border-radius:22px;
+  background:#0a0a0a;
+  color:#fff;
+  transition:background .25s, transform .15s;
+}
+.nav-top a:hover{ background:rgba(255,255,255,.08); }
+.nav-top a:active{ background:rgba(255,255,255,.12); transform:translateY(2px); }
+.nav-top.nav-hidden{
+  transform:translateY(-140%);
+  opacity:0;
+  pointer-events:none;
+}
+blockquote{
+  margin:24px 0;
+  padding:14px 18px;
+  background:#0a0a0a;
+  border:1px solid #ffffff;
+  border-radius:16px;
+  font-size:.95rem;
+}
+.todo{
+  background:rgba(255,255,255,.05);
+  padding:10px 14px;
+  border:1px dashed #fff;
+  border-radius:14px;
+  font-size:.8rem;
+  margin-top:12px;
+  line-height:1.4;
+}
+/* Hover hint zone (optional, invisible) */
+body::before{
+  content:"";
+  position:fixed;
+  top:0;left:0;right:0;
+  height:60px;
+  z-index:99;
+  pointer-events:none;
+}
+@media (max-width:640px){
+  .doc-container{ margin-top:110px; }
+  .nav-top{ left:10px; right:10px; }
+}
+</style>
+</head>
+<body>
+<div class="nav-top">
+  <a href="/">Home</a>
+  <a href="/projects/">Projects</a>
+  <a href="#parts">Parts</a>
+  <a href="#assembly">Assembly</a>
+  <a href="#thermals">Thermals</a>
+  <a href="#benchmarks">Benchmarks</a>
+</div>
+<main class="doc-container">
+  <h1>Custom SFF PC Build – NCASE M2</h1>
+  <div class="meta">Started May 2025 • Last updated <span id="lastUpdated">2025-08-24</span></div>
+
+  <div class="hero">
+    <img src="/img/pc2.jpg" alt="NCASE M2 small form factor PC build hero image">
+  </div>
+
+  <p>This page documents my small form factor (SFF) daily driver build in the NCASE M2 PC case. I chose this platform to balance portability, thermals, and high‑end performance in a volume far smaller than a traditional ATX system.</p>
+
+  <blockquote>
+    Goal of the build: Fit a high performance CPU (9950X3D)+ GPU (5070TI) combination into a compact chassis while maintaining acceptable thermals, overclocking, and acoustics for software development, gaming, and content creation.
+  </blockquote>
+
+  <div id="parts" class="section">
+    <h2>Component Selection</h2>
+    <p>Here is a detailed list of components and why I chose them.</p>
+		<h3><a href="https://pcpartpicker.com/list/CQcvcx">PCPartPicker Part List</a></div>
+<blockquote>
+			<table class="pcpp-part-list">
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Item</th>
+      <th>Price (USD)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="pcpp-part-list-type">CPU</td>
+      <td class="pcpp-part-list-item"><a href="https://pcpartpicker.com/product/Pk62FT/amd-ryzen-9-9950x3d-43-ghz-16-core-processor-100-100000719wof">AMD Ryzen 9 9950X3D 4.3 GHz 16-Core Processor</a></td>
+      <td class="pcpp-part-list-price">
+        <a href="https://pcpartpicker.com/product/Pk62FT/amd-ryzen-9-9950x3d-43-ghz-16-core-processor-100-100000719wof">≈$699.00</a>
+      </td>
+    </tr>
+    <tr>
+      <td class="pcpp-part-list-type">CPU Cooler</td>
+      <td class="pcpp-part-list-item"><a href="https://pcpartpicker.com/product/NbBzK8/corsair-icue-link-titan-280-rx-rgb-947-cfm-liquid-cpu-cooler-cw-9061017-ww">Corsair iCUE LINK TITAN 280 RX RGB 94.7 CFM Liquid CPU Cooler</a></td>
+      <td class="pcpp-part-list-price">
+        <a href="https://pcpartpicker.com/product/NbBzK8/corsair-icue-link-titan-280-rx-rgb-947-cfm-liquid-cpu-cooler-cw-9061017-ww">≈$179.99</a>
+      </td>
+    </tr>
+    <tr>
+      <td class="pcpp-part-list-type">Motherboard</td>
+      <td class="pcpp-part-list-item"><a href="https://pcpartpicker.com/product/ysJBD3/asus-rog-strix-b850-i-gaming-wifi-mini-itx-am5-motherboard-rog-strix-b850-i-gaming-wifi">Asus ROG STRIX B850-I GAMING WIFI Mini ITX AM5 Motherboard</a></td>
+      <td class="pcpp-part-list-price">
+        <a href="https://pcpartpicker.com/product/ysJBD3/asus-rog-strix-b850-i-gaming-wifi-mini-itx-am5-motherboard-rog-strix-b850-i-gaming-wifi">≈$349.99</a>
+      </td>
+    </tr>
+    <tr>
+      <td class="pcpp-part-list-type">Memory</td>
+      <td class="pcpp-part-list-item"><a href="https://pcpartpicker.com/product/hRQcCJ/gskill-trident-z5-neo-rgb-64-gb-2-x-32-gb-ddr5-6000-cl30-memory-f5-6000j3040g32gx2-tz5nr">G.Skill Trident Z5 Neo RGB 64 GB (2 x 32 GB) DDR5-6000 CL30 Memory</a></td>
+      <td class="pcpp-part-list-price">
+        <a href="https://pcpartpicker.com/product/hRQcCJ/gskill-trident-z5-neo-rgb-64-gb-2-x-32-gb-ddr5-6000-cl30-memory-f5-6000j3040g32gx2-tz5nr">≈$219.99</a>
+      </td>
+    </tr>
+    <tr>
+      <td class="pcpp-part-list-type">Storage</td>
+      <td class="pcpp-part-list-item"><a href="https://pcpartpicker.com/product/FsqPxr/samsung-990-pro-1-tb-m2-2280-pcie-40-x4-nvme-solid-state-drive-mz-v9p1t0bw">Samsung 990 Pro 1 TB M.2-2280 PCIe 4.0 X4 NVME Solid State Drive</a></td>
+      <td class="pcpp-part-list-price">
+        <a href="https://pcpartpicker.com/product/FsqPxr/samsung-990-pro-1-tb-m2-2280-pcie-40-x4-nvme-solid-state-drive-mz-v9p1t0bw">≈$89.99</a>
+      </td>
+    </tr>
+    <tr>
+      <td class="pcpp-part-list-type">Storage</td>
+      <td class="pcpp-part-list-item"><a href="https://pcpartpicker.com/product/3vvD4D/corsair-mp700-pro-2-tb-m2-2280-pcie-50-x4-nvme-solid-state-drive-cssd-f2000gbmp700pnh">Corsair MP700 PRO 2 TB M.2-2280 PCIe 5.0 X4 NVME Solid State Drive</a></td>
+      <td class="pcpp-part-list-price">
+        <a href="https://pcpartpicker.com/product/3vvD4D/corsair-mp700-pro-2-tb-m2-2280-pcie-50-x4-nvme-solid-state-drive-cssd-f2000gbmp700pnh">≈$169.99</a>
+      </td>
+    </tr>
+    <tr>
+      <td class="pcpp-part-list-type">Video Card</td>
+      <td class="pcpp-part-list-item"><a href="https://pcpartpicker.com/product/hP3WGX/gigabyte-gaming-oc-geforce-rtx-5070-ti-16-gb-video-card-gv-n507tgaming-oc-16gd">Gigabyte GAMING OC GeForce RTX 5070 Ti 16 GB Video Card</a></td>
+      <td class="pcpp-part-list-price">
+        <a href="https://pcpartpicker.com/product/hP3WGX/gigabyte-gaming-oc-geforce-rtx-5070-ti-16-gb-video-card-gv-n507tgaming-oc-16gd">≈$969.99</a>
+      </td>
+    </tr>
+    <tr>
+      <td class="pcpp-part-list-type">Power Supply</td>
+      <td class="pcpp-part-list-item"><a href="https://pcpartpicker.com/product/ZsTZxr/corsair-sf850-2024-850-w-80-platinum-certified-fully-modular-sfx-power-supply-cp-9020256">Corsair SF850 (2024) 850 W 80+ Platinum Certified Fully Modular SFX Power Supply</a></td>
+      <td class="pcpp-part-list-price">
+        <a href="https://pcpartpicker.com/product/ZsTZxr/corsair-sf850-2024-850-w-80-platinum-certified-fully-modular-sfx-power-supply-cp-9020256">≈$224.99</a>
+      </td>
+    </tr>
+    <tr class="pcpp-part-list-price-note">
+      <td></td>
+      <td class="pcpp-part-list-price-note">Prices include shipping, taxes, rebates, and discounts</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td class="pcpp-part-list-total">Total</td>
+      <td class="pcpp-part-list-total-price">$2903.93 (Without case)</td>
+    </tr>
+  </tbody>
+</table>
+</blockquote>
+
+	<p><strong>CPU:</strong> The AMD Ryzen 9 9950X3D offers exceptional multi-threaded performance for both gaming and productivity tasks thanks to the 16 cores and 32 threads, along with the extra 3D V-Cache. This CPU is AMD's most efficient Ryzen 9 yet, delivering outstanding performance per watt, and can be cooled in a SFF build like this.</p>
+	<p><strong>CPU Cooler:</strong> The Corsair ICUE LINK Titan 280 RX delivers outstanding silence and performance due to it's in-house pump design and quiet magnetic RX fans. Because it is an ICUE Link Product, it's easier to cable manage and also has decent software.</p>
+	<p><strong>GPU:</strong> The Gigabyte Gaming OC GeForce RTX 5070 Ti provides excellent 1440p/4K gaming performance with ray tracing capabilities. This version of the 5070 Ti has one of the best coolers making quiet operation and good overclocking support. It also has triple RGB Rings around the fans for better aesthetics when vertically mounted.</p>
+	<p><strong>Motherboard:</strong> The ASUS ROG Strix B850-I Gaming WiFi Mini ITX AM5 motherboard is feature-rich with robust power delivery and extensive connectivity options without breaking the bank; it is one of the best options for compact builds.</p>
+	<p><strong>RAM:</strong> G.Skill Trident Z5 Neo RGB is not only high-performance but also aesthetically pleasing with customizable RGB lighting. I went with 64GB of RAM because it provides ample memory for gaming and multitasking, ensuring smooth performance even under heavy loads. 6000 MT/s CL30 is the sweet spot for Ryzen 7000/9000 series CPUs.</p>
+	<p><strong>Storage:</strong> The Samsung 990 Pro and Corsair MP700 PRO offer blazing-fast NVMe speeds for quick load times and system responsiveness. The MP700 PRO is a good low-cost option for gen 5 SSD speeds.</p>
+	<p><strong>Power Supply:</strong> The Corsair SF850 is a high-quality, fully modular SFX PSU that fits perfectly in the compact case. Nothing to complain about besides the cables being a bit too long and stiff, but manageable.</p>
+	<p><strong>Case:</strong> The NCASE M2 is a compact and versatile case that allows for excellent airflow and cooling potential. Its modular design makes it easy to work with, and it can accommodate high-end components and large GPUs without issue.</p>
+	<p><strong>Thermal Paste:</strong> The Arctic MX-6 is a high-performance thermal paste that provides excellent thermal conductivity and is easy to apply. It's a great choice for ensuring optimal heat transfer between your CPU/GPU and their coolers. It also lasts very long which is what we want in SFF builds!</p>
+
+
+  <div id="assembly" class="section">
+    <h2>Assembly</h2>
+    <p>Build video coming soon!</p>
+    <img src="/img/pc1.jpg" class="inline-img" alt="Open case assembly stage">
+    <div class="todo">
+      Assembly Notes: <br>
+		Make sure to read the manual/watch build videos on the case to familiarize yourself with the assembly process since this case is difficult to build with.
+			<br>Cable management in this case is VERY IMPORTANT! Without cable management, cables may prevent the AIO fans from spinning or block airflow. The insides will look messy with cable clutter.
+			<br> When buying the case, make sure to get the PCIe riser cable (not included) if you plan to vertically mount the GPU.
+
+    </div>
+  </div>
+
+  <div id="thermals" class="section">
+    <h2>Overclocking?</h2>
+    <p>Light Overclocking is possible with the AMD Ryzen 9 9950X3D and Gigabyte Gaming OC GeForce RTX 5070 Ti in this small of a case!
+			<br> The motherboard's AI Overclocking does the job done well enough for the CPU. It automatically adjusts the PBO settings and voltage curve to achieve a stable overclock while keeping thermals in check.
+			<br> For the GPU, I used MSI Afterburner, along with these great tutorials:
+			<li>
+				<a href="https://www.youtube.com/watch?v=f_GSr-BwaBU">MSI Afterburner Tutorial - 5070TI (ImWateringPSUs)</a>
+			</li>
+			<li>
+				<a href="https://www.youtube.com/watch?v=_we_cvY2Zto&t=290s">MSI Afterburner Tutorial - 5070TI (Der Bauer)</a>
+			</li>
+		</p>
+		
+
+  </div>
+
+  <div id="benchmarks" class="section">
+    <h2>Performance</h2>
+    <p>Runs any Roblox game smoothly at 4k with 240 FPS</p>
+		<p>BeamNG Drive runs great with an average of 100 FPS at 4K Ultra settings.</p>
+  </div>
+
+  <div class="section">
+    <h2>Future Improvements</h2>
+    <ul>
+      <li>Custom length individually sleeved PSU cables.</li>
+      <li>Add 2 fans under GPU for better intake / airflow.</li>
+      <li>Replace AIO fans with better static pressure fans.</li>
+      <li>Cable management.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>Changelog</h2>
+    <ul>
+      <li><strong>2025-05-18:</strong> Initial assembly & first boot.</li>
+      <li><strong>2025-06-02:</strong> Stable PBO / curve optimizer baseline.</li>
+      <li><strong>2025-08-24:</strong> Documentation page scaffold created.</li>
+    </ul>
+  </div>
+</main>
+<script>
+/* Nav hide / reveal on scroll + top hover */
+(function(){
+  const nav=document.querySelector('.nav-top');
+  let hideTimer;
+  function scheduleHide(){
+    if (hideTimer) clearTimeout(hideTimer);
+    if (window.scrollY>120){
+      hideTimer=setTimeout(()=>nav.classList.add('nav-hidden'),1600);
+    }
+  }
+  function reveal(){
+    if (hideTimer) clearTimeout(hideTimer);
+    nav.classList.remove('nav-hidden');
+    scheduleHide();
+  }
+  window.addEventListener('scroll', () => {
+    if (window.scrollY>120){
+      nav.classList.add('nav-hidden');
+    } else {
+      nav.classList.remove('nav-hidden');
+    }
+  }, { passive:true });
+  window.addEventListener('mousemove', e=>{
+    if (e.clientY < 60){
+      reveal();
+    }
+  }, { passive:true });
+})();
+</script>
+</body>
+</html>
