@@ -1,16 +1,256 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/styles.css" />
-    <title>Arts</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<link rel="stylesheet" href="/styles.css" />
+<title>Events</title>
+<style>
+/* Button styling (match other pages) */
+.dropbtn{
+  font-family:inherit;
+  font-size:1em;
+  color:#fff;
+  padding:14px 28px;
+  background:#0a0a0a;
+  border:1px solid #ffffff;
+  box-sizing:border-box;
+  cursor:pointer;
+  outline:none;
+  border-radius:24px;
+  transition:background .25s, border-color .25s, box-shadow .25s, transform .15s;
+  white-space:nowrap;
+  display:inline-flex;
+  align-items:center;
+  line-height:1;
+  position:relative;
+}
+.dropbtn:hover,.dropbtn:focus{ background:rgba(255,255,255,0.08); }
+.dropbtn:active{ background:rgba(255,255,255,0.12); transform:translateY(2px); }
+
+/* Site logo (top-left) */
+.site-logo{
+  position:fixed;
+  top:18px;
+  left:22px;
+  z-index:120;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:50%;
+  padding:4px;
+  cursor:pointer;
+  transition:background .25s, transform .15s;
+}
+.site-logo:hover{ background:rgba(255,255,255,0.08); }
+.site-logo:active{ background:rgba(255,255,255,0.12); transform:translateY(2px); }
+.site-logo img{ width:58px; height:58px; border-radius:50%; display:block; }
+@media (max-width:540px){
+  .site-logo{ top:10px; left:10px; }
+  .site-logo img{ width:48px; height:48px; }
+}
+
+/* Button row */
+.event-buttons{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  justify-content:center;
+  margin:20px 0 12px;
+}
+#eventsContent{
+  max-width:960px;
+  margin:0 auto;
+  padding:0 14px 40px;
+  opacity:0;
+  transform:translateY(-14px);
+  transition:opacity .35s cubic-bezier(.4,0,.2,1),
+             transform .35s cubic-bezier(.4,0,.2,1);
+  will-change:opacity,transform;
+  min-height:180px;
+  text-align:center;              /* center default message */
+}
+#eventsContent.loaded{ text-align:left; } /* after timeline loads */
+#eventsContent.show{ opacity:1; transform:translateY(0); }
+
+/* Timeline */
+.events-timeline{
+  --axis-x:34px;
+  position:relative;
+  margin:36px auto 0;
+  padding:0 0 0 88px;
+  max-width:880px;
+}
+.events-timeline::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:var(--axis-x);
+  width:4px;
+  height:100%;
+  background:linear-gradient(to bottom,#ffffff 0%,rgba(255,255,255,0.25) 100%);
+  border-radius:4px;
+}
+.event-item{
+  position:relative;
+  margin:0 0 46px;
+  padding:18px 20px 20px;
+  border:1px solid #ffffff;
+  border-radius:20px;
+  background:#0a0a0a;
+  opacity:0;
+  transform:translateY(54px);
+  transition:
+    opacity .75s cubic-bezier(.4,0,.2,1),
+    transform .75s cubic-bezier(.4,0,.2,1);
+  will-change:opacity,transform;
+}
+.event-item.show{ opacity:1; transform:translateY(0); }
+.event-item.show:hover{ transform:translateY(-4px); }
+.event-item figure{ margin:0 0 14px; }
+.event-item img{
+  display:block;
+  width:100%;
+  height:auto;
+  border-radius:14px;
+  object-fit:cover;
+  background:#000;
+}
+.event-item time{
+  display:inline-block;
+  font-size:.70rem;
+  letter-spacing:.6px;
+  text-transform:uppercase;
+  opacity:.65;
+  margin:0 0 6px;
+}
+.event-item h4{
+  margin:0 0 6px;
+  font-size:1.05rem;
+}
+.event-item p{
+  margin:0;
+  font-size:.9rem;
+  line-height:1.45;
+}
+.empty-note{
+  text-align:center;
+  margin-top:24px;
+  font-size:.9rem;
+  opacity:.7;
+}
+@media (max-width:640px){
+  .events-timeline{
+    --axis-x:26px;
+    padding-left:72px;
+  }
+  .event-item{ padding:16px 16px 18px; }
+}
+</style>
 </head>
 <body>
-    <div class="main" style="margin-top:48px; text-align:center;">
-    <h1>content soon...</h1>
+<a class="site-logo" href="/" aria-label="Home">
+  <img src="/img/websitelogo.png" alt="WW Logo">
+</a>
+
+<div class="main" style="margin-top:48px; text-align:center;">
+  <h1>Events</h1>
+  <h2>Here are the events that I have been to:</h2>
+
+  <div class="event-buttons">
+    <button class="dropbtn event-btn" data-category="all">All Events (Timeline)</button>
+    <button class="dropbtn event-btn" data-category="hackathons">Hackathons (Timeline)</button>
+</div>
+
+  <div id="eventsContent">Select a timeline to view events.</div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const contentEl = document.getElementById('eventsContent');
+  const defaultText = 'Select a timeline to view events.';
+  let activeCat = null;
+
+  const allEvents = [
+    { title:'Scrapyard Vancouver 2025', dateISO:'2025-03-15', dateDisplay:'Mar 2025', img:'/img/event/scrapyard.png', desc:'"Scrapyard" is Hack Club\'s worldwide hackathon where people build "stupid" and fun projects. <br> <strong>Project:</strong> <a href="/projects/AINerfAimbot">AI Nerf Gun Aimbot</a>', type:'hackathon'},
+    { title:'Juice 2025',        dateISO:'2025-04-05', dateDisplay:'April 2025', img:'/img/event/juice.jpg',      desc:'A Game Jam in Shanghai, China presented by Hack Club! <br><strong>Project:</strong> <a href="https://fraserhackclub.itch.io/spacegoose">SpaceGoose</a>', type:'hackathon'},
+    { title:'BCSLC 2024',        dateISO:'2024-10-25', dateDisplay:'Oct 2024', img:'/img/event/bcslc.png',   desc:'BC\'s annual student leadership conference, bringing leaders around the province.', type:'leadership'},
+    { title:'Spark 2024',      dateISO:'2024-04-22', dateDisplay:'April 2024', img:'/img/event/spark.jpg',     desc:'"Spark" is a sustainability event focused on climate change and environmental awareness.', type:'talk'},
+    { title:'Youth4Action CHAMP 2024',      dateISO:'2024-01-01', dateDisplay:'2024-2025', img:'/img/event/youth.png',     desc:'<a href="https://metrovancouver.org/school-programs/Youth4Action">Youth4Action CHAMP</a> is a program designed to empower youth leaders into making Metro Vancouver a better, sustainable place.', type:'leadership'},
+    { title:'Québec 2024',      dateISO:'2024-02-24', dateDisplay:'Feb 2024', img:'/img/event/quebec.jpg',     desc:'Citadel Middle School french-immersion trip to Québec, Canada.', type:'trip'},
+    { title:'Youth Tech Day 2024',      dateISO:'2024-09-07', dateDisplay:'Sep 2024', img:'/img/event/techday.jpg',     desc:'Youth Tech Day hosted by Geek Squad, featuring various tech-related activities, including a live PC build with <a href="https://lttstore.com">Linus Tech Tips</a>.', type:'tech'},
+  ];
+  const hackathons = allEvents.filter(e=> e.type==='hackathon');
+
+  function renderTimeline(list){
+    if(!list.length){
+    swap('<div class="events-timeline"><div class="empty-note">No events yet.</div></div>', true);
+    return;
+    }
+    const entries = list.slice().sort((a,b)=> new Date(b.dateISO)-new Date(a.dateISO));
+    const html = `
+    <div class="events-timeline">
+        ${entries.map((e,i)=>`
+        <div class="event-item" style="--delay:${i*60}ms">
+            <figure><img src="${e.img}" alt="${e.title}" onerror="this.src='/img/placeholder.png'"></figure>
+            <time datetime="${e.dateISO}">${e.dateDisplay}</time>
+            <h4>${e.title}</h4>
+            <p>${e.desc}</p>
+        </div>
+        `).join('')}
     </div>
+    `;
+    swap(html, true, observeReveal);
+}
+
+function observeReveal(){
+    const items = document.querySelectorAll('.event-item');
+    if(!items.length) return;
+    if(!('IntersectionObserver' in window)){
+    items.forEach(it=> it.classList.add('show'));
+    return;
+    }
+    const io = new IntersectionObserver((ents)=>{
+    ents.forEach(en=>{
+        if(en.isIntersecting){
+        en.target.classList.add('show');
+        io.unobserve(en.target);
+        }
+    });
+    }, { threshold:0.15, rootMargin:'0px 0px -10% 0px' });
+    items.forEach(it=> io.observe(it));
+    if(items[0]) items[0].classList.add('show');
+}
+
+  function swap(html, loaded=false, after){
+    contentEl.classList.remove('show');
+    setTimeout(()=>{
+      contentEl.innerHTML = html;
+      contentEl.classList.toggle('loaded', loaded); // switch text alignment
+      if(after) after();
+      requestAnimationFrame(()=> contentEl.classList.add('show'));
+    },160);
+  }
+
+  document.querySelectorAll('.event-btn').forEach(btn=>{
+    btn.setAttribute('aria-pressed','false');
+    btn.addEventListener('click', ()=>{
+      const isActive = btn.getAttribute('aria-pressed')==='true';
+      document.querySelectorAll('.event-btn').forEach(b=> b.setAttribute('aria-pressed','false'));
+      if(isActive){
+        activeCat = null;
+        swap(defaultText,false);
+        return;
+      }
+      activeCat = btn.dataset.category;
+      btn.setAttribute('aria-pressed','true');
+      if(activeCat==='all') renderTimeline(allEvents);
+      else if(activeCat==='hackathons') renderTimeline(hackathons);
+    });
+  });
+
+  requestAnimationFrame(()=> contentEl.classList.add('show'));
+});
+</script>
 </body>
 </html>
