@@ -6,11 +6,44 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="/styles.css" />
-  <title>Arts</title>
+  <title>Resumé</title>
+    <a class="site-logo" href="/" aria-label="Home">
+    <img src="/img/websitelogo.png" alt="WW Logo">
+  </a>
 </head>
+<style>
+  body {
+    .site-logo {
+    position: absolute;
+    top: 25px; /* Adjusted to match the y-position of the writing h1 heading */
+    left: 30px; /* Set a consistent width space from the left edge */
+    z-index: 100;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 4px;
+    transition: background .25s, transform .15s;
+    
+}
+    .site-logo:hover,
+    .site-logo:focus{ background:rgba(255,255,255,0.08); }
+    .site-logo:active{ background:rgba(255,255,255,0.12); transform:translateY(2px); }
+    .site-logo img{ width:65px; height:65px; border-radius:50%; display:block; }
+    @media (max-width:540px){
+      .site-logo img{ width:48px; height:48px; }
+      .site-logo{ top:10px; left:10px; }
+    }
+  }
+</style>
 <body>
   <div class="main" style="margin-top:48px; text-align:center;">
-    <h1>content soon...</h1>
+    <h1>Resumé</h1>
+    <h2>Current resumé (Aug 26 2025)</h2>
+    <img src="/img/resume.png" alt="Resumé" style="max-width:90%; height:1000px; width:800px; border:1px solid #fff; border-radius:14px; margin-top:24px;">
+    <div style="margin-top:24px; font-size:.9rem;">
+      <h2><a href="/resume/Resumé.docx" download>Download resumé (.docx)</a></h2>
   </div>
 </body>
 </html>
