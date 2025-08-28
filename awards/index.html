@@ -1,15 +1,118 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="/styles.css" />
-  <title>Arts</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<link rel="stylesheet" href="/styles.css" />
+<title>Awards</title>
+<style>
+.site-logo{
+  position:fixed; top:18px; left:22px; z-index:120;
+  display:inline-flex; align-items:center; justify-content:center;
+  border-radius:50%; padding:4px; cursor:pointer;
+  transition:background .25s, transform .15s;
+}
+.site-logo:hover{ background:rgba(255,255,255,.08); }
+.site-logo:active{ background:rgba(255,255,255,.12); transform:translateY(2px); }
+.site-logo img{ width:58px; height:58px; border-radius:50%; display:block; }
+@media (max-width:540px){
+  .site-logo{ top:10px; left:10px; }
+  .site-logo img{ width:48px; height:48px; }
+}
+
+/* Gallery layout (same style pattern as other pages) */
+.awards-container{
+  max-width:1250px;
+  margin:70px auto 60px;
+  padding:0 10px;
+}
+.awards-gallery{
+  column-width:300px;
+  column-gap:26px;
+  max-width:1250px;
+  margin:24px auto 0;
+}
+@media (max-width:730px){
+  .awards-gallery{ column-width:240px; column-gap:20px; }
+}
+.awards-gallery figure{
+  break-inside:avoid;
+  margin:0 0 26px;
+}
+.awards-card{
+  display:block;
+  text-decoration:none;
+  color:inherit;
+  background:#0a0a0a;
+  border:1px solid #ffffff;
+  border-radius:20px;
+  padding:16px 16px 18px;
+  transition:transform .25s; /* removed background transition */
+}
+.awards-card:hover{
+  transform:translateY(-4px); /* no background highlight now */
+}
+.awards-card img{
+  width:100%; height:auto; display:block;
+  border-radius:14px; margin:0 0 14px; background:#000;
+  object-fit:cover;
+}
+.awards-card h4{
+  margin:0 0 6px; font-size:1.02rem;
+}
+.awards-card p{
+  margin:0 0 10px; font-size:.82rem; line-height:1.35;
+}
+.tag-row{
+  display:flex; flex-wrap:wrap; gap:6px; margin-top:4px;
+}
+.tag{
+  font-size:.60rem; letter-spacing:.7px; text-transform:uppercase;
+  padding:4px 8px 3px;
+  border:1px solid #ffffff;
+  border-radius:32px;
+  background:rgba(255,255,255,.05);
+  user-select:none;
+}
+</style>
 </head>
 <body>
-  <div class="main" style="margin-top:48px; text-align:center;">
-    <h1>content soon...</h1>
+<a class="site-logo" href="/" aria-label="Home">
+  <img src="/img/websitelogo.png" alt="WW Logo">
+</a>
+
+<main class="awards-container" style="text-align:center;">
+  <h1>Awards</h1>
+  <h2>Some awards I have received:</h2>
+
+  <div class="awards-gallery">
+    <!-- Each card: image, description, year tag, clickable link -->
+    <figure>
+      <a class="awards-card" href="https://docs.google.com/document/d/1kXjQNyiscQn2zaWMtxfgl-uwdmnqZ8j-wsJJY0dZCqQ/edit?usp=sharing" target="_blank" rel="noopener" aria-label="Queen's Commonwealth Essay Competition - Gold">
+        <img src="/img/award/essay.jpg" alt="Commonwealth Essay Competition Gold Award" onerror="this.src='/img/placeholder.png'">
+        <h4>Queen's Commonwealth Essay Competition - Gold</h4>
+        <p>Recognized for "Small Steps for a Climate Crisis" essay showcasing climate action insights.</p>
+        <div class="tag-row">
+          <span class="tag">2024</span>
+          <span class="tag">Writing</span>
+        </div>
+      </a>
+    </figure>
+
+    <figure>
+      <a class="awards-card" href="#" aria-label="Democracy and me">
+        <img src="/img/award/democracy.jpg" alt="Democracy and me" onerror="this.src='/img/placeholder.png'">
+        <h4>Democracy and me art contest - 1st place</h4>
+        <p>An art contest about democracy, the world, and us. (1st place grade K-4 category)<br> Award: Lunch with the speaker of British Columbia</p>
+        <div class="tag-row">
+          <span class="tag">2019</span>
+          <span class="tag">Arts</span>
+        </div>
+      </a>
+    </figure>
+
+
   </div>
+</main>
 </body>
 </html>
