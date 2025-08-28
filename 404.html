@@ -85,6 +85,19 @@
       font-size: 0.9rem;
       text-align: center;
     }
+    .awards-card{
+      display:block;
+      text-decoration:none;
+      color:inherit;
+      background:#0a0a0a;
+      border:1px solid #ffffff;
+      border-radius:20px;
+      padding:16px 16px 18px;
+      transition:transform .25s; /* removed background transition */
+    }
+    .awards-card:hover{
+      transform:translateY(-4px); /* no background highlight now */
+    }
   </style>
 </head>
 <body>
@@ -123,10 +136,12 @@
       <div style="margin-top:20px">
         <strong>Quick links</strong>
         <div class="grid links">
-          <a class="btn" href="/Arts.html">Arts</a>
-          <a class="btn" href="/Writing.html">Writing</a>
-          <a class="btn" href="/events.html">Events</a>
           <a class="btn" href="/">Home</a>
+          <a class="btn" href="/projects/">Projects</a>
+          <a class="btn" href="/writing/">Writing</a>
+            <a class="btn" href="/events/">Events</a>
+          <a class="btn" href="/awards/">Awards</a>
+          <a class="btn" href="/resume/">Resume</a>
           <a class="btn" href="https://github.com/stickmanned/stickmanned.github.io" target="_blank" rel="noopener">Repository</a>
         </div>
       </div>
@@ -148,28 +163,22 @@
       const path = loc.pathname + (loc.search || '');
       document.getElementById('requestedPath').textContent = path || '/';
 
-      // Build helpful “Try …” links
-      const basePath = loc.pathname.replace(/\/+$/, ''); // drop trailing slash
+      // Build helpful “Try …” links (kept for legacy .html paths)
+      const basePath = loc.pathname.replace(/\/+$/, '');
       const last = basePath.split('/').filter(Boolean).pop() || '';
-      const parent = basePath.slice(0, -(last.length)).replace(/\/+$/, '');
 
-      // Try with .html
       if (last && !/\.html?$/i.test(basePath)) {
         const htmlHref = basePath + '.html' + loc.search;
         const el = document.getElementById('tryHtml');
         el.href = htmlHref;
         el.style.display = '';
       }
-
-      // Try index.html if URL ends with a slash
       if (loc.pathname.endsWith('/')) {
         const idxHref = basePath + '/index.html' + loc.search;
         const el = document.getElementById('tryIndex');
         el.href = idxHref;
         el.style.display = '';
       }
-
-      // Try lowercase
       const lower = loc.pathname.toLowerCase();
       if (lower !== loc.pathname) {
         const el = document.getElementById('tryLower');
@@ -177,28 +186,26 @@
         el.style.display = '';
       }
 
-      // Simple suggestions based on known pages and the last segment
+      // Updated known pages (correct addresses)
       const knownPages = [
-        { path: '/', label: 'Home', key: 'home' },
-        { path: '/Arts.html', label: 'Arts', key: 'arts' },
-        { path: '/Writing.html', label: 'Writing', key: 'writing' },
-        { path: '/events.html', label: 'Events', key: 'events' },
+        { path: '/',            label: 'Home',     key: 'home' },
+        { path: '/projects/',   label: 'Projects', key: 'projects' },
+        { path: '/writing/',    label: 'Writing',  key: 'writing' },
+        { path: '/events/',     label: 'Events',   key: 'events' },
+        { path: '/awards/',     label: 'Awards',   key: 'awards' },
+        { path: '/resume/',     label: 'Resume',   key: 'resume' }
       ];
+
       const targetKey = (last || '').replace(/\.(html?)$/i, '').toLowerCase();
 
       function distance(a, b) {
-        // Levenshtein distance
         const dp = Array.from({ length: a.length + 1 }, () => new Array(b.length + 1).fill(0));
-        for (let i = 0; i <= a.length; i++) dp[i][0] = i;
-        for (let j = 0; j <= b.length; j++) dp[0][j] = j;
-        for (let i = 1; i <= a.length; i++) {
-          for (let j = 1; j <= b.length; j++) {
-            const cost = a[i-1] === b[j-1] ? 0 : 1;
-            dp[i][j] = Math.min(
-              dp[i-1][j] + 1,
-              dp[i][j-1] + 1,
-              dp[i-1][j-1] + cost
-            );
+        for (let i=0;i<=a.length;i++) dp[i][0]=i;
+        for (let j=0;j<=b.length;j++) dp[0][j]=j;
+        for (let i=1;i<=a.length;i++){
+          for (let j=1;j<=b.length;j++){
+            const cost = a[i-1]===b[j-1]?0:1;
+            dp[i][j]=Math.min(dp[i-1][j]+1, dp[i][j-1]+1, dp[i-1][j-1]+cost);
           }
         }
         return dp[a.length][b.length];
@@ -207,8 +214,8 @@
       const sugg = document.getElementById('suggestions');
       const candidates = knownPages
         .map(p => ({ ...p, score: targetKey ? distance(targetKey, p.key) : 99 }))
-        .sort((a, b) => a.score - b.score)
-        .slice(0, 3);
+        .sort((a,b)=> a.score - b.score)
+        .slice(0,3);
 
       if (targetKey && candidates.length && candidates[0].score < 4) {
         sugg.classList.remove('muted');
