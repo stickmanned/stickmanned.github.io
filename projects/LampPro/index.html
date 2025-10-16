@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<title>Lamp Pro — AutoCAD Project</title>
+<link rel="stylesheet" href="/styles.css" />
+<link rel="icon" type="image/png" href="/img/websitelogo.png" />
+<meta property="og:title" content="Lamp Pro — AutoCAD Project" />
+<meta property="og:description" content="A Mac Pro–inspired lamp pattern workflow: Fusion 360 → DXF → AutoCAD with math behind the iconic perforations." />
+<meta property="og:type" content="article" />
+<meta property="og:image" content="https://stickmanned.github.io/img/projects/LampPro/1.png" />
+<meta property="og:url" content="https://stickmanned.github.io/projects/LampPro/" />
+<style>
+/* Page scaffold (matching other project pages) */
+.doc-container{
+  max-width:1000px;
+  margin:80px auto 60px;
+  padding:0 18px;
+  line-height:1.55;
+  font-size:1rem;
+}
+.doc-container h1{ margin-top:0; font-size:2.2rem; }
+.section{ margin:56px 0 0; }
+.section h2{ margin:0 0 12px; font-size:1.5rem; }
+.hero{
+  border:1px solid #fff;
+  border-radius:22px;
+  overflow:hidden;
+  margin:24px 0 40px;
+}
+.hero img{
+  display:block;
+  width:100%;
+  height:auto;
+  object-fit:cover;
+  background:#000;
+}
+.inline-img{
+  max-width:860px;
+  width:100%;
+  border:1px solid #fff;
+  border-radius:16px;
+  margin:10px 0 18px;
+  display:block;
+  background:#000;
+}
+.meta{
+  font-size:.8rem;
+  opacity:.65;
+  text-transform:uppercase;
+  letter-spacing:.6px;
+  margin-top:4px;
+}
+
+/* Fixed title/TOC bar */
+.nav-top{
+  position:fixed;
+  top:14px;
+  left:14px;
+  right:14px;
+  z-index:110;
+  display:flex;
+  align-items:center;
+  column-gap:18px;
+  row-gap:10px;
+  flex-wrap:wrap;
+  transition:transform .35s ease, opacity .3s;
+}
+.nav-top.nav-hidden{
+  transform:translateY(-140%);
+  opacity:0;
+  pointer-events:none;
+}
+.nav-top .site-logo{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:50%;
+  padding:4px;
+  transition:background .25s, transform .15s;
+}
+.nav-top .site-logo img{
+  width:58px;
+  height:58px;
+  border-radius:50%;
+  display:block;
+}
+.nav-top .site-logo:hover{ background:rgba(255,255,255,.08); }
+.nav-top .site-logo:active{ background:rgba(255,255,255,.12); transform:translateY(2px); }
+
+.nav-links{
+  display:flex;
+  flex:1;
+  flex-wrap:wrap;
+  gap:10px;
+  padding-left:10px;
+}
+.nav-links a{
+  text-decoration:none;
+  font-size:.8rem;
+  padding:8px 16px;
+  border:1px solid #fff;
+  border-radius:22px;
+  background:#0a0a0a;
+  color:#fff;
+  transition:background .25s, transform .15s;
+  flex:0 0 auto;
+}
+.nav-links a:hover{ background:rgba(255,255,255,.08); }
+.nav-links a:active{ background:rgba(255,255,255,.12); transform:translateY(2px); }
+@media (max-width:540px){
+  .nav-top{ top:10px; left:10px; right:10px; }
+  .nav-top .site-logo img{ width:48px; height:48px; }
+  .nav-links{ padding-left:6px; }
+  .doc-container{ margin-top:110px; }
+}
+
+/* Hover reveal zone (invisible) */
+body::before{
+  content:"";
+  position:fixed;
+  top:0;left:0;right:0;
+  height:60px;
+  z-index:99;
+  pointer-events:none;
+}
+
+/* On-page table of contents card */
+.toc{
+  margin:14px 0 28px;
+  padding:14px 16px;
+  border:1px solid #fff;
+  border-radius:16px;
+  background:#0a0a0a;
+  font-size:.95rem;
+}
+.toc strong{ display:block; margin-bottom:8px; }
+.toc a{
+  display:inline-block;
+  margin:6px 10px 0 0;
+  font-size:.9rem;
+  text-decoration:none;
+  padding:6px 12px;
+  border:1px solid #fff;
+  border-radius:20px;
+  color:#fff;
+  background:transparent;
+  transition:background .25s, transform .15s;
+}
+.toc a:hover{ background:rgba(255,255,255,.08); }
+.toc a:active{ transform:translateY(2px); }
+
+/* Home logo (top-left) */
+.site-logo{
+  position:fixed;
+  top:18px; left:22px;
+  z-index:120;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:50%;
+  padding:4px;
+  cursor:pointer;
+  transition:background .25s, transform .15s;
+}
+.site-logo:hover{ background:rgba(255,255,255,.08); }
+.site-logo:active{ background:rgba(255,255,255,.12); transform:translateY(2px); }
+.site-logo img{ width:58px; height:58px; border-radius:50%; display:block; }
+@media (max-width:540px){
+  .site-logo{ top:10px; left:10px; }
+  .site-logo img{ width:48px; height:48px; }
+  .doc-container{ margin-top:110px; }
+}
+</style>
+</head>
+<body>
+<div class="nav-top">
+  <nav class="nav-links">
+		<a href ="/">Home</a>
+    <a href="/projects/">Projects</a>
+    <a href="#intro">Introduction</a>
+    <a href="#topbottom">Top & Bottom</a>
+    <a href="#sides">Side Pieces</a>
+    <a href="#math">Math & Method</a>
+    <a href="#refs">References</a>
+  </nav>
+</div>
+
+<main class="doc-container">
+  <h1>Lamp Pro — AutoCAD Project</h1>
+  <div class="meta">AutoCAD + Fusion 360 workflow • Last updated <span id="lastUpdated">2025-10-16</span></div>
+
+  <div class="hero">
+    <img src="/img/projects/LampPro/1.png" alt="Lamp Pro project hero image (Mac Pro–inspired pattern)" onerror="this.src='/img/placeholder.png'">
+  </div>
+
+  <div class="toc" aria-label="Table of contents">
+    <strong>Table of contents</strong>
+    <a href="#intro">Introduction</a>
+    <a href="#topbottom">Top & Bottom</a>
+    <a href="#sides">Side Pieces</a>
+    <a href="#math">Math & Method</a>
+    <a href="#refs">References</a>
+  </div>
+
+  <div id="intro" class="section">
+    <h2>Introduction</h2>
+    <p>Apple’s Mac Pro features one of the best computer case designs in my opinion. Often called the “cheese grater” Mac, it is an icon of modern computing—both positive and negative. Because the pattern is visually compelling, I designed a lamp inspired by it. Lamp dimensions were provided as a template by my drafting teacher.</p>
+  </div>
+
+  <div id="topbottom" class="section">
+    <h2>Top/bottom</h2>
+    <p>I started the design with the top and bottom pieces. Since the lamp needed at least two distinct designs, I chose a second pattern: the Noctua Fan Grille.</p>
+    <p>The Noctua fan grille’s circular motif makes it a great fit for both top and bottom. To bring this into AutoCAD, I first located a 3D model of the grille.</p>
+    <p><strong>Model link:</strong> <a href="https://www.printables.com/model/1096961-high-efficiency-noctua-120mm-fan-grill" target="_blank" rel="noopener">High‑Efficiency Noctua 120mm Fan Grill (Printables)</a></p>
+    <p>Using Fusion 360, I imported the STL as a mesh. The original mesh had too much detail to convert directly to a sketch, so I simplified it using the Reduce tool.</p>
+    <img class="inline-img" src="/img/projects/LampPro/1.png" alt="Fusion 360 Reduce Mesh example" onerror="this.src='/img/placeholder.png'">
+    <p>After simplifying the grille, we still need a 2D sketch. Using the <em>Create Mesh Section Sketch</em> tool, I generated a mesh sketch.</p>
+    <img class="inline-img" src="/img/projects/LampPro/2.png" alt="Create Mesh Section Sketch result" onerror="this.src='/img/placeholder.png'">
+    <p>Now there is a mesh sketch of the fan grille:</p>
+    <img class="inline-img" src="/img/projects/LampPro/3.png" alt="Mesh sketch of the fan grille" onerror="this.src='/img/placeholder.png'">
+    <p>If we want to export to AutoCAD, we need a normal sketch. The orange lines indicate a mesh sketch. Convert it using <em>Fit Curves to Mesh Section</em> to trace the lines. Then right‑click the sketch in the browser and export as DXF for AutoCAD.</p>
+    <p>In AutoCAD, scale the fan grille DXF to fit inside the lamp template, and center it precisely using Move + object snaps. After centering, the template looks like this:</p>
+    <img class="inline-img" src="/img/projects/LampPro/4.png" alt="Centered fan grille pattern in template" onerror="this.src='/img/placeholder.png'">
+    <p>For the second plate (top or bottom), I mirrored the pattern:</p>
+    <img class="inline-img" src="/img/projects/LampPro/5.png" alt="Mirrored fan grille pattern" onerror="this.src='/img/placeholder.png'">
+    <p>Top pieces complete. The real challenge is the side panels.</p>
+  </div>
+
+  <div id="sides" class="section">
+    <h2>Side Pieces</h2>
+    <p>This is where the project becomes interesting. Huge thanks to J. Peterson’s article for the mathematics behind the Mac Pro holes: <a href="https://saccade.com/blog/2019/06/how-to-make-apples-mac-pro-holes/" target="_blank" rel="noopener">How to Make Apple’s Mac Pro Holes</a>.</p>
+    <p><strong>Disclaimer:</strong> The Mac Pro holes are 3D; I approximated them in 2D. The inner holes are perfectly circular in 3D, but appear slightly oval from a front view, so my 2D version uses ellipses to match that appearance.</p>
+    <p>Starting from the example 3D model provided in the article, I imported it into Fusion 360 and repeated the STL→mesh→section→DXF workflow. The inner “small holes” are not directly captured in the 2D conversion, so I constructed those using the article’s geometry.</p>
+    <p>In the template, I centered the larger holes. They look like this:</p>
+    <img class="inline-img" src="/img/projects/LampPro/6.png" alt="Centered large holes layout" onerror="this.src='/img/placeholder.png'">
+    <p>Next, we need the smaller holes. Use the diagram from the article as a guide:</p>
+    <img class="inline-img" src="/img/projects/LampPro/7.png" alt="Diagram for small hole construction" onerror="this.src='/img/placeholder.png'">
+  </div>
+
+  <div id="math" class="section">
+    <h2>Math & Method</h2>
+    <p>First, find the base length <em>x</em> of the construction triangle using:</p>
+    <img class="inline-img" src="/img/projects/LampPro/math1.png" alt="Formula for x with r and pi/6" onerror="this.src='/img/placeholder.png'">
+    <p>…where <em>r</em> is the radius of the large holes and π/6 is 30°.</p>
+    <p>To find the height <em>h</em>, follow the derivation in the article; the conclusion is:</p>
+    <img class="inline-img" src="/img/projects/LampPro/math2.png" alt="Formula for h derived from the article" onerror="this.src='/img/placeholder.png'">
+    <p>After determining the variables, construct an equilateral triangle (60°) as a reference:</p>
+    <img class="inline-img" src="/img/projects/LampPro/8.png" alt="Equilateral triangle construction" onerror="this.src='/img/placeholder.png'">
+    <p>From each triangle vertex, draw a circle matching the large hole diameter. Repeat the triangle/circle placement until each large hole has three overlapping circles:</p>
+    <img class="inline-img" src="/img/projects/LampPro/9.png" alt="Overlapping circles inside large hole" onerror="this.src='/img/placeholder.png'">
+    <p>Delete the construction triangles and trim the arcs outside the main circle to reveal the characteristic Mac Pro “petal” shapes:</p>
+    <img class="inline-img" src="/img/projects/LampPro/10.png" alt="Trimmed arcs to form Mac Pro pattern petals" onerror="this.src='/img/placeholder.png'">
+    <p>The interior arcs serve as guides for the “small holes.” Because we’re flattening a 3D pattern, these appear as ellipses. I drew a guide line from the arc midpoint to the outer edge, another at 1/6 of that length, and created an ellipse with the same effective diameter as the reference arc:</p>
+    <img class="inline-img" src="/img/projects/LampPro/11.png" alt="Ellipse guide for small hole" onerror="this.src='/img/placeholder.png'">
+    <p>For aesthetics, I made the ellipse slightly smaller and rounder to resemble the Mac Pro design more closely:</p>
+    <img class="inline-img" src="/img/projects/LampPro/12.png" alt="Refined ellipse for small hole" onerror="this.src='/img/placeholder.png'">
+    <p>Repeat for each hole to produce the final side panel pattern:</p>
+    <img class="inline-img" src="/img/projects/LampPro/13.png" alt="Completed side panel pattern" onerror="this.src='/img/placeholder.png'">
+    <p>Repeat the process for each side panel to complete the lamp.</p>
+		<img class="inline-img" src="/img/projects/LampPro/14.png" alt="Final Lamp Pro design with all panels" onerror="this.src='/img/placeholder.png'">
+		<p>This is the entire Lamp design, including the top and side pieces.</p>
+  </div>
+
+  <div id="refs" class="section">
+    <h2>References</h2>
+    <ul>
+      <li><a href="https://saccade.com/blog/2019/06/how-to-make-apples-mac-pro-holes/" target="_blank" rel="noopener">How to Make Apple’s Mac Pro Holes — J. Peterson</a></li>
+      <li><a href="https://www.printables.com/model/1096961-high-efficiency-noctua-120mm-fan-grill" target="_blank" rel="noopener">High‑Efficiency Noctua 120mm Fan Grill — Printables</a></li>
+    </ul>
+  </div>
+</main>
+
+<script>
+/* Hide the top bar when scrolling; reveal when hovering near the top (same as other project pages) */
+(function(){
+  const nav=document.querySelector('.nav-top');
+  let hideTimer;
+  function scheduleHide(){
+    if (hideTimer) clearTimeout(hideTimer);
+    if (window.scrollY>120){
+      hideTimer=setTimeout(()=>nav.classList.add('nav-hidden'),1600);
+    }
+  }
+  function reveal(){
+    if (hideTimer) clearTimeout(hideTimer);
+    nav.classList.remove('nav-hidden');
+    scheduleHide();
+  }
+  window.addEventListener('scroll', () => {
+    if (window.scrollY>120){
+      nav.classList.add('nav-hidden');
+    } else {
+      nav.classList.remove('nav-hidden');
+    }
+  }, { passive:true });
+  window.addEventListener('mousemove', e=>{
+    if (e.clientY < 60){
+      reveal();
+    }
+  }, { passive:true });
+})();
+</script>
+</body>
+</html>
