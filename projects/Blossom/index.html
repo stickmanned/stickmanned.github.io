@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<title>Blossom - Productivity Chrome Extension</title>
+<link rel="stylesheet" href="/styles.css" />
+<link rel="icon" type="image/png" href="/img/websitelogo.png" />
+<link rel="canonical" href="https://stickmanned.github.io/projects/Blossom/" />
+<meta property="og:title" content="Blossom - Productivity Chrome Extension" />
+<meta property="og:description" content="Blossom is a premium Chrome extension that combines a high-performance focus timer with a rewarding garden simulation." />
+<meta property="og:type" content="article" />
+<meta property="og:image" content="https://stickmanned.github.io/img/websitelogo.png" />
+<meta property="og:url" content="https://stickmanned.github.io/projects/Blossom/" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Blossom - Productivity Chrome Extension" />
+<meta name="twitter:description" content="A premium Chrome extension that turns focused work into a rewarding garden simulation." />
+<meta name="twitter:image" content="https://stickmanned.github.io/img/websitelogo.png" />
+<style>
+.doc-container{
+	max-width:1000px;
+	margin:80px auto 60px;
+	padding:0 18px;
+	line-height:1.55;
+	font-size:1rem;
+}
+.doc-container h1{ margin-top:0; font-size:2.2rem; }
+.section{ margin:56px 0 0; }
+.section h2{ margin:0 0 12px; font-size:1.5rem; }
+.meta{
+	font-size:.8rem;
+	opacity:.65;
+	text-transform:uppercase;
+	letter-spacing:.6px;
+	margin-top:4px;
+}
+
+.hero-card{
+	border:1px solid #fff;
+	border-radius:22px;
+	margin:24px 0 40px;
+	padding:22px 20px;
+	background:linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
+}
+.hero-card h2{
+	margin:0 0 8px;
+	font-size:1.35rem;
+}
+.hero-card p{
+	margin:0;
+	opacity:.95;
+}
+
+.feature-grid{
+	display:grid;
+	grid-template-columns:repeat(auto-fit, minmax(220px,1fr));
+	gap:12px;
+	margin-top:14px;
+}
+.feature-card{
+	border:1px solid #fff;
+	border-radius:16px;
+	padding:14px;
+	background:#0a0a0a;
+}
+.feature-card h3{
+	margin:0 0 6px;
+	font-size:1rem;
+}
+.feature-card p{
+	margin:0;
+	font-size:.92rem;
+	line-height:1.45;
+}
+
+.policy-link{
+	display:inline-flex;
+	align-items:center;
+	text-decoration:none;
+	border:1px solid #fff;
+	border-radius:22px;
+	padding:8px 14px;
+	font-size:.92rem;
+	transition:background .25s, transform .15s;
+}
+.policy-link:hover{ background:rgba(255,255,255,.08); }
+.policy-link:active{ transform:translateY(2px); }
+
+.nav-top{
+	position:fixed;
+	top:14px;
+	left:14px;
+	right:14px;
+	z-index:110;
+	display:flex;
+	align-items:center;
+	gap:10px;
+	flex-wrap:wrap;
+	transition:transform .35s ease, opacity .3s;
+}
+.nav-top.nav-hidden{
+	transform:translateY(-140%);
+	opacity:0;
+	pointer-events:none;
+}
+.nav-top a{
+	text-decoration:none;
+	font-size:.8rem;
+	padding:8px 16px;
+	border:1px solid #fff;
+	border-radius:22px;
+	background:#0a0a0a;
+	color:#fff;
+	transition:background .25s, transform .15s;
+}
+.nav-top a:hover{ background:rgba(255,255,255,.08); }
+.nav-top a:active{ background:rgba(255,255,255,.12); transform:translateY(2px); }
+
+body::before{
+	content:"";
+	position:fixed;
+	top:0;
+	left:0;
+	right:0;
+	height:60px;
+	z-index:99;
+	pointer-events:none;
+}
+
+@media (max-width:640px){
+	.doc-container{ margin-top:108px; }
+	.nav-top{ top:10px; left:10px; right:10px; }
+}
+</style>
+</head>
+<body>
+<div class="nav-top">
+	<a href="/">Home</a>
+	<a href="/projects/">Projects</a>
+	<a href="#overview">Overview</a>
+	<a href="#features">Features</a>
+	<a href="#workflow">How It Works</a>
+	<a href="#implementation">Implementation</a>
+	<a href="#privacy">Privacy</a>
+</div>
+
+<main class="doc-container">
+	<h1>Blossom - Productivity Chrome Extension</h1>
+	<div class="meta">Focus Timer + Garden Simulation • Last updated <span id="lastUpdated">2026-04-02</span></div>
+
+	<div class="hero-card" id="overview">
+		<h2>Project Overview</h2>
+		<p>Blossom is a premium Chrome extension that transforms productivity into a rewarding, gamified experience. By combining a high-performance focus timer with an interactive Garden Simulation, Blossom helps users combat digital distractions. Users earn currency through productive work, which is then used to buy, plant, and grow unique tree species in a customizable virtual sanctuary.</p>
+	</div>
+
+	<div id="features" class="section">
+		<h2>Core Features</h2>
+		<div class="feature-grid">
+			<article class="feature-card">
+				<h3>Focus Timer Engine</h3>
+				<p>Run structured work sessions with reliable timing behavior designed for deep focus.</p>
+			</article>
+			<article class="feature-card">
+				<h3>Garden Simulation</h3>
+				<p>Translate completed focus sessions into visual garden growth for long-term motivation.</p>
+			</article>
+			<article class="feature-card">
+				<h3>Local Progress Economy</h3>
+				<p>Earn in-app currency from productive work and spend it on unique trees and layouts.</p>
+			</article>
+			<article class="feature-card">
+				<h3>Distraction Blocking</h3>
+				<p>Block selected domains during active focus sessions to reduce context-switching.</p>
+			</article>
+		</div>
+	</div>
+
+	<div id="workflow" class="section">
+		<h2>How It Works</h2>
+		<ol>
+			<li>Start a focus timer session and choose your work duration.</li>
+			<li>Complete sessions to earn coins based on time spent concentrating.</li>
+			<li>Use coins to purchase and plant new tree species in your virtual sanctuary.</li>
+			<li>Continue sessions to grow your garden and strengthen productivity habits.</li>
+		</ol>
+	</div>
+
+	<div id="implementation" class="section">
+		<h2>Implementation Details</h2>
+		<ul>
+			<li>Session data and game state are stored locally for fast performance and privacy-conscious behavior.</li>
+			<li>Distraction blocking evaluates active URLs against a local blocklist only during focus sessions.</li>
+			<li>The reward loop ties each productive session to visible sanctuary growth to reinforce consistency.</li>
+		</ul>
+	</div>
+
+	<div class="section" id="privacy">
+		<h2>Privacy & Legal</h2>
+		<p>Blossom is designed around local-first data handling. You can review the complete policy below.</p>
+		<p><a class="policy-link" href="/projects/Blossom/privacy-policy.html">View Blossom Privacy Policy</a></p>
+	</div>
+</main>
+
+<script>
+(function(){
+	const nav = document.querySelector('.nav-top');
+	let hideTimer;
+
+	function scheduleHide(){
+		if (hideTimer) clearTimeout(hideTimer);
+		if (window.scrollY > 120){
+			hideTimer = setTimeout(() => nav.classList.add('nav-hidden'), 1600);
+		}
+	}
+
+	function reveal(){
+		if (hideTimer) clearTimeout(hideTimer);
+		nav.classList.remove('nav-hidden');
+		scheduleHide();
+	}
+
+	window.addEventListener('scroll', () => {
+		if (window.scrollY > 120){
+			nav.classList.add('nav-hidden');
+		} else {
+			nav.classList.remove('nav-hidden');
+		}
+	}, { passive:true });
+
+	window.addEventListener('mousemove', (e) => {
+		if (e.clientY < 60) reveal();
+	}, { passive:true });
+})();
+</script>
+</body>
+</html>
