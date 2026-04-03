@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<title>Blossom Privacy Policy</title>
+<link rel="stylesheet" href="/styles.css" />
+<link rel="icon" type="image/png" href="/img/websitelogo.png" />
+<meta property="og:title" content="Blossom Privacy Policy" />
+<meta property="og:description" content="Privacy policy for the Blossom Chrome extension." />
+<meta property="og:type" content="article" />
+<meta property="og:image" content="https://stickmanned.github.io/img/websitelogo.png" />
+<meta property="og:url" content="https://stickmanned.github.io/projects/Blossom/privacy-policy.html" />
+<style>
+.doc-container{
+	max-width:960px;
+	margin:90px auto 60px;
+	padding:0 18px;
+	line-height:1.6;
+	font-size:1rem;
+}
+.doc-container h1{ margin-top:0; font-size:2rem; }
+.meta{
+	font-size:.82rem;
+	letter-spacing:.6px;
+	text-transform:uppercase;
+	opacity:.68;
+	margin:4px 0 24px;
+}
+.policy-card{
+	border:1px solid #fff;
+	border-radius:20px;
+	padding:20px 18px;
+}
+.policy-card h2{
+	margin:20px 0 8px;
+	font-size:1.2rem;
+}
+.policy-card h2:first-of-type{ margin-top:0; }
+.policy-card p{ margin:0; }
+
+.nav-top{
+	position:fixed;
+	top:14px;
+	left:14px;
+	right:14px;
+	z-index:110;
+	display:flex;
+	gap:10px;
+	flex-wrap:wrap;
+}
+.nav-top a{
+	text-decoration:none;
+	font-size:.8rem;
+	padding:8px 16px;
+	border:1px solid #fff;
+	border-radius:22px;
+	background:#0a0a0a;
+	color:#fff;
+	transition:background .25s, transform .15s;
+}
+.nav-top a:hover{ background:rgba(255,255,255,.08); }
+.nav-top a:active{ background:rgba(255,255,255,.12); transform:translateY(2px); }
+
+@media (max-width:640px){
+	.doc-container{ margin-top:110px; }
+	.nav-top{ top:10px; left:10px; right:10px; }
+}
+</style>
+</head>
+<body>
+<div class="nav-top">
+	<a href="/">Home</a>
+	<a href="/projects/">Projects</a>
+	<a href="/projects/Blossom/">Blossom</a>
+</div>
+
+<main class="doc-container">
+	<h1>Blossom Privacy Policy</h1>
+	<div class="meta">Last Updated: April 2, 2026</div>
+
+	<article class="policy-card">
+		<h2>1. Data Collection</h2>
+		<p>Blossom collects and stores data strictly necessary for its core focus and gamification features. This includes your focus duration, coin balance, garden state, and your list of blocked domains.</p>
+
+		<h2>2. Local Storage</h2>
+		<p>All data collected by Blossom is stored locally on your device using the chrome.storage.local API. This data is never transmitted to our servers, nor is it shared with any third parties.</p>
+
+		<h2>3. Website Monitoring</h2>
+		<p>To provide the distraction blocking feature, Blossom checks the current website URL against your local blocklist while a focus timer is active. This information is processed locally on your machine and is never logged or transmitted.</p>
+
+		<h2>4. Third-Party Access</h2>
+		<p>Blossom does not sell, trade, or otherwise transfer your information to outside parties.</p>
+
+		<h2>5. Your Consent</h2>
+		<p>By using the Blossom extension, you consent to this privacy policy.</p>
+	</article>
+</main>
+</body>
+</html>
