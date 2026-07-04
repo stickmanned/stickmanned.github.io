@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Pine A64 Gaming PC</title>
+<link rel="stylesheet" href="/styles.css">
+<link rel="icon" type="image/png" href="/img/websitelogo.png">
+<meta property="og:title" content="Pine A64 Gaming PC">
+<meta property="og:description" content="Converting a Pine A64 single-board computer into a custom-cooled, custom-enclosed cloud/retro gaming PC that streams games over Moonlight.">
+<meta property="og:type" content="article">
+<meta property="og:image" content="https://raw.githubusercontent.com/stickmanned/Pine-A64-Gaming-PC/main/Photos/finished_case_fan_spinning.jpeg">
+<meta property="og:url" content="https://stickmanned.github.io/projects/PineA64/">
+<style>
+.doc-container{
+  max-width:1000px;
+  margin:80px auto 60px;
+  padding:0 18px;
+  line-height:1.55;
+  font-size:1rem;
+}
+.doc-container h1{ margin-top:0; font-size:2.2rem; }
+.section{ margin:56px 0 0; }
+.section h2{ margin:0 0 12px; font-size:1.5rem; }
+.section h3{ margin:22px 0 8px; font-size:1.15rem; }
+.hero{
+  border:1px solid #fff;
+  border-radius:22px;
+  overflow:hidden;
+  margin:24px 0 40px;
+}
+.hero img{
+  display:block;
+  width:100%;
+  height:auto;
+  object-fit:cover;
+}
+.inline-img{
+  max-width:460px;
+  width:100%;
+  border:1px solid #fff;
+  border-radius:16px;
+  margin:10px 0 18px;
+  display:block;
+}
+.gallery{
+  display:flex;
+  flex-wrap:wrap;
+  gap:16px;
+  margin:18px 0 8px;
+}
+.gallery figure{
+  flex:1 1 240px;
+  margin:0;
+}
+.gallery img{
+  display:block;
+  width:100%;
+  height:auto;
+  border:1px solid #fff;
+  border-radius:16px;
+  object-fit:cover;
+  background:#000;
+}
+.gallery figcaption{
+  font-size:.78rem;
+  opacity:.75;
+  text-align:center;
+  margin-top:8px;
+}
+.meta{
+  font-size:.8rem;
+  opacity:.65;
+  text-transform:uppercase;
+  letter-spacing:.6px;
+  margin-top:4px;
+}
+.nav-top{
+  position:fixed;
+  top:14px;left:14px;
+  z-index:100;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  transition:transform .35s ease, opacity .3s;
+}
+.nav-top a{
+  text-decoration:none;
+  font-size:.8rem;
+  padding:8px 16px;
+  border:1px solid #fff;
+  border-radius:22px;
+  background:#0a0a0a;
+  color:#fff;
+  transition:background .25s, transform .15s;
+}
+.nav-top a:hover{ background:rgba(255,255,255,.08); }
+.nav-top a:active{ background:rgba(255,255,255,.12); transform:translateY(2px); }
+.nav-top.nav-hidden{
+  transform:translateY(-140%);
+  opacity:0;
+  pointer-events:none;
+}
+blockquote{
+  margin:24px 0;
+  padding:14px 18px;
+  background:#0a0a0a;
+  border:1px solid #ffffff;
+  border-radius:16px;
+  font-size:.95rem;
+}
+.spec-table{
+  width:100%;
+  border-collapse:collapse;
+  margin:8px 0 4px;
+  font-size:.92rem;
+}
+.spec-table th,.spec-table td{
+  text-align:left;
+  padding:8px 12px;
+  border:1px solid rgba(255,255,255,.35);
+  vertical-align:top;
+}
+.spec-table th{ background:rgba(255,255,255,.05); }
+pre.wire{
+  background:#0a0a0a;
+  border:1px solid #fff;
+  border-radius:16px;
+  padding:14px 16px;
+  overflow-x:auto;
+  font-size:.82rem;
+  line-height:1.5;
+}
+.todo{
+  background:rgba(255,255,255,.05);
+  padding:10px 14px;
+  border:1px dashed #fff;
+  border-radius:14px;
+  font-size:.8rem;
+  margin-top:12px;
+  line-height:1.4;
+}
+body::before{
+  content:"";
+  position:fixed;
+  top:0;left:0;right:0;
+  height:60px;
+  z-index:99;
+  pointer-events:none;
+}
+@media (max-width:640px){
+  .doc-container{ margin-top:110px; }
+  .nav-top{ left:10px; right:10px; }
+}
+</style>
+</head>
+<body>
+<div class="nav-top">
+  <a href="/">Home</a>
+  <a href="/projects/">Projects</a>
+  <a href="#overview">Overview</a>
+  <a href="#hardware">Hardware</a>
+  <a href="#wiring">Wiring</a>
+  <a href="#software">Software</a>
+  <a href="#enclosure">Enclosure</a>
+  <a href="#story">Build Story</a>
+</div>
+<main class="doc-container">
+  <h1>Pine A64 Gaming PC</h1>
+  <div class="meta">Built for Hack Club Horizons • Started Jun 2025 • Last updated <span id="lastUpdated">2026-07-02</span></div>
+
+  <div class="hero">
+    <img src="https://raw.githubusercontent.com/stickmanned/Pine-A64-Gaming-PC/main/Photos/finished_case_fan_spinning.jpeg" alt="Finished, assembled Pine A64 gaming PC enclosure with the fan spinning" onerror="this.src='/img/placeholder.png'">
+  </div>
+
+  <p>This page documents how I turned a Pine A64 single-board computer into a fully functional, custom-cooled, custom-enclosed cloud/retro gaming PC. The board runs DietPi and streams games from a host gaming PC over <a href="https://moonlight-stream.org/" target="_blank" rel="noopener">Moonlight</a> using hardware-accelerated video decode. Active cooling (a Noctua fan on a boosted 12V rail) keeps it stable under sustained streaming load, and the whole thing lives in a 3D-printed enclosure I designed with a snap-fit power button. I built it for <a href="https://guides.horizons.hackclub.com/" target="_blank" rel="noopener">Hack Club Horizons</a>.</p>
+
+  <blockquote>
+    Goal of the build: take a cheap, low-power ARM64 board that was never meant for gaming and get it to play modern titles like Roblox and BeamNG.drive smoothly — by offloading the rendering to a host PC and using the Pine A64 purely as a low-latency Moonlight streaming client, kept cool and quiet inside a case I made myself.
+  </blockquote>
+
+  <p>
+    <strong>Repo:</strong> <a href="https://github.com/stickmanned/Pine-A64-Gaming-PC" target="_blank" rel="noopener">stickmanned/Pine-A64-Gaming-PC</a> &nbsp;•&nbsp;
+    <strong>Demo video:</strong> <a href="https://photos.app.goo.gl/yZgWkz5E3pNsgPrR7" target="_blank" rel="noopener">Moonlight streaming Roblox &amp; BeamNG.drive</a>
+  </p>
+
+  <div id="overview" class="section">
+    <h2>Overview</h2>
+    <p>The Pine A64 is a 2GB ARM64 board that costs almost nothing and draws almost no power — but it has no real GPU to speak of, so it can't render a modern game on its own. Instead of fighting that, I leaned into it: the board does zero game rendering. A host gaming PC does all the heavy lifting, and the Pine A64 just decodes and displays the video stream over Moonlight, sending my inputs back. That turns a tiny SBC into a capable "gaming PC" as long as it can decode 1080p video and stay cool doing it.</p>
+    <p>Getting there meant solving three problems: keeping the board cool without a huge cooler, getting the Allwinner A64 graphics stack to do hardware-accelerated decode under Linux, and packaging it all into an enclosure that looks and feels like a real product.</p>
+  </div>
+
+  <div id="hardware" class="section">
+    <h2>Hardware</h2>
+    <p>The parts list is short and cheap on purpose — the whole point was to build something capable out of an inexpensive board. Full itemized costs, quantities, and source links live in the <a href="https://github.com/stickmanned/Pine-A64-Gaming-PC/blob/main/Pine%20A64%20PC%20Bill%20of%20Materials.csv" target="_blank" rel="noopener">Bill of Materials</a>.</p>
+    <table class="spec-table">
+      <thead>
+        <tr><th>Component</th><th>Purpose</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Pine A64 (2GB, Rev B)</td><td>Main compute, ARM64, running DietPi</td></tr>
+        <tr><td>Noctua NF-A6x25 FLX (12V, 0.96W)</td><td>Active cooling fan</td></tr>
+        <tr><td>MT3608 adjustable boost converter</td><td>Steps the board's 5V rail up to the fan's 12V supply, isolated from the board's own power</td></tr>
+        <tr><td>Copper heatsinks</td><td>Passive cooling on the SoC and power stages</td></tr>
+        <tr><td>Cherry MX–style momentary switch</td><td>External power button</td></tr>
+        <tr><td>Custom 3D-printed enclosure</td><td>Top/bottom shell, fan mount, power-button cutout</td></tr>
+        <tr><td>Custom OpenSCAD keycap (KeyV2)</td><td>Correctly-sized cap for the cutout, engraved with a power icon</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="wiring" class="section">
+    <h2>Wiring &amp; Electrical</h2>
+    <p>The most important rule of this build is that there are two separate voltage rails that must never touch each other: <strong>5V powers the Pine A64, and 12V powers only the Noctua fan.</strong> The MT3608 boost converter is the only thing that ever sees 12V — everything on the board side stays at 5V.</p>
+    <pre class="wire">5 V PSU
+  &#9500;&#9472;&#9472; PINE A64 power input (microUSB, or Euler pin 2/4 &#8594; GND pin 6/9)
+  &#9492;&#9472;&#9472; MT3608 boost converter input (IN+ / IN-)
+
+MT3608 output, adjusted to 12.0 V
+  &#9492;&#9472;&#9472; Noctua fan (red = OUT+, black = OUT-, yellow = disconnected)
+
+Key switch (momentary, normally-open)
+  &#9492;&#9472;&#9472; EXP header pin 5 (Pwr/Stb Sw) &#8596; EXP header pin 6 (GND)</pre>
+    <p>I split the 5V rail so the fan's boost converter draws directly from the PSU rather than through the board, which keeps the fan's startup current off the Pine A64. Before ever connecting the fan, I measured the MT3608 output with a multimeter and adjusted its potentiometer to exactly 12.0V. The fan's yellow tachometer wire isn't used here, so it stays disconnected and insulated.</p>
+    <p>The power button is wired to the Pine A64's dedicated <strong>EXP header</strong> — pins 5 (<code>Pwr/Stb Sw</code>) and 6 (<code>GND</code>) — <em>not</em> in series with the main power line. That way the switch signals the board to power on or shut down cleanly instead of hard-cutting 5V, which would risk corrupting the microSD card if the OS is running.</p>
+    <p>There's no custom PCB — the electronics are point-to-point wiring around off-the-shelf parts, so the reproducible hardware artifact is the exported <a href="https://github.com/stickmanned/Pine-A64-Gaming-PC/blob/main/Hardware/wiring-schematic.pdf" target="_blank" rel="noopener">wiring schematic PDF</a>.</p>
+  </div>
+
+  <div id="software" class="section">
+    <h2>Software</h2>
+    <p>The board runs <a href="https://dietpi.com/" target="_blank" rel="noopener">DietPi</a> for Allwinner A64, flashed to a microSD card. The interesting part was getting hardware-accelerated video decode working, which is what makes streaming smooth instead of a slideshow.</p>
+    <h3>The graphics fix</h3>
+    <p>Out of the box, the Allwinner A64 DRM/KMS stack would exhaust its CMA memory pool trying to bring up the display, so I force HDMI to 1080p <em>before</em> Linux starts by adding <code>video=HDMI-A-1:1920x1080@60</code> to the DietPi boot environment. I also purged the XFCE desktop and LightDM entirely so Moonlight can run directly on the DRM/KMS path instead of going through a windowing system, and added a udev rule so the normal login can access <code>/dev/dri/*</code> and <code>/dev/input/*</code>.</p>
+    <h3>Streaming</h3>
+    <p>Moonlight (<code>moonlight-qt</code>) is installed on the board and paired with the host gaming PC. An autostart block in the DietPi user's shell profile launches straight into a Moonlight session on boot, so powering the device on drops you right into streaming with no desktop in between. All of these config files are committed as real files in <a href="https://github.com/stickmanned/Pine-A64-Gaming-PC/tree/main/firmware-config" target="_blank" rel="noopener">firmware-config/</a> so the setup is reviewable and reproducible.</p>
+  </div>
+
+  <div id="enclosure" class="section">
+    <h2>Enclosure &amp; 3D Printing</h2>
+    <p>I designed the case in Fusion 360 — a top and bottom shell, a fan mount, and a power-button cutout. The cutout ended up slightly undersized for a standard keycap, so I generated a correctly-sized cap with the power icon engraved on it using <a href="https://github.com/rsheldiii/keyv2" target="_blank" rel="noopener">KeyV2</a> in OpenSCAD.</p>
+    <p>The two shells were printed on two different printers, each tuned for what that part needs — surface finish on the top, load-bearing strength on the bottom:</p>
+    <table class="spec-table">
+      <thead>
+        <tr><th>Part</th><th>Printer</th><th>Filament</th><th>Layer</th><th>Infill</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Case top shell</td><td>Snapmaker U1</td><td>Bambu PLA Basic (Black)</td><td>0.20 mm</td><td>10% gyroid</td></tr>
+        <tr><td>Case bottom shell</td><td>Anycubic Kobra X</td><td>JAYO PLA+ (Wood)</td><td>0.16 mm</td><td>15% gyroid</td></tr>
+        <tr><td>Power-button keycap</td><td>Either</td><td>PLA</td><td>0.12–0.20 mm</td><td>20%</td></tr>
+      </tbody>
+    </table>
+    <p>One lesson learned the hard way: a test print showed one of the four fan-mount pillars was blocking the fan, so I removed it — the fan now clears with 3 posts installed. The CAD sources (Fusion 360 F3Z, STLs, and 3MF) are all in <a href="https://github.com/stickmanned/Pine-A64-Gaming-PC/tree/main/CAD" target="_blank" rel="noopener">CAD/</a>.</p>
+
+    <div class="gallery">
+      <figure>
+        <img src="https://raw.githubusercontent.com/stickmanned/Pine-A64-Gaming-PC/main/Photos/cad_final_render_fan_angle.png" alt="Fusion 360 render of the finished enclosure, fan angle" onerror="this.src='/img/placeholder.png'">
+        <figcaption>Fusion 360 render — fan side</figcaption>
+      </figure>
+      <figure>
+        <img src="https://raw.githubusercontent.com/stickmanned/Pine-A64-Gaming-PC/main/Photos/final_assembly_fan_and_board.jpeg" alt="Fan mounted inside the printed enclosure next to the Pine A64 board" onerror="this.src='/img/placeholder.png'">
+        <figcaption>Fan + board assembly</figcaption>
+      </figure>
+      <figure>
+        <img src="https://raw.githubusercontent.com/stickmanned/Pine-A64-Gaming-PC/main/Photos/moonlight_streaming_verified.jpeg" alt="Moonlight streaming session running on the connected display" onerror="this.src='/img/placeholder.png'">
+        <figcaption>Moonlight streaming verified</figcaption>
+      </figure>
+    </div>
+  </div>
+
+  <div id="story" class="section">
+    <h2>Build Story</h2>
+    <p>I built this over a roughly 24-hour session for Hack Club Horizons, and I kept an hourly devlog the whole way through. The build broke down into teardown, adding cooling, bringing up the OS, the DRM/KMS graphics debugging saga, designing the enclosure in CAD, final wiring, and the custom OpenSCAD keycap.</p>
+    <p>The hardest part by far was the graphics stack. For several hours the board just would not do hardware-accelerated decode — it kept running out of contiguous memory during display init. Narrowing that down to the CMA pool and the boot-time HDMI mode, and then chasing a few boot-time race conditions on top of it, took the most patience of anything in the build. Once the DRM/KMS path finally lit up and <code>modetest</code> recognized the Allwinner display engine, the rest came together quickly.</p>
+    <p>Along the way I hit the kind of small physical problems you only find by actually building: hot-plugging USB peripherals caused brownout resets, so peripherals have to be cold-plugged before boot; a fan-mount pillar blocked the fan and had to be redesigned out; and cable management inside a tiny shell meant hot-gluing the fan leads and MT3608 down for strain relief. The full hour-by-hour writeup, including root-cause notes on each of these, is in the <a href="https://github.com/stickmanned/Pine-A64-Gaming-PC/blob/main/Devlog.md" target="_blank" rel="noopener">Devlog</a>.</p>
+    <div class="gallery">
+      <figure>
+        <img src="https://raw.githubusercontent.com/stickmanned/Pine-A64-Gaming-PC/main/Photos/cable_management_hot_glue.jpeg" alt="Hot-gluing the fan wiring inside the enclosure for cable management" onerror="this.src='/img/placeholder.png'">
+        <figcaption>Hot-glue cable management inside the shell</figcaption>
+      </figure>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Safety Notes</h2>
+    <ul>
+      <li>All wiring is low-voltage DC (5V/12V) — no mains voltage anywhere in the enclosure.</li>
+      <li><strong>Never connect the MT3608's 12V output to the Pine A64.</strong> 12V is only for the fan; the board only ever sees 5V.</li>
+      <li>Always verify the MT3608 output at 12.0V with a multimeter <em>before</em> connecting the fan.</li>
+      <li>Wire the power switch across the EXP header's <code>Pwr/Stb Sw</code> and <code>GND</code> pins only — never in series with the main 5V line, which can corrupt the microSD card.</li>
+      <li>No lithium batteries are used in this build.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>AI Disclosure</h2>
+    <p>AI was used as a tool during this build to speed up troubleshooting, research, and editing — helping scope the initial plan and bill of materials, acting as a debugging aid when narrowing down the DRM/KMS decode issue and the boot-time race conditions, and cleaning up the hourly devlog for readability. All hardware assembly, wiring, CAD modeling, and physical debugging were done by hand.</p>
+  </div>
+</main>
+<script>
+/* Nav hide / reveal on scroll + top hover */
+(function(){
+  const nav=document.querySelector('.nav-top');
+  let hideTimer;
+  function scheduleHide(){
+    if (hideTimer) clearTimeout(hideTimer);
+    if (window.scrollY>120){
+      hideTimer=setTimeout(()=>nav.classList.add('nav-hidden'),1600);
+    }
+  }
+  function reveal(){
+    if (hideTimer) clearTimeout(hideTimer);
+    nav.classList.remove('nav-hidden');
+    scheduleHide();
+  }
+  window.addEventListener('scroll', () => {
+    if (window.scrollY>120){
+      nav.classList.add('nav-hidden');
+    } else {
+      nav.classList.remove('nav-hidden');
+    }
+  }, { passive:true });
+  window.addEventListener('mousemove', e=>{
+    if (e.clientY < 60){
+      reveal();
+    }
+  }, { passive:true });
+})();
+</script>
+</body>
+</html>
