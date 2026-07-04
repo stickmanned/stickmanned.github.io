@@ -1,377 +1,350 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="canonical" href="https://stickmanned.github.io/">
-<!-- Open Graph / Discord / Twitter -->
-<meta property="og:url" content="https://stickmanned.github.io/">
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="William Wen">
-<meta property="og:title" content="William Wen's Website">
-<meta property="og:description" content="My digital portfolio. A high school student with a passion for technology.">
-<!-- UPDATED banner image (cache‑busting version param) -->
-<meta property="og:image" content="https://stickmanned.github.io/img/wwbanner.png?v=2">
-<meta property="og:image:secure_url" content="https://stickmanned.github.io/img/wwbanner.png?v=2">
-<meta property="og:image:type" content="image/png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="William Wen banner">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="William Wen's Website">
-<meta name="twitter:description" content="My digital portfolio. A high school student with a passion for technology.">
-<meta name="twitter:image" content="https://stickmanned.github.io/img/wwbanner.png?v=2">
-<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.15.4/css/all.css" />
-<link rel="stylesheet" href="./styles.css" />
-<link rel="shortcut icon" href="./favicon.ico">
-<link rel="icon" type="image/png" href="/img/websitelogo.png" />
-<title>William Wen</title>
-<style>
-/* REMOVE old absolute-position logo styles (.navbar-wrapper, .site-logo with border) and REPLACE with below */
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="canonical" href="https://williamwen.xyz/" />
+    <!-- Open Graph / Discord / Twitter -->
+    <meta property="og:url" content="https://williamwen.xyz/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="William Wen" />
+    <meta property="og:title" content="William Wen's Website" />
+    <meta
+      property="og:description"
+      content="My digital portfolio. A high school student with a passion for technology."
+    />
+    <!-- UPDATED banner image (cache‑busting version param) -->
+    <meta
+      property="og:image"
+      content="https://williamwen.xyz/img/wwbanner.png?v=2"
+    />
+    <meta
+      property="og:image:secure_url"
+      content="https://williamwen.xyz/img/wwbanner.png?v=2"
+    />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="William Wen banner" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="William Wen's Website" />
+    <meta
+      name="twitter:description"
+      content="My digital portfolio. A high school student with a passion for technology."
+    />
+    <meta
+      name="twitter:image"
+      content="https://williamwen.xyz/img/wwbanner.png?v=2"
+    />
+    <link
+      rel="stylesheet"
+      href="https://pro.fontawesome.com/releases/v5.15.4/css/all.css"
+    />
+    <link rel="stylesheet" href="./styles.css?v=2" />
+    <link rel="shortcut icon" href="./favicon.ico" />
+    <link rel="icon" type="image/png" href="/img/websitelogo.png" />
+    <title>William Wen</title>
+    <style>
+      /* REMOVE old absolute-position logo styles (.navbar-wrapper, .site-logo with border) and REPLACE with below */
 
-/* Unified nav bar with logo participating in the same gap spacing */
-.navbar {
-    background:none;
-    font-family:inherit;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    gap:24px;              /* equal spacing between ALL items (logo + buttons) */
-    margin:24px auto 0 auto;
-    width:fit-content;
-    padding:0;
-    flex-wrap:wrap;
-}
+      /* Unified nav bar with logo participating in the same gap spacing */
+      .navbar {
+        background: none;
+        font-family: inherit;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 24px; /* equal spacing between ALL items (logo + buttons) */
+        margin: 24px auto 0 auto;
+        width: fit-content;
+        padding: 0;
+        flex-wrap: wrap;
+      }
 
-/* Logo acts like a button but WITHOUT border/outline */
-.site-logo{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    padding:0;
-    background:none;
-    border:none;            /* no outline/border */
-    border-radius:50%;
-    cursor:pointer;
-    transition:background .25s, transform .15s;
-}
-.site-logo:hover,
-.site-logo:focus{
-    background:rgba(255,255,255,0.08);
-}
-.site-logo:active{
-    background:rgba(255,255,255,0.12);
-    transform:translateY(2px);
-}
-.site-logo img{
-    width:56px;
-    height:56px;
-    display:block;
-    border-radius:50%;
-}
+      /* Optional visual for a “toggled” (selected) hobby button */
+      .hobby-btn[aria-pressed="true"] {
+        background: rgba(255, 255, 255, 0.12);
+        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15) inset;
+      }
 
-/* ===== unify button styling so ALL (menu + hobbies) match ===== */
+      /* Remove old hobby active style (previous .hobby-btn.active) if present */
+      .hobbies .hobby-btn.active {
+        background: unset;
+        box-shadow: unset;
+      }
 
-/* (Remove/replace the old `.navbar .dropbtn { ... }` block) */
-.dropbtn {
-    font-family: inherit;
-    font-size: 1em;
-    color: #fff;
-    padding: 14px 28px;
-    background: #0a0a0a;
-    border: 1px solid #ffffff;
-    box-sizing: border-box;
-    cursor: pointer;
-    outline: none;
-    border-radius: 24px;
-    transition: background .25s, border-color .25s, box-shadow .25s, transform .15s;
-    white-space: nowrap;
-    display: inline-flex;
-    align-items: center;
-    line-height: 1;
-    position: relative;
-}
+      /* Keep navbar layout */
+      .navbar {
+        background: none;
+        font-family: inherit;
+        display: flex;
+        justify-content: center;
+        gap: 24px;
+        margin: 24px auto 0 auto;
+        width: fit-content;
+        padding: 0;
+        flex-wrap: wrap;
+      }
+      .navbar .dropdown {
+        position: relative;
+        display: inline-block;
+      }
 
-.dropbtn:hover,
-.dropbtn:focus {
-    background: rgba(255,255,255,0.08);
-    border-color: #ffffff;
-}
+      /* Dropdown content unchanged */
+      .dropdown-content {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        margin-top: 8px;
+        min-width: 180px;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(4px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+        border-radius: 12px;
+        padding: 6px 0;
+        opacity: 0;
+        transform: scaleY(0.6);
+        transform-origin: top;
+        pointer-events: none;
+        transition:
+          opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+          transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        will-change: opacity, transform;
+      }
+      .dropdown.show .dropdown-content {
+        opacity: 1;
+        transform: scaleY(1);
+        pointer-events: auto;
+      }
+      .dropdown-content a {
+        color: #fff;
+        padding: 12px 20px;
+        text-decoration: none;
+        display: block;
+        background: transparent;
+        border-radius: 6px;
+        font-family: inherit;
+        transition: background 0.2s;
+        white-space: nowrap;
+      }
+      .dropdown-content a:hover {
+        background: rgba(255, 255, 255, 0.08);
+      }
 
-.dropbtn:active {
-    background: rgba(255,255,255,0.12);
-    transform: translateY(2px);
-}
+      /* Hobbies layout; buttons now inherit identical styling via .dropbtn */
+      .hobbies .hobby-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: center;
+        margin: 12px 0 18px;
+      }
 
-/* Optional visual for a “toggled” (selected) hobby button */
-.hobby-btn[aria-pressed="true"] {
-    background: rgba(255,255,255,0.12);
-    box-shadow: 0 0 0 2px rgba(255,255,255,0.15) inset;
-}
+      /* REPLACE the current .hobby-content animation block with this SLIDE (top→down) version */
+      .hobby-content {
+        max-width: 640px;
+        margin: 0 auto 8px;
+        line-height: 1.6;
+        font-size: 1rem;
+        padding: 0 12px;
+        min-height: 70px;
+        opacity: 0;
+        transform: translateY(-14px); /* start slightly above */
+        transition:
+          opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+          transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        will-change: opacity, transform;
+      }
+      .hobby-content.show {
+        opacity: 1;
+        transform: translateY(0); /* slides down into place */
+      }
 
-/* Remove old hobby active style (previous .hobby-btn.active) if present */
-.hobbies .hobby-btn.active { background: unset; box-shadow: unset; }
+      /* Remove old hobby fade css (hobbyFadeIn keyframes & .hobby-content.hobby-animate) */
 
-/* Keep navbar layout */
-.navbar {
-    background: none;
-    font-family: inherit;
-    display: flex;
-    justify-content: center;
-    gap: 24px;
-    margin: 24px auto 0 auto;
-    width: fit-content;
-    padding: 0;
-    flex-wrap: wrap;
-}
-.navbar .dropdown { position: relative; display: inline-block; }
+      /* Responsive tweak */
+      @media (max-width: 540px) {
+        .navbar {
+          gap: 12px;
+        }
+        .dropbtn {
+          padding: 12px 20px;
+          font-size: 0.95em;
+        }
+        .dropdown-content {
+          min-width: 160px;
+        }
+      }
 
-/* Dropdown content unchanged */
-.dropdown-content {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    margin-top: 8px;
-    min-width: 180px;
-    background: rgba(0,0,0,0.7);
-    backdrop-filter: blur(4px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.35);
-    border-radius: 12px;
-    padding: 6px 0;
-    opacity: 0;
-    transform: scaleY(0.6);
-    transform-origin: top;
-    pointer-events: none;
-    transition: opacity .3s cubic-bezier(.4,0,.2,1),
-                transform .3s cubic-bezier(.4,0,.2,1);
-    will-change: opacity, transform;
-}
-.dropdown.show .dropdown-content {
-    opacity: 1;
-    transform: scaleY(1);
-    pointer-events: auto;
-}
-.dropdown-content a {
-    color: #fff;
-    padding: 12px 20px;
-    text-decoration: none;
-    display: block;
-    background: transparent;
-    border-radius: 6px;
-    font-family: inherit;
-    transition: background .2s;
-    white-space: nowrap;
-}
-.dropdown-content a:hover {
-    background: rgba(255,255,255,0.08);
-}
+      .secret-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.65);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.25s ease;
+        z-index: 1000;
+        backdrop-filter: blur(4px);
+      }
+      .secret-overlay.show {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .secret-popup {
+        background: #0a0a0a;
+        border: 1px solid #ffffff;
+        padding: 28px 32px 24px;
+        border-radius: 20px;
+        max-width: 320px;
+        text-align: center;
+      }
+      .secret-popup h3 {
+        margin: 0 0 18px;
+        font-size: 1.25rem;
+        font-weight: 700;
+      }
+      .secret-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+      }
+      .secret-actions button {
+        font-family: inherit;
+        font-size: 0.9rem;
+        padding: 10px 18px;
+        border: 1px solid #ffffff;
+        background: #0a0a0a;
+        color: #fff;
+        border-radius: 18px;
+        cursor: pointer;
+        transition: background 0.2s;
+        white-space: nowrap;
+      }
+      .secret-actions button:hover {
+        background: rgba(255, 255, 255, 0.08);
+      }
 
-/* Hobbies layout; buttons now inherit identical styling via .dropbtn */
-.hobbies .hobby-buttons{
-    display:flex;
-    flex-wrap:wrap;
-    gap:12px;
-    justify-content:center;
-    margin:12px 0 18px;
-}
+      /* Hobbies section: buttons already use .dropbtn so they inherit identical styling */
+      .hobbies .hobby-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: center;
+        margin: 12px 0 18px;
+      }
+      .hobbies .hobby-btn {
+        /* No extra styling so they exactly match menu bar buttons */
+      }
+      .hobbies .hobby-btn.active {
+        background: rgba(255, 255, 255, 0.18); /* active state highlight */
+      }
+      .hobby-content h3 {
+        margin: 0 0 8px;
+        font-size: 1.25rem;
+        font-weight: 700;
+      }
+      /* UPDATED gallery styles for bigger, uniform, fully clickable cards */
+      .hobby-gallery {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 24px;
+        justify-content: center;
+        margin-top: 18px;
+      }
+      .hobby-gallery figure {
+        margin: 0;
+        width: 260px; /* card width */
+      }
+      .hobby-gallery a.game-link {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+        background: #0a0a0a;
+        border: 1px solid #ffffff;
+        border-radius: 16px;
+        padding: 12px 12px 14px;
+        transition:
+          background 0.25s,
+          transform 0.25s,
+          border-color 0.25s;
+      }
+      .hobby-gallery a.game-link:hover {
+        background: rgba(255, 255, 255, 0.08);
+        transform: translateY(-4px);
+      }
+      .hobby-gallery img {
+        width: 100%;
+        aspect-ratio: 16/9; /* uniform size */
+        object-fit: cover;
+        display: block;
+        border-radius: 10px;
+        margin: 0 0 10px;
+      }
+      .hobby-gallery figcaption {
+        font-size: 0.8rem;
+        text-align: center;
+        opacity: 0.85;
+        line-height: 1.2;
+      }
 
-/* REPLACE the current .hobby-content animation block with this SLIDE (top→down) version */
-.hobby-content{
-    max-width:640px;
-    margin:0 auto 8px;
-    line-height:1.6;
-    font-size:1rem;
-    padding:0 12px;
-    min-height:70px;
-    opacity:0;
-    transform: translateY(-14px);      /* start slightly above */
-    transition: opacity .30s cubic-bezier(.4,0,.2,1),
-                transform .30s cubic-bezier(.4,0,.2,1);
-    will-change: opacity, transform;
-}
-.hobby-content.show{
-    opacity:1;
-    transform: translateY(0);          /* slides down into place */
-}
-
-/* Remove old hobby fade css (hobbyFadeIn keyframes & .hobby-content.hobby-animate) */
-
-/* Responsive tweak */
-@media (max-width: 540px) {
-    .navbar { gap: 12px; }
-    .dropbtn { padding: 12px 20px; font-size: .95em; }
-    .dropdown-content { min-width: 160px; }
-}
-
-.secret-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.65);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity .25s ease;
-    z-index: 1000;
-    backdrop-filter: blur(4px);
-}
-.secret-overlay.show {
-    opacity: 1;
-    pointer-events: auto;
-}
-.secret-popup {
-    background: #0a0a0a;
-    border: 1px solid #ffffff;
-    padding: 28px 32px 24px;
-    border-radius: 20px;
-    max-width: 320px;
-    text-align: center;
-}
-.secret-popup h3 {
-    margin: 0 0 18px;
-    font-size: 1.25rem;
-    font-weight: 700;
-}
-.secret-actions {
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-}
-.secret-actions button {
-    font-family: inherit;
-    font-size: .9rem;
-    padding: 10px 18px;
-    border: 1px solid #ffffff;
-    background: #0a0a0a;
-    color: #fff;
-    border-radius: 18px;
-    cursor: pointer;
-    transition: background .2s;
-    white-space: nowrap;
-}
-.secret-actions button:hover {
-    background: rgba(255,255,255,0.08);
-}
-
-/* Hobbies section: buttons already use .dropbtn so they inherit identical styling */
-.hobbies .hobby-buttons{
-    display:flex;
-    flex-wrap:wrap;
-    gap:12px;
-    justify-content:center;
-    margin:12px 0 18px;
-}
-.hobbies .hobby-btn {
-    /* No extra styling so they exactly match menu bar buttons */
-}
-.hobbies .hobby-btn.active {
-    background: rgba(255,255,255,0.18); /* active state highlight */
-}
-.hobby-content h3 {
-    margin: 0 0 8px;
-    font-size: 1.25rem;
-    font-weight: 700;
-}
-/* UPDATED gallery styles for bigger, uniform, fully clickable cards */
-.hobby-gallery {
-    display:flex;
-    flex-wrap:wrap;
-    gap:24px;
-    justify-content:center;
-    margin-top:18px;
-}
-.hobby-gallery figure {
-    margin:0;
-    width:260px;              /* card width */
-}
-.hobby-gallery a.game-link {
-    display:block;
-    text-decoration:none;
-    color:inherit;
-    background:#0a0a0a;
-    border:1px solid #ffffff;
-    border-radius:16px;
-    padding:12px 12px 14px;
-    transition:background .25s, transform .25s, border-color .25s;
-}
-.hobby-gallery a.game-link:hover {
-    background:rgba(255,255,255,0.08);
-    transform:translateY(-4px);
-}
-.hobby-gallery img {
-    width:100%;
-    aspect-ratio:16/9;        /* uniform size */
-    object-fit:cover;
-    display:block;
-    border-radius:10px;
-    margin:0 0 10px;
-}
-.hobby-gallery figcaption {
-    font-size:.8rem;
-    text-align:center;
-    opacity:.85;
-    line-height:1.2;
-}
-
-/* Small screens: shrink logo */
-@media (max-width:540px){
-    .site-logo img{ width:48px; height:48px; }
-}
-.fhc-download-row{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    flex-wrap:wrap;
-    margin-top:6px;
-}
-.fhc-download-row .dropbtn{
-    padding:8px 20px; /* slightly smaller so it sits nicely inline */
-}
-</style>
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    /* Dropdown buttons */
-    document.addEventListener('click', e => {
-        document.querySelectorAll('.dropdown.show').forEach(dd => {
+      .fhc-download-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 6px;
+      }
+      .fhc-download-row .dropbtn {
+        padding: 8px 20px; /* slightly smaller so it sits nicely inline */
+      }
+    </style>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        /* Dropdown buttons */
+        document.addEventListener("click", (e) => {
+          document.querySelectorAll(".dropdown.show").forEach((dd) => {
             if (!dd.contains(e.target)) {
-                dd.classList.remove('show');
-                const btn = dd.querySelector('.dropbtn');
-                if (btn) btn.blur(); // reset color on close
+              dd.classList.remove("show");
+              const btn = dd.querySelector(".dropbtn");
+              if (btn) btn.blur(); // reset color on close
             }
+          });
         });
-    });
 
-    document.querySelectorAll('.navbar .dropbtn').forEach(btn => {
-        btn.addEventListener('click', e => {
+        document.querySelectorAll(".navbar .dropbtn").forEach((btn) => {
+          btn.addEventListener("click", (e) => {
             e.stopPropagation();
             const parent = btn.parentElement;
-            if (!parent.classList.contains('dropdown')) return;
-            const wasOpen = parent.classList.contains('show');
+            if (!parent.classList.contains("dropdown")) return;
+            const wasOpen = parent.classList.contains("show");
 
             // close others
-            document.querySelectorAll('.dropdown').forEach(d => {
-                if (d !== parent) {
-                    d.classList.remove('show');
-                    const b = d.querySelector('.dropbtn');
-                    if (b) b.blur();
-                }
+            document.querySelectorAll(".dropdown").forEach((d) => {
+              if (d !== parent) {
+                d.classList.remove("show");
+                const b = d.querySelector(".dropbtn");
+                if (b) b.blur();
+              }
             });
 
-            parent.classList.toggle('show');
+            parent.classList.toggle("show");
 
             // If we just closed the same one (second click), remove focus so it returns to dark grey
             if (wasOpen) btn.blur();
+          });
         });
-    });
 
-    /* Easter egg (unchanged) */
-    const img = document.querySelector('img[src="img/william.png"]');
-    let clickCount = 0, lastClickTime = 0;
-    const thresholdMs = 1500;
-    const overlay = document.createElement('div');
-    overlay.className = 'secret-overlay';
-    overlay.innerHTML = `
+        /* Easter egg (unchanged) */
+        const img = document.querySelector('img[src="img/william.png"]');
+        let clickCount = 0,
+          lastClickTime = 0;
+        const thresholdMs = 1500;
+        const overlay = document.createElement("div");
+        overlay.className = "secret-overlay";
+        overlay.innerHTML = `
         <div class="secret-popup" role="dialog" aria-modal="true" aria-labelledby="secretQ">
             <h3 id="secretQ">Do you like capybaras?</h3>
             <div class="secret-actions">
@@ -379,25 +352,32 @@ document.addEventListener('DOMContentLoaded', () => {
                 <button type="button" id="noCapy">No</button>
             </div>
         </div>`;
-    document.body.appendChild(overlay);
-    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('show'); });
-    overlay.querySelector('#yesCapy').addEventListener('click', () => {
-        window.location.href = 'https://stickmanned.github.io/site';
-    });
-    overlay.querySelector('#noCapy').addEventListener('click', () => overlay.classList.remove('show'));
-    if (img) {
-        img.addEventListener('click', () => {
+        document.body.appendChild(overlay);
+        overlay.addEventListener("click", (e) => {
+          if (e.target === overlay) overlay.classList.remove("show");
+        });
+        overlay.querySelector("#yesCapy").addEventListener("click", () => {
+          window.location.href = "https://williamwen.xyz/site";
+        });
+        overlay
+          .querySelector("#noCapy")
+          .addEventListener("click", () => overlay.classList.remove("show"));
+        if (img) {
+          img.addEventListener("click", () => {
             const now = Date.now();
             if (now - lastClickTime > thresholdMs) clickCount = 0;
             lastClickTime = now;
-            if (++clickCount >= 10) { overlay.classList.add('show'); clickCount = 0; }
-        });
-    }
+            if (++clickCount >= 10) {
+              overlay.classList.add("show");
+              clickCount = 0;
+            }
+          });
+        }
 
-    /* Hobbies interactive section */
-    const defaultHobbyText = 'Select a hobby to learn more.';
-    const hobbyTexts = {
-        coding: `
+        /* Hobbies interactive section */
+        const defaultHobbyText = "Select a hobby to learn more.";
+        const hobbyTexts = {
+          coding: `
             <h3 class="hobby-title">Coding</h3>
             <p>I started coding in Grade 2 with Scratch and have since explored
             Python, Java, HTML, CSS, JavaScript, TypeScript, and C++. I completed
@@ -421,7 +401,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </figure>
             </div>
         `,
-        pcs: `
+          pcs: `
             <h3 class="hobby-title">Building PCs</h3>
             <p>I enjoy building PCs, from selecting all the right parts to putting them together and benchmarking—it's satisfying and enjoyable.</p>
             <p>I particularly enjoy SFF (Small Form Factor) builds: fitting powerful components in a compact case is challenging (cable management!) but rewarding.</p>
@@ -441,119 +421,169 @@ document.addEventListener('DOMContentLoaded', () => {
                 </figure>
             </div>
         `,
-        golf: `<h3 class="hobby-title">Golf</h3><p>I like to play Golf for fun as it is my favorite sport, and I joined multiple golf competitions. <br> I hope to get better at the game and play at amazing golf courses! </p>`,
-        gaming: `<h3 class="hobby-title">Gaming</h3><p>My favorite games are Roblox and BeamNG Drive. My favorite game on Roblox is TDS (Tower Defense Simulator).</p>`,
-        '3d': `
+          golf: `<h3 class="hobby-title">Golf</h3><p>I like to play Golf for fun as it is my favorite sport, and I joined multiple golf competitions. <br> I hope to get better at the game and play at amazing golf courses! </p>`,
+          gaming: `<h3 class="hobby-title">Gaming</h3><p>My favorite games are Roblox and BeamNG Drive. My favorite game on Roblox is TDS (Tower Defense Simulator).</p>`,
+          "3d": `
             <h3 class="hobby-title">3D Modelling / 3D Printing</h3>
             <p>I am currently learning how to 3D Model since I have a 3D printer. I like 3D printing various objects that help me with my projects and daily life.</p>
             <h3 style="margin-top:14px;">Here are some of my 3D Designs:</h3>
             <p><strong>FHC Tag —</strong>    <a href="/files/FHC%20tag%20v2.3mf" download>Download (.3mf)</a></p>
             <p><strong>FHC Swirl Ice Cream —</strong>    <a href="/files/swirl V1.3.3mf" download>Download (.3mf)</a></p>
         `,
-        art: `<h3 class="hobby-title">Art</h3><p>I like Digital Art since there are a plethora more ways to express creativity. I enjoy using Procreate on iPad to draw.<br> For more of my artwork and Art information, check out the <a href="/arts/">Art</a> page.</p>`
-    };
+          art: `<h3 class="hobby-title">Art</h3><p>I like Digital Art since there are a plethora more ways to express creativity. I enjoy using Procreate on iPad to draw.<br> For more of my artwork and Art information, check out the <a href="/arts/">Art</a> page.</p>`,
+        };
 
-    const hobbyContent = document.getElementById('hobbyContent');
-    requestAnimationFrame(()=>hobbyContent.classList.add('show'));
+        const hobbyContent = document.getElementById("hobbyContent");
+        requestAnimationFrame(() => hobbyContent.classList.add("show"));
 
-    function swapContent(html){
-        hobbyContent.classList.remove('show');
-        const swapDelay = 160;
-        setTimeout(()=>{
+        function swapContent(html) {
+          hobbyContent.classList.remove("show");
+          const swapDelay = 160;
+          setTimeout(() => {
             hobbyContent.innerHTML = html;
-            requestAnimationFrame(()=>hobbyContent.classList.add('show'));
-        }, swapDelay);
-    }
+            requestAnimationFrame(() => hobbyContent.classList.add("show"));
+          }, swapDelay);
+        }
 
-    document.querySelectorAll('.hobby-btn').forEach(btn => {
-        btn.setAttribute('aria-pressed','false');
-        btn.addEventListener('click', () => {
-            const isActive = btn.getAttribute('aria-pressed') === 'true';
-            document.querySelectorAll('.hobby-btn').forEach(b => b.setAttribute('aria-pressed','false'));
+        document.querySelectorAll(".hobby-btn").forEach((btn) => {
+          btn.setAttribute("aria-pressed", "false");
+          btn.addEventListener("click", () => {
+            const isActive = btn.getAttribute("aria-pressed") === "true";
+            document
+              .querySelectorAll(".hobby-btn")
+              .forEach((b) => b.setAttribute("aria-pressed", "false"));
             if (isActive) {
-                swapContent(defaultHobbyText);
-                btn.blur();
-                return;
+              swapContent(defaultHobbyText);
+              btn.blur();
+              return;
             }
-            btn.setAttribute('aria-pressed','true');
+            btn.setAttribute("aria-pressed", "true");
             swapContent(hobbyTexts[btn.dataset.hobby] || defaultHobbyText);
+          });
         });
-    });
-});
-</script>
-</head>
-<body>
-<!-- REPLACED wrapper: logo now first item inside .navbar so spacing is uniform -->
-<div class="navbar">
-  <a class="site-logo" href="/" aria-label="Home">
-    <img src="/img/websitelogo.png" alt="WW Logo">
-  </a>
-  <div class="dropdown">
-    <button class="dropbtn">Projects</button>
-    <div class="dropdown-content">
-      <a href="/arts/">Arts</a>
-      <a href="/writing/">Writing</a>
-      <a href="/projects/">My Projects</a>
-    </div>
-  </div>
-  <div class="dropdown">
-    <button class="dropbtn">Experience</button>
-    <div class="dropdown-content">
-      <a href="/resume/">Resumé</a>
-      <a href="/events/">My Events</a>
-    </div>
-  </div>
-  <div class="dropdown">
-    <button class="dropbtn">Achievements</button>
-    <div class="dropdown-content">
-      <a href="/awards/">Awards</a>
-      <a href="/achievements/">My Achievements</a>
-      <a href="/achievement-timeline/">Timeline</a>
-    </div>
-  </div>
-</div>
-
-<div class="main" style="margin-top:48px;">
-    <img src="img/william.png" alt="William Wen" width="300" height="300" class="rounded">
-    <h1 class="title">William Wen</h1>
-    <h2>My digital portfolio</h2>
-    <h2>About Me:</h2>
-    <p>
-        <strong>Hey there!</strong> My name is William Wen, I am a high school student with a passion for technology.<br>
-        I am the co-founder of <a href="http://fraser.hackclub.com/" target="_blank">Fraser Hack Club</a>, the LARGEST coding club in Coquitlam, BC!
-    </p>
-    <h2>Here are some of my hobbies:</h2>
-    <div class="hobbies">
-        <div class="hobby-buttons">
-            <button class="dropbtn hobby-btn" data-hobby="coding">Coding</button>
-            <button class="dropbtn hobby-btn" data-hobby="pcs">Building PCs</button>
-            <button class="dropbtn hobby-btn" data-hobby="golf">Golf</button>
-            <button class="dropbtn hobby-btn" data-hobby="gaming">Gaming</button>
-            <button class="dropbtn hobby-btn" data-hobby="3d">3D Modelling / 3D Printing</button>
-            <button class="dropbtn hobby-btn" data-hobby="art">Art</button>
+      });
+    </script>
+  </head>
+  <body>
+    <!-- REPLACED wrapper: logo now first item inside .navbar so spacing is uniform -->
+    <div class="navbar">
+      <a class="site-logo" href="/" aria-label="Home">
+        <img src="/img/websitelogo.png" alt="WW Logo" />
+      </a>
+      <div class="dropdown">
+        <button class="dropbtn">Projects</button>
+        <div class="dropdown-content">
+          <a href="/arts/">Arts</a>
+          <a href="/writing/">Writing</a>
+          <a href="/projects/">My Projects</a>
         </div>
-        <div id="hobbyContent" class="hobby-content">Select a hobby to learn more.</div>
+      </div>
+      <div class="dropdown">
+        <button class="dropbtn">Experience</button>
+        <div class="dropdown-content">
+          <a href="/resume/">Resumé</a>
+          <a href="/events/">My Events</a>
+        </div>
+      </div>
+      <div class="dropdown">
+        <button class="dropbtn">Achievements</button>
+        <div class="dropdown-content">
+          <a href="/awards/">Awards</a>
+          <a href="/achievements/">My Achievements</a>
+          <a href="/achievement-timeline/">Timeline</a>
+        </div>
+      </div>
     </div>
-    <h2>Pets</h2>
-    <p>I have multiple pets!<br> I have one cat, three guinea pigs, and two goldfish.</p>
-    <p>My cat's name is <strong>Bread</strong>.</p>
-    <img src="img/bread.jpg" alt="Bread the cat" width="300" height="400" class="rounded">
-    <p>Here are pictures of my three guinea pigs:</p>
-    <div class="guinea-pigs">
-        <img src="img/blackpig.jpg" alt="Guinea Pig 1" width="300" height="300" class="rounded">
-        <img src="img/guineapigs.jpg" alt="Guinea Pig 2" width="300" height="300" class="rounded">
-    </div>
-    <div class="socials">
-        <a href="https://github.com/stickmanned" target="_blank"><i class="fab fa-github"></i></a>
-        <a href="http://discordapp.com/users/911011264120119336/" target="_blank"><i class="fab fa-discord"></i></a>
-        <a href="https://www.youtube.com/@fhctech" target="_blank"><i class="fab fa-youtube"></i></a>
-    </div>
-    <br>
-    <footer>
-        Contact: <a href="mailto:williamwen25+support@gmail.com">williamwen25@gmail.com</a>
-        <br><br>
+
+    <div class="main page-main">
+      <img
+        src="img/william.png"
+        alt="William Wen"
+        width="300"
+        height="300"
+        class="rounded"
+      />
+      <h1 class="title">William Wen</h1>
+      <h2>My digital portfolio</h2>
+      <h2>About Me:</h2>
+      <p>
+        <strong>Hey there!</strong> My name is William Wen, I am a high school
+        student with a passion for technology.<br />
+        I am the co-founder of
+        <a href="http://fraser.hackclub.com/" target="_blank"
+          >Fraser Hack Club</a
+        >, the LARGEST coding club in Coquitlam, BC!
+      </p>
+      <h2>Here are some of my hobbies:</h2>
+      <div class="hobbies">
+        <div class="hobby-buttons">
+          <button class="dropbtn hobby-btn" data-hobby="coding">Coding</button>
+          <button class="dropbtn hobby-btn" data-hobby="pcs">
+            Building PCs
+          </button>
+          <button class="dropbtn hobby-btn" data-hobby="golf">Golf</button>
+          <button class="dropbtn hobby-btn" data-hobby="gaming">Gaming</button>
+          <button class="dropbtn hobby-btn" data-hobby="3d">
+            3D Modelling / 3D Printing
+          </button>
+          <button class="dropbtn hobby-btn" data-hobby="art">Art</button>
+        </div>
+        <div id="hobbyContent" class="hobby-content">
+          Select a hobby to learn more.
+        </div>
+      </div>
+      <h2>Pets</h2>
+      <p>
+        I have multiple pets!<br />
+        I have one cat, three guinea pigs, and two goldfish.
+      </p>
+      <p>My cat's name is <strong>Bread</strong>.</p>
+      <img
+        src="img/bread.jpg"
+        alt="Bread the cat"
+        width="300"
+        height="400"
+        class="rounded"
+      />
+      <p>Here are pictures of my three guinea pigs:</p>
+      <div class="guinea-pigs">
+        <img
+          src="img/blackpig.jpg"
+          alt="Guinea Pig 1"
+          width="300"
+          height="300"
+          class="rounded"
+        />
+        <img
+          src="img/guineapigs.jpg"
+          alt="Guinea Pig 2"
+          width="300"
+          height="300"
+          class="rounded"
+        />
+      </div>
+      <div class="socials">
+        <a href="https://github.com/stickmanned" target="_blank"
+          ><i class="fab fa-github"></i
+        ></a>
+        <a
+          href="http://discordapp.com/users/911011264120119336/"
+          target="_blank"
+          ><i class="fab fa-discord"></i
+        ></a>
+        <a href="https://www.youtube.com/@fhctech" target="_blank"
+          ><i class="fab fa-youtube"></i
+        ></a>
+      </div>
+      <br />
+      <footer>
+        Contact:
+        <a href="mailto:williamwen25+support@gmail.com"
+          >williamwen25@gmail.com</a
+        >
+        <br /><br />
         <a href="./sitemap.xml">Sitemap</a>
-    </footer>
-</div>
-</body>
+      </footer>
+    </div>
+  </body>
 </html>

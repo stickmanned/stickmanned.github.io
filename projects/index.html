@@ -3,130 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="../styles.css?v=2" />
   <title>Projects</title>
   <style>
-    /* Reuse global .dropbtn styling from index (add here if not already in styles.css) */
-    .dropbtn {
-      font-family: inherit;
-      font-size: 1em;
-      color: #fff;
-      padding: 14px 28px;
-      background: #0a0a0a;
-      border: 1px solid #ffffff;
-      box-sizing: border-box;
-      cursor: pointer;
-      outline: none;
-      border-radius: 24px;
-      transition: background .25s, border-color .25s, box-shadow .25s, transform .15s;
-      white-space: nowrap;
-      display: inline-flex;
-      align-items: center;
-      line-height: 1;
-      position: relative;
-    }
-    .dropbtn:hover,
-    .dropbtn:focus { background: rgba(255,255,255,0.08); }
-    .dropbtn:active { background: rgba(255,255,255,0.12); transform: translateY(2px); }
 
-    /* Writing section layout */
-    .writing-buttons {
-      display:flex;
-      flex-wrap:wrap;
-      gap:12px;
-      justify-content:center;
-      margin:12px 0 18px;
-    }
 
-    /* Content area (slide in like hobby text) */
-    .writing-content {
-      max-width:900px;
-      margin:0 auto 8px;
-      line-height:1.6;
-      font-size:1rem;
-      padding:0 12px;
-      opacity:0;
-      transform:translateY(-14px);
-      transition: opacity .30s cubic-bezier(.4,0,.2,1),
-                  transform .30s cubic-bezier(.4,0,.2,1);
-      will-change:opacity,transform;
-      min-height:120px;
-    }
-    .writing-content.show {
-      opacity:1;
-      transform:translateY(0);
-    }
 
-    /* Gallery cards (match hobby gallery formatting) */
-    .writing-gallery {
-      column-width: 280px;         /* target card width; browser decides count */
-      column-gap: 24px;
-      max-width:1200px;
-      margin:24px auto 0;
-      padding:0 8px;
-    }
-    @media (max-width:620px){
-      .writing-gallery { column-width: 220px; column-gap:20px; }
-    }
-    .writing-gallery figure {
-      break-inside: avoid;
-      margin:0 0 24px;
-      width:100%;
-    }
-    .writing-gallery a.card-link {
-      display:block;
-      text-decoration:none;
-      color:inherit;
-      background:#0a0a0a;
-      border:1px solid #ffffff;
-      border-radius:20px;
-      padding:16px 16px 18px;
-      transition:background .25s, transform .25s;
-    }
-    .writing-gallery a.card-link:hover {
-      background:rgba(255,255,255,0.08);
-      transform:translateY(-4px);
-    }
-    .writing-gallery img {
-      display:block;
-      width:100%;
-      height:auto;
-      object-fit:contain;
-      border-radius:12px;
-      margin:0 0 14px;
-      background:#000;
-    }
-    .writing-gallery figcaption {
-      font-size:.85rem;
-      text-align:center;
-      opacity:.9;
-      line-height:1.3;
-    }
-    .writing-gallery a.card-link,
-    .writing-gallery a.card-link * { background:transparent !important; }
-
-    /* Site logo (top-left home link) */
-.site-logo {
-    position: absolute;
-    top: 25px; /* Adjusted to match the y-position of the writing h1 heading */
-    left: 30px; /* Set a consistent width space from the left edge */
-    z-index: 100;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    cursor: pointer;
-    padding: 4px;
-    transition: background .25s, transform .15s;
-}
-    .site-logo:hover,
-    .site-logo:focus{ background:rgba(255,255,255,0.08); }
-    .site-logo:active{ background:rgba(255,255,255,0.12); transform:translateY(2px); }
-    .site-logo img{ width:65px; height:65px; border-radius:50%; display:block; }
-    @media (max-width:540px){
-      .site-logo img{ width:48px; height:48px; }
-      .site-logo{ top:10px; left:10px; }
-    }
 
     /* --- Add below existing styles (or modify if already present) --- */
 .project-buttons {
@@ -228,53 +110,7 @@
 }
 /* --- END timeline CSS replacement --- */
 
-    /* Ensure gallery (masonry) still works for All Projects view */
-    .projects-gallery {
-      column-width: 280px;
-      column-gap: 24px;
-      max-width:1200px;
-      margin:24px auto 0;
-      padding:0 8px;
-    }
-    @media (max-width:620px){
-      .projects-gallery { column-width:220px; column-gap:20px; }
-    }
-    .projects-gallery figure {
-      break-inside:avoid;
-      margin:0 0 24px;
-      width:100%;
-    }
-    .projects-gallery a.card-link {
-      display:block;
-      text-decoration:none;
-      color:inherit;
-      background:#0a0a0a;
-      border:1px solid #ffffff;
-      border-radius:20px;
-      padding:16px 16px 18px;
-      transition:background .25s, transform .25s;
-    }
-    .projects-gallery a.card-link:hover {
-      background:rgba(255,255,255,0.08);
-      transform:translateY(-4px);
-    }
-    .projects-gallery img {
-      display:block;
-      width:100%;
-      height:auto;
-      object-fit:contain;
-      border-radius:12px;
-      margin:0 0 14px;
-      background:#000;
-    }
-    .projects-gallery figcaption {
-      font-size:.85rem;
-      text-align:center;
-      opacity:.9;
-      line-height:1.3;
-    }
-    .projects-gallery a.card-link,
-    .projects-gallery a.card-link * { background:transparent !important; }
+
 
   </style>
 </head>
@@ -284,7 +120,7 @@
     <img src="/img/websitelogo.png" alt="WW Logo">
   </a>
 
-  <div class="main" style="margin-top:48px; text-align:center;">
+  <div class="main page-main">
     <h1>Projects</h1>
     <h2>Here are a collection of my projects. <br>I am most interested in hardware projects.</h2>
     <h1>Explore my projects:</h1>  <!-- FIX: missing closing > -->
@@ -431,7 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
     else return;
     const entries = sorted(source);
     const html = `
-      <div class="projects-gallery">
+      <div class="media-gallery">
         ${entries.map(p=>`
           <figure>
             <a class="card-link" href="${p.link.startsWith('/') ? p.link : p.link.replace(/^\/+/, '')}" ${isExternal(p.link) ? 'target="_blank" rel="noopener"' : ''} aria-label="${p.title}">
