@@ -82,10 +82,70 @@ export default async function ProjectCaseStudy({ params }: Props) {
                   ))}
                 </ul>
               ) : null}
+              {section.links ? (
+                <div className="button-row">
+                  {section.links.map((link) =>
+                    link.href.startsWith("/") ? (
+                      <Link key={link.href} className="quiet-button" href={link.href}>
+                        {link.label}
+                      </Link>
+                    ) : (
+                      <a key={link.href} className="quiet-button" href={link.href} target="_blank" rel="noreferrer">
+                        {link.label}
+                      </a>
+                    )
+                  )}
+                </div>
+              ) : null}
             </article>
           ))}
         </div>
       </section>
+
+      {project.components ? (
+        <section className="section-wrap">
+          <div className="section-heading">
+            <p>{project.components.heading}</p>
+            <h2>What&apos;s inside the build.</h2>
+          </div>
+          <div className="spec-table-wrap">
+            <table className="spec-table">
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Item</th>
+                  <th className="spec-price">Price (USD)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {project.components.rows.map((row) => (
+                  <tr key={`${row.type}-${row.item}`}>
+                    <td data-label="Type">{row.type}</td>
+                    <td data-label="Item">{row.item}</td>
+                    <td data-label="Price" className="spec-price">{row.price}</td>
+                  </tr>
+                ))}
+              </tbody>
+              {project.components.total ? (
+                <tfoot>
+                  <tr>
+                    <td colSpan={2}>{project.components.totalNote ?? "Total"}</td>
+                    <td className="spec-price">{project.components.total}</td>
+                  </tr>
+                </tfoot>
+              ) : null}
+            </table>
+          </div>
+          <div className="spec-meta">
+            {project.components.note ? <span>{project.components.note}</span> : null}
+            {project.components.listHref ? (
+              <a href={project.components.listHref} target="_blank" rel="noreferrer">
+                View full PCPartPicker list →
+              </a>
+            ) : null}
+          </div>
+        </section>
+      ) : null}
 
       <section className="section-wrap">
         <div className="section-heading">
@@ -101,6 +161,23 @@ export default async function ProjectCaseStudy({ params }: Props) {
           ))}
         </div>
       </section>
+
+      {project.changelog ? (
+        <section className="section-wrap">
+          <div className="section-heading">
+            <p>Changelog</p>
+            <h2>How the build evolved.</h2>
+          </div>
+          <ol className="changelog">
+            {project.changelog.map((entry) => (
+              <li key={entry.date}>
+                <span>{entry.date}</span>
+                <p>{entry.note}</p>
+              </li>
+            ))}
+          </ol>
+        </section>
+      ) : null}
     </main>
   );
 }

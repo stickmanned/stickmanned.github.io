@@ -18,8 +18,22 @@ export type CaseStudy = Project & {
   eyebrow: string;
   summary: string;
   links: { label: string; href: string }[];
-  sections: { title: string; body: string[]; bullets?: string[] }[];
+  sections: {
+    title: string;
+    body: string[];
+    bullets?: string[];
+    links?: { label: string; href: string }[];
+  }[];
   gallery: { src: string; alt: string; caption: string }[];
+  components?: {
+    heading: string;
+    note?: string;
+    listHref?: string;
+    rows: { type: string; item: string; price: string }[];
+    total?: string;
+    totalNote?: string;
+  };
+  changelog?: { date: string; note: string }[];
 };
 
 export const socials = [
@@ -773,7 +787,7 @@ export const caseStudies: CaseStudy[] = [
     ...featuredProjects[5],
     eyebrow: "Small form factor PC",
     summary:
-      "A compact high-performance daily-driver PC build inside the 12.6-litre NCASE M2.",
+      "My small form factor (SFF) daily driver in the NCASE M2 — fitting a Ryzen 9 9950X3D and RTX 5070 Ti into a chassis far smaller than a traditional ATX system, while keeping thermals, overclocking, and acoustics in check. Started May 2025, last updated August 24, 2025.",
     links: [
       {
         label: "PCPartPicker list",
@@ -782,52 +796,133 @@ export const caseStudies: CaseStudy[] = [
     ],
     sections: [
       {
-        title: "Problem",
+        title: "Goal of the build",
         body: [
-          "The build set out to fit a high-performance CPU and GPU combination into a compact chassis while keeping thermals, overclocking, acoustics, and cable management acceptable.",
+          "This build documents my small form factor (SFF) daily driver in the NCASE M2 PC case. I chose this platform to balance portability, thermals, and high-end performance in a volume far smaller than a traditional ATX system.",
+          "The target: fit a high-performance CPU (9950X3D) and GPU (5070 Ti) combination into a compact chassis while maintaining acceptable thermals, overclocking headroom, and acoustics for software development, gaming, and content creation.",
         ],
       },
       {
-        title: "What I Built",
+        title: "Why these parts",
         body: [
-          "A small-form-factor daily-driver PC in the NCASE M2 using an AMD Ryzen 9 9950X3D, Gigabyte Gaming OC RTX 5070 Ti, Asus ROG Strix B850-I, 64GB DDR5-6000 CL30 memory, and a Corsair SF850.",
+          "A detailed rundown of the components and the reasoning behind each pick. Full pricing is in the parts list above.",
+        ],
+        bullets: [
+          "CPU — AMD Ryzen 9 9950X3D: exceptional multi-threaded performance for gaming and productivity thanks to 16 cores / 32 threads plus the extra 3D V-Cache. AMD's most efficient Ryzen 9 yet, with outstanding performance per watt that can be cooled in an SFF build like this.",
+          "CPU Cooler — Corsair iCUE LINK TITAN 280 RX: outstanding silence and performance from its in-house pump design and quiet magnetic RX fans. Being an iCUE LINK product makes cable management easier, and the software is decent.",
+          "GPU — Gigabyte Gaming OC RTX 5070 Ti: excellent 1440p/4K ray-traced gaming. This version has one of the best coolers for quiet operation and good overclocking headroom, plus triple RGB rings around the fans that look great when vertically mounted.",
+          "Motherboard — ASUS ROG Strix B850-I Gaming WiFi: feature-rich with robust power delivery and extensive connectivity without breaking the bank — one of the best Mini ITX options for compact builds.",
+          "RAM — G.Skill Trident Z5 Neo RGB 64GB: high-performance and aesthetically pleasing with customizable RGB. 64GB gives ample headroom for gaming and multitasking, and 6000 MT/s CL30 is the sweet spot for Ryzen 7000/9000 CPUs.",
+          "Storage — Samsung 990 Pro (1TB) + Corsair MP700 PRO (2TB): blazing-fast NVMe speeds for quick load times and responsiveness. The MP700 PRO is a good low-cost route to Gen 5 SSD speeds.",
+          "Power Supply — Corsair SF850 (2024): a high-quality, fully modular SFX PSU that fits the compact case perfectly. Nothing to complain about besides the cables being a bit long and stiff, but manageable.",
+          "Case — NCASE M2: compact and versatile with excellent airflow and cooling potential. Its modular design is easy to work with and accommodates high-end components and large GPUs without issue.",
+          "Thermal Paste — Arctic MX-6: high thermal conductivity, easy to apply, and long-lasting — exactly what you want in an SFF build you don't want to re-paste often.",
         ],
       },
       {
-        title: "My Role",
+        title: "Assembly",
         body: [
-          "William selected the parts, assembled the system, documented component tradeoffs, tuned overclocking, and recorded future airflow and cable-management improvements.",
+          "Build video coming soon. A few notes from putting this one together — the NCASE M2 is a rewarding but tricky case to build in.",
+        ],
+        bullets: [
+          "Read the manual and watch case build videos first to familiarize yourself with the process; this case is difficult to build in.",
+          "Cable management is VERY important. Without it, cables can stop the AIO fans from spinning or block airflow, and the interior looks messy with clutter.",
+          "If you plan to vertically mount the GPU, buy the PCIe riser cable separately — it is not included with the case.",
         ],
       },
       {
-        title: "Tech Stack",
+        title: "Overclocking",
+        body: [
+          "Light overclocking is possible with the 9950X3D and the Gaming OC 5070 Ti even in a case this small.",
+          "For the CPU, the motherboard's AI Overclocking does the job well enough — it automatically adjusts PBO settings and the voltage curve to reach a stable overclock while keeping thermals in check.",
+          "For the GPU I used MSI Afterburner. ImWateringPSUs has two great step-by-step guides depending on whether you want to prioritize lower temperatures or maximum performance, and der8auer's deep dive covers the card's real overclocking limits:",
+        ],
+        links: [
+          {
+            label: "Undervolt for lower temps (ImWateringPSUs)",
+            href: "https://www.youtube.com/watch?v=f_GSr-BwaBU",
+          },
+          {
+            label: "Overclock to match a 5080 (ImWateringPSUs)",
+            href: "https://www.youtube.com/watch?v=Zw89TEkN974",
+          },
+          {
+            label: "Overclocking limits deep dive (der8auer)",
+            href: "https://www.youtube.com/watch?v=_we_cvY2Zto",
+          },
+        ],
+      },
+      {
+        title: "Performance",
+        body: [
+          "Runs any Roblox game smoothly at 4K and 240 FPS.",
+          "BeamNG.drive runs great, averaging around 100 FPS at 4K Ultra settings.",
+        ],
+      },
+      {
+        title: "Future improvements",
         body: [],
         bullets: [
-          "AMD Ryzen 9 9950X3D",
-          "Gigabyte Gaming OC GeForce RTX 5070 Ti",
-          "NCASE M2",
-          "Corsair iCUE LINK TITAN 280 RX",
-          "Corsair SF850 SFX PSU",
+          "Custom-length, individually sleeved PSU cables.",
+          "Add two fans under the GPU for better intake and airflow.",
+          "Replace the AIO fans with better static-pressure fans.",
+          "Tidy up cable management.",
         ],
       },
-      {
-        title: "Build Process",
-        body: [
-          "The original writeup emphasizes reading the case manual and build videos before assembly, because the compact case makes cable management and fan clearance especially important.",
-        ],
-      },
-      {
-        title: "Challenges",
-        body: [
-          "Cables can block AIO fans or airflow in the NCASE M2, and vertical GPU mounting requires a separate PCIe riser cable.",
-        ],
-      },
-      {
-        title: "Result",
-        body: [
-          "The documented performance notes report Roblox running smoothly at 4K 240 FPS and BeamNG.drive averaging 100 FPS at 4K Ultra settings.",
-        ],
-      },
+    ],
+    components: {
+      heading: "Parts list",
+      note: "Prices include shipping, taxes, rebates, and discounts.",
+      listHref: "https://pcpartpicker.com/list/CQcvcx",
+      rows: [
+        {
+          type: "CPU",
+          item: "AMD Ryzen 9 9950X3D 4.3 GHz 16-Core Processor",
+          price: "≈$699.00",
+        },
+        {
+          type: "CPU Cooler",
+          item: "Corsair iCUE LINK TITAN 280 RX RGB 94.7 CFM Liquid CPU Cooler",
+          price: "≈$179.99",
+        },
+        {
+          type: "Motherboard",
+          item: "Asus ROG STRIX B850-I GAMING WIFI Mini ITX AM5 Motherboard",
+          price: "≈$349.99",
+        },
+        {
+          type: "Memory",
+          item: "G.Skill Trident Z5 Neo RGB 64 GB (2 x 32 GB) DDR5-6000 CL30",
+          price: "≈$219.99",
+        },
+        {
+          type: "Storage",
+          item: "Samsung 990 Pro 1 TB M.2-2280 PCIe 4.0 X4 NVMe SSD",
+          price: "≈$89.99",
+        },
+        {
+          type: "Storage",
+          item: "Corsair MP700 PRO 2 TB M.2-2280 PCIe 5.0 X4 NVMe SSD",
+          price: "≈$169.99",
+        },
+        {
+          type: "Video Card",
+          item: "Gigabyte GAMING OC GeForce RTX 5070 Ti 16 GB Video Card",
+          price: "≈$969.99",
+        },
+        {
+          type: "Power Supply",
+          item: "Corsair SF850 (2024) 850 W 80+ Platinum Fully Modular SFX",
+          price: "≈$224.99",
+        },
+      ],
+      total: "$2903.93",
+      totalNote: "Total (without case)",
+    },
+    changelog: [
+      { date: "2025-05-18", note: "Initial assembly & first boot." },
+      { date: "2025-06-02", note: "Stable PBO / curve optimizer baseline." },
+      { date: "2025-08-24", note: "Documentation page scaffold created." },
     ],
     gallery: [
       {

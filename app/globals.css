@@ -1120,6 +1120,129 @@ h3 {
   font-size: 0.9rem;
 }
 
+.spec-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.spec-table {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.spec-table th,
+.spec-table td {
+  padding: 14px 18px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.spec-table thead th {
+  color: var(--accent);
+  font-family: var(--font-space-mono), monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.spec-table tbody td {
+  color: var(--muted-2);
+  vertical-align: top;
+}
+
+.spec-table tbody td:first-child {
+  color: var(--text, #f5f6fa);
+  white-space: nowrap;
+  font-family: var(--font-space-mono), monospace;
+  font-size: 0.85rem;
+}
+
+.spec-table tbody tr:hover td {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.spec-table .spec-price {
+  text-align: right;
+  white-space: nowrap;
+  font-family: var(--font-space-mono), monospace;
+}
+
+.spec-table tfoot td {
+  padding: 16px 18px;
+  border-bottom: none;
+  font-weight: 600;
+}
+
+.spec-table tfoot td:first-child {
+  color: var(--muted-2);
+}
+
+.spec-table tfoot .spec-price {
+  color: var(--accent);
+  font-size: 1.05rem;
+}
+
+.spec-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 14px;
+  color: var(--muted-2);
+  font-size: 0.88rem;
+}
+
+.spec-meta a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.spec-meta a:hover {
+  text-decoration: underline;
+}
+
+.changelog {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+}
+
+.changelog li {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 20px;
+  align-items: baseline;
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.changelog span {
+  color: var(--accent);
+  font-family: var(--font-space-mono), monospace;
+  font-size: 0.85rem;
+}
+
+.changelog p {
+  margin: 0;
+  color: var(--muted-2);
+  line-height: 1.6;
+}
+
+@media (max-width: 640px) {
+  .changelog li {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+}
+
 .timeline {
   display: grid;
   gap: 18px;
