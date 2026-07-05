@@ -3,3 +3,8 @@ node_modules/
 out/
 .npm-cache/
 tsconfig.tsbuildinfo
+dist/
+build/
+.env
+.env.local
+.DS_Store
