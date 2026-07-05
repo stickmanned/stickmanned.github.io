@@ -2,13 +2,338 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
     <link rel="stylesheet" href="../styles.css?v=2" />
     <title>Achievement Timeline</title>
+    <style>
+      /* Filter buttons */
+      .filter-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: center;
+        margin: 20px 0 12px;
+      }
+
+      /* Content wrapper with fade transition */
+      #timelineContent {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 0 14px 40px;
+        opacity: 0;
+        transform: translateY(-14px);
+        transition:
+          opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+          transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        will-change: opacity, transform;
+        min-height: 180px;
+        text-align: center;
+      }
+      #timelineContent.loaded {
+        text-align: left;
+      }
+      #timelineContent.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* Timeline axis */
+      .achievement-timeline {
+        --axis-x: 34px;
+        position: relative;
+        margin: 36px auto 0;
+        padding: 0 0 0 88px;
+        max-width: 880px;
+      }
+      .achievement-timeline::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: var(--axis-x);
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(
+          to bottom,
+          #ffffff 0%,
+          rgba(255, 255, 255, 0.25) 100%
+        );
+        border-radius: 4px;
+      }
+
+      /* Year separator */
+      .year-label {
+        position: relative;
+        margin: 0 0 24px;
+        padding: 0;
+        font-size: 1.4rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        opacity: 0.85;
+      }
+      .year-label::before {
+        content: "";
+        position: absolute;
+        left: calc(-88px + var(--axis-x) - 5px);
+        top: 50%;
+        transform: translateY(-50%);
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: #fff;
+        border: 3px solid #0a0a0a;
+        box-shadow: 0 0 0 2px #fff;
+      }
+
+      /* Timeline card */
+      .timeline-item {
+        position: relative;
+        margin: 0 0 46px;
+        padding: 18px 20px 20px;
+        border: 1px solid #ffffff;
+        border-radius: 20px;
+        background: #0a0a0a;
+        opacity: 0;
+        transform: translateY(54px);
+        transition:
+          opacity 0.75s cubic-bezier(0.4, 0, 0.2, 1),
+          transform 0.75s cubic-bezier(0.4, 0, 0.2, 1);
+        will-change: opacity, transform;
+      }
+      .timeline-item.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .timeline-item.show:hover {
+        transform: translateY(-4px);
+      }
+      .timeline-item figure {
+        margin: 0 0 14px;
+      }
+      .timeline-item img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 14px;
+        object-fit: cover;
+        background: #000;
+      }
+      .timeline-item time {
+        display: inline-block;
+        font-size: 0.7rem;
+        letter-spacing: 0.6px;
+        text-transform: uppercase;
+        opacity: 0.65;
+        margin: 0 0 6px;
+      }
+      .timeline-item h4 {
+        margin: 0 0 6px;
+        font-size: 1.05rem;
+      }
+      .timeline-item p {
+        margin: 0 0 10px;
+        font-size: 0.9rem;
+        line-height: 1.45;
+      }
+      .timeline-item .tag-row {
+        margin-top: 8px;
+      }
+
+      .empty-note {
+        text-align: center;
+        margin-top: 24px;
+        font-size: 0.9rem;
+        opacity: 0.7;
+      }
+
+      @media (max-width: 640px) {
+        .achievement-timeline {
+          --axis-x: 26px;
+          padding-left: 72px;
+        }
+        .timeline-item {
+          padding: 16px 16px 18px;
+        }
+        .year-label::before {
+          left: calc(-72px + var(--axis-x) - 5px);
+        }
+      }
+    </style>
   </head>
   <body>
+    <a class="site-logo" href="/" aria-label="Home">
+      <img src="/img/websitelogo.png" alt="WW Logo" />
+    </a>
+
     <div class="main page-main">
-      <h1>Content coming soon..</h1>
+      <h1>Achievement Timeline</h1>
+      <h2>A chronological view of my achievements:</h2>
+
+      <div class="filter-buttons">
+        <button class="dropbtn filter-btn" data-category="all">All</button>
+        <button class="dropbtn filter-btn" data-category="School">School</button>
+        <button class="dropbtn filter-btn" data-category="Writing">Writing</button>
+        <button class="dropbtn filter-btn" data-category="Arts">Arts</button>
+      </div>
+
+      <div id="timelineContent">Select a category to view the timeline.</div>
     </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const contentEl = document.getElementById("timelineContent");
+        const defaultText = "Select a category to view the timeline.";
+        let activeCat = null;
+
+        /* ── Achievement data (single source of truth for this page) ── */
+        const achievements = [
+          {
+            title: "Dr. Charles Best Secondary School Honours With Distinction",
+            dateISO: "2026-06-01",
+            dateDisplay: "2026",
+            year: 2026,
+            img: "/img/award/honours%20with%20distinctions.JPG",
+            desc: "Received this award after getting A (86%+) in 8+ courses at school.",
+            category: "School",
+            link: "#",
+          },
+          {
+            title: "Queen's Commonwealth Essay Competition — Gold",
+            dateISO: "2024-06-01",
+            dateDisplay: "2024",
+            year: 2024,
+            img: "/img/award/essay.jpg",
+            desc: 'Recognized for "Small Steps for a Climate Crisis" essay showcasing climate action insights.',
+            category: "Writing",
+            link: "https://docs.google.com/document/d/1kXjQNyiscQn2zaWMtxfgl-uwdmnqZ8j-wsJJY0dZCqQ/edit?usp=sharing",
+          },
+          {
+            title: "Democracy and me art contest — 1st place",
+            dateISO: "2019-01-01",
+            dateDisplay: "2019",
+            year: 2019,
+            img: "/img/award/democracy.jpg",
+            desc: "An art contest about democracy, the world, and us. (1st place grade K-4 category). Award: Lunch with the speaker of British Columbia.",
+            category: "Arts",
+            link: "#",
+          },
+        ];
+
+        /* ── Render ── */
+        function renderTimeline(list) {
+          if (!list.length) {
+            swap(
+              '<div class="achievement-timeline"><div class="empty-note">No achievements in this category yet.</div></div>',
+              true
+            );
+            return;
+          }
+
+          // Sort newest-first
+          const sorted = list
+            .slice()
+            .sort((a, b) => new Date(b.dateISO) - new Date(a.dateISO));
+
+          // Group by year
+          const byYear = [];
+          let currentYear = null;
+          sorted.forEach((item) => {
+            const y = item.year || new Date(item.dateISO).getFullYear();
+            if (y !== currentYear) {
+              currentYear = y;
+              byYear.push({ type: "year", year: y });
+            }
+            byYear.push({ type: "item", data: item });
+          });
+
+          let idx = 0;
+          const html = `
+            <div class="achievement-timeline">
+              ${byYear
+                .map((entry) => {
+                  if (entry.type === "year") {
+                    return `<div class="year-label">${entry.year}</div>`;
+                  }
+                  const e = entry.data;
+                  const card = `
+                    <div class="timeline-item" style="--delay:${idx * 60}ms">
+                      <figure><img src="${e.img}" alt="${e.title}" onerror="this.src='/img/placeholder.png'"></figure>
+                      <time datetime="${e.dateISO}">${e.dateDisplay}</time>
+                      <h4>${e.title}</h4>
+                      <p>${e.desc}</p>
+                      <div class="tag-row">
+                        <span class="tag">${e.dateDisplay}</span>
+                        <span class="tag">${e.category}</span>
+                      </div>
+                    </div>`;
+                  idx++;
+                  return card;
+                })
+                .join("")}
+            </div>`;
+
+          swap(html, true, observeReveal);
+        }
+
+        function observeReveal() {
+          const items = document.querySelectorAll(".timeline-item");
+          if (!items.length) return;
+          if (!("IntersectionObserver" in window)) {
+            items.forEach((it) => it.classList.add("show"));
+            return;
+          }
+          const io = new IntersectionObserver(
+            (ents) => {
+              ents.forEach((en) => {
+                if (en.isIntersecting) {
+                  en.target.classList.add("show");
+                  io.unobserve(en.target);
+                }
+              });
+            },
+            { threshold: 0.15, rootMargin: "0px 0px -10% 0px" }
+          );
+          items.forEach((it) => io.observe(it));
+          // Show the first item immediately
+          if (items[0]) items[0].classList.add("show");
+        }
+
+        function swap(html, loaded = false, after) {
+          contentEl.classList.remove("show");
+          setTimeout(() => {
+            contentEl.innerHTML = html;
+            contentEl.classList.toggle("loaded", loaded);
+            if (after) after();
+            requestAnimationFrame(() => contentEl.classList.add("show"));
+          }, 160);
+        }
+
+        /* ── Filter buttons ── */
+        document.querySelectorAll(".filter-btn").forEach((btn) => {
+          btn.setAttribute("aria-pressed", "false");
+          btn.addEventListener("click", () => {
+            const isActive = btn.getAttribute("aria-pressed") === "true";
+            document
+              .querySelectorAll(".filter-btn")
+              .forEach((b) => b.setAttribute("aria-pressed", "false"));
+            if (isActive) {
+              activeCat = null;
+              swap(defaultText, false);
+              return;
+            }
+            activeCat = btn.dataset.category;
+            btn.setAttribute("aria-pressed", "true");
+            if (activeCat === "all") {
+              renderTimeline(achievements);
+            } else {
+              renderTimeline(
+                achievements.filter((a) => a.category === activeCat)
+              );
+            }
+          });
+        });
+
+        requestAnimationFrame(() => contentEl.classList.add("show"));
+      });
+    </script>
   </body>
 </html>
