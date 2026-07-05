@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "preview": "npx serve out",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit"
   },
