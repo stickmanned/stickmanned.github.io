@@ -1,0 +1,24 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Next.js: dev server",
+      "type": "shell",
+      "command": "npm.cmd",
+      "args": ["run", "dev", "--", "-H", "127.0.0.1"],
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "Next.js: build static export",
+      "type": "shell",
+      "command": "npm.cmd",
+      "args": ["run", "build"],
+      "problemMatcher": []
+    }
+  ]
+}

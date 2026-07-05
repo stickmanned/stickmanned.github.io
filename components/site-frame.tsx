@@ -12,15 +12,31 @@ const navItems = [
   { label: "Writing", href: "/writing/" },
   { label: "About", href: "/about/" },
   { label: "Resume", href: "/resume/" },
-  { label: "Contact", href: "/contact/" }
+  { label: "Contact", href: "/contact/" },
 ];
 
 const commands = [
-  ...navItems.map((item) => ({ label: `Go to ${item.label}`, hint: "route", href: item.href })),
-  { label: "Email William", hint: "link", href: "mailto:williamwen25@gmail.com" },
-  { label: "Open GitHub", hint: "link", href: "https://github.com/stickmanned" },
-  { label: "Open YouTube / FHC Tech", hint: "link", href: "https://www.youtube.com/@fhctech" },
-  { label: "Capybara?", hint: "secret", href: "#secret" }
+  ...navItems.map((item) => ({
+    label: `Go to ${item.label}`,
+    hint: "route",
+    href: item.href,
+  })),
+  {
+    label: "Email William",
+    hint: "link",
+    href: "mailto:williamwen25@gmail.com",
+  },
+  {
+    label: "Open GitHub",
+    hint: "link",
+    href: "https://github.com/stickmanned",
+  },
+  {
+    label: "Open YouTube / FHC Tech",
+    hint: "link",
+    href: "https://www.youtube.com/@fhctech",
+  },
+  { label: "Capybara?", hint: "secret", href: "#secret" },
 ];
 
 export function SiteFrame({ children }: { children: React.ReactNode }) {
@@ -29,9 +45,7 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
   const [secretOpen, setSecretOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState(0);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => setMounted(true), []);
+  const portalRoot = typeof document === "undefined" ? null : document.body;
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -69,7 +83,8 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    document.body.style.overflow = menuOpen || paletteOpen || secretOpen ? "hidden" : "";
+    document.body.style.overflow =
+      menuOpen || paletteOpen || secretOpen ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
     };
@@ -77,10 +92,10 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return commands.filter((command) => !q || command.label.toLowerCase().includes(q));
+    return commands.filter(
+      (command) => !q || command.label.toLowerCase().includes(q),
+    );
   }, [query]);
-
-  useEffect(() => setSelected(0), [query, paletteOpen]);
 
   const runCommand = (href: string) => {
     setPaletteOpen(false);
@@ -112,8 +127,15 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
           ))}
         </nav>
         <div className="nav-actions">
-          <button className="key-button" type="button" onClick={() => setPaletteOpen(true)}>
-            <span aria-hidden="true">⌘K</span>
+          <button
+            className="key-button"
+            type="button"
+            onClick={() => {
+              setSelected(0);
+              setPaletteOpen(true);
+            }}
+          >
+            <span aria-hidden="true">Ctrl K</span>
             <span className="sr-only">Open command palette</span>
           </button>
           <Link className="accent-button small" href="/resume/">
@@ -141,7 +163,12 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
         </div>
         <div className="footer-links">
           {socials.map((social) => (
-            <a key={social.href} href={social.href} target="_blank" rel="noreferrer">
+            <a
+              key={social.href}
+              href={social.href}
+              target="_blank"
+              rel="noreferrer"
+            >
               {social.label}
             </a>
           ))}
@@ -149,23 +176,31 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
         </div>
       </footer>
 
-      {mounted && menuOpen
+      {portalRoot && menuOpen
         ? createPortal(
             <div className="mobile-menu" role="dialog" aria-modal="true">
-              <button type="button" className="close-button" onClick={() => setMenuOpen(false)}>
+              <button
+                type="button"
+                className="close-button"
+                onClick={() => setMenuOpen(false)}
+              >
                 Close
               </button>
               {navItems.map((item) => (
-                <Link key={item.href} href={item.href} onClick={() => setMenuOpen(false)}>
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setMenuOpen(false)}
+                >
                   {item.label}
                 </Link>
               ))}
             </div>,
-            document.body
+            portalRoot,
           )
         : null}
 
-      {mounted && paletteOpen
+      {portalRoot && paletteOpen
         ? createPortal(
             <div
               className="palette-backdrop"
@@ -173,22 +208,34 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
               aria-modal="true"
               onClick={() => setPaletteOpen(false)}
             >
-              <div className="palette" onClick={(event) => event.stopPropagation()}>
+              <div
+                className="palette"
+                onClick={(event) => event.stopPropagation()}
+              >
                 <input
                   autoFocus
                   value={query}
-                  onChange={(event) => setQuery(event.target.value)}
+                  onChange={(event) => {
+                    setQuery(event.target.value);
+                    setSelected(0);
+                  }}
                   onKeyDown={(event) => {
                     if (event.key === "ArrowDown") {
                       event.preventDefault();
-                      setSelected((value) => Math.min(filtered.length - 1, value + 1));
+                      setSelected((value) =>
+                        Math.min(Math.max(0, filtered.length - 1), value + 1),
+                      );
                     }
                     if (event.key === "ArrowUp") {
                       event.preventDefault();
                       setSelected((value) => Math.max(0, value - 1));
                     }
-                    if (event.key === "Enter" && filtered[selected]) {
-                      runCommand(filtered[selected].href);
+                    const activeIndex = Math.min(
+                      selected,
+                      Math.max(0, filtered.length - 1),
+                    );
+                    if (event.key === "Enter" && filtered[activeIndex]) {
+                      runCommand(filtered[activeIndex].href);
                     }
                   }}
                   placeholder="Type a command..."
@@ -199,7 +246,12 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
                     filtered.map((command, index) => (
                       <button
                         key={`${command.label}-${command.href}`}
-                        className={index === selected ? "selected" : ""}
+                        className={
+                          index ===
+                          Math.min(selected, Math.max(0, filtered.length - 1))
+                            ? "selected"
+                            : ""
+                        }
                         type="button"
                         onMouseEnter={() => setSelected(index)}
                         onClick={() => runCommand(command.href)}
@@ -214,26 +266,35 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
                 </div>
               </div>
             </div>,
-            document.body
+            portalRoot,
           )
         : null}
 
-      {mounted && secretOpen
+      {portalRoot && secretOpen
         ? createPortal(
             <div className="secret-backdrop" role="dialog" aria-modal="true">
               <div className="secret-card">
                 <h2>Do you like capybaras?</h2>
                 <div className="button-row">
-                  <a className="accent-button" href="https://williamwen.xyz/site" target="_blank" rel="noreferrer">
+                  <a
+                    className="accent-button"
+                    href="https://williamwen.xyz/site"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     Yes
                   </a>
-                  <button className="quiet-button" type="button" onClick={() => setSecretOpen(false)}>
+                  <button
+                    className="quiet-button"
+                    type="button"
+                    onClick={() => setSecretOpen(false)}
+                  >
                     No
                   </button>
                 </div>
               </div>
             </div>,
-            document.body
+            portalRoot,
           )
         : null}
     </>
@@ -242,11 +303,26 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
 
 function InteractionBoot() {
   useEffect(() => {
-    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const prefersReduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
 
-    const revealEls = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
+    const revealEls = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-reveal]"),
+    );
     if (prefersReduced || !("IntersectionObserver" in window)) {
       revealEls.forEach((el) => el.classList.add("is-visible"));
+
+      const mo = new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+          for (const node of mutation.addedNodes) {
+            if (!(node instanceof HTMLElement)) continue;
+            if (node.hasAttribute("data-reveal")) node.classList.add("is-visible");
+            node.querySelectorAll<HTMLElement>("[data-reveal]").forEach((el) => el.classList.add("is-visible"));
+          }
+        }
+      });
+      mo.observe(document.body, { childList: true, subtree: true });
     } else {
       const io = new IntersectionObserver(
         (entries) => {
@@ -257,12 +333,25 @@ function InteractionBoot() {
             }
           });
         },
-        { threshold: 0.12, rootMargin: "0px 0px -8% 0px" }
+        { threshold: 0.12, rootMargin: "0px 0px -8% 0px" },
       );
       revealEls.forEach((el) => io.observe(el));
+
+      const mo = new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+          for (const node of mutation.addedNodes) {
+            if (!(node instanceof HTMLElement)) continue;
+            if (node.hasAttribute("data-reveal")) io.observe(node);
+            node.querySelectorAll<HTMLElement>("[data-reveal]").forEach((el) => io.observe(el));
+          }
+        }
+      });
+      mo.observe(document.body, { childList: true, subtree: true });
     }
 
-    const countEls = Array.from(document.querySelectorAll<HTMLElement>("[data-count]"));
+    const countEls = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-count]"),
+    );
     const animateCount = (el: HTMLElement) => {
       const target = Number(el.dataset.count || "0");
       if (prefersReduced) {
@@ -272,7 +361,9 @@ function InteractionBoot() {
       const start = performance.now();
       const tick = (now: number) => {
         const progress = Math.min(1, (now - start) / 1300);
-        el.textContent = String(Math.round(target * (1 - Math.pow(1 - progress, 3))));
+        el.textContent = String(
+          Math.round(target * (1 - Math.pow(1 - progress, 3))),
+        );
         if (progress < 1) requestAnimationFrame(tick);
       };
       requestAnimationFrame(tick);
@@ -289,7 +380,7 @@ function InteractionBoot() {
             }
           });
         },
-        { threshold: 0.5 }
+        { threshold: 0.5 },
       );
       countEls.forEach((el) => countIo.observe(el));
     }

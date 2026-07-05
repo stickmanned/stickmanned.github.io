@@ -11,6 +11,8 @@
   --border: rgba(255, 255, 255, 0.09);
   --border-strong: rgba(255, 255, 255, 0.16);
   --max: 1180px;
+  --font-space-grotesk: "Space Grotesk";
+  --font-space-mono: "Space Mono";
 }
 
 * {

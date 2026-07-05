@@ -41,8 +41,10 @@ export function KnowledgeGraph() {
 
   useEffect(() => {
     const canvas = ref.current;
-    const ctx = canvas?.getContext("2d");
-    if (!canvas || !ctx) return;
+    if (!canvas) return;
+    const canvasContext = canvas.getContext("2d") as CanvasRenderingContext2D | null;
+    if (!canvasContext) return;
+    const ctx: CanvasRenderingContext2D = canvasContext;
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let width = 0;

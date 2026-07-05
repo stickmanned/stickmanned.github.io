@@ -4,15 +4,16 @@ import { notFound } from "next/navigation";
 import { caseStudies, projectBySlug } from "@/lib/site-data";
 
 type Props = {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 };
 
 export function generateStaticParams() {
   return caseStudies.map((project) => ({ slug: project.slug }));
 }
 
-export function generateMetadata({ params }: Props): Metadata {
-  const project = projectBySlug.get(params.slug);
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const project = projectBySlug.get(slug);
   if (!project) return {};
   return {
     title: project.title,
@@ -25,8 +26,9 @@ export function generateMetadata({ params }: Props): Metadata {
   };
 }
 
-export default function ProjectCaseStudy({ params }: Props) {
-  const project = projectBySlug.get(params.slug);
+export default async function ProjectCaseStudy({ params }: Props) {
+  const { slug } = await params;
+  const project = projectBySlug.get(slug);
   if (!project) notFound();
 
   return (
