@@ -2,7 +2,14 @@
 
 import { useEffect, useRef } from "react";
 
-type Node = { id: string; label: string; x: number; y: number; r: number; kind: "core" | "domain" | "leaf" };
+type Node = {
+  id: string;
+  label: string;
+  x: number;
+  y: number;
+  r: number;
+  kind: "core" | "domain" | "leaf";
+};
 
 const nodes: Node[] = [
   { id: "me", label: "william", x: 0.5, y: 0.5, r: 20, kind: "core" },
@@ -17,7 +24,7 @@ const nodes: Node[] = [
   { id: "nerf", label: "nerf", x: 0.32, y: 0.13, r: 8, kind: "leaf" },
   { id: "blossom", label: "blossom", x: 0.91, y: 0.15, r: 8, kind: "leaf" },
   { id: "goose", label: "spacegoose", x: 0.92, y: 0.85, r: 8, kind: "leaf" },
-  { id: "lamp", label: "lamp pro", x: 0.09, y: 0.87, r: 8, kind: "leaf" }
+  { id: "lamp", label: "lamp pro", x: 0.09, y: 0.87, r: 8, kind: "leaf" },
 ];
 
 const edges = [
@@ -33,7 +40,7 @@ const edges = [
   ["web", "blossom"],
   ["games", "goose"],
   ["cad", "lamp"],
-  ["club", "goose"]
+  ["club", "goose"],
 ];
 
 export function KnowledgeGraph() {
@@ -42,11 +49,15 @@ export function KnowledgeGraph() {
   useEffect(() => {
     const canvas = ref.current;
     if (!canvas) return;
-    const canvasContext = canvas.getContext("2d") as CanvasRenderingContext2D | null;
+    const canvasContext = canvas.getContext(
+      "2d",
+    ) as CanvasRenderingContext2D | null;
     if (!canvasContext) return;
     const ctx: CanvasRenderingContext2D = canvasContext;
 
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
     let width = 0;
     let height = 0;
     let dpr = 1;
@@ -67,8 +78,12 @@ export function KnowledgeGraph() {
     };
 
     const pos = (node: Node, index: number) => ({
-      x: node.x * width + (drag === node || reduced ? 0 : Math.sin(t * 1.3 + index * 2.1) * 3),
-      y: node.y * height + (drag === node || reduced ? 0 : Math.cos(t + index * 1.7) * 3)
+      x:
+        node.x * width +
+        (drag === node || reduced ? 0 : Math.sin(t * 1.3 + index * 2.1) * 3),
+      y:
+        node.y * height +
+        (drag === node || reduced ? 0 : Math.cos(t + index * 1.7) * 3),
     });
 
     function draw() {
@@ -94,13 +109,22 @@ export function KnowledgeGraph() {
         ctx.arc(point.x, point.y, node.r + (hot ? 2 : 0), 0, Math.PI * 2);
         ctx.fillStyle = node.kind === "core" ? "#c9ff3b" : "#12151a";
         ctx.fill();
-        ctx.strokeStyle = hot || node.kind === "core" ? "#c9ff3b" : "rgba(255,255,255,0.26)";
+        ctx.strokeStyle =
+          hot || node.kind === "core" ? "#c9ff3b" : "rgba(255,255,255,0.26)";
         ctx.lineWidth = hot ? 1.6 : 1;
         ctx.stroke();
         ctx.textAlign = "center";
-        ctx.font = node.kind === "core" ? '700 11px "Space Mono", monospace' : '10px "Space Mono", monospace';
-        ctx.fillStyle = node.kind === "core" ? "#08090b" : hot ? "#f5f7fa" : "#8a94a6";
-        ctx.fillText(node.kind === "core" ? "WW" : node.label, point.x, point.y + (node.kind === "core" ? 4 : node.r + 15));
+        ctx.font =
+          node.kind === "core"
+            ? '700 11px "Space Mono", monospace'
+            : '10px "Space Mono", monospace';
+        ctx.fillStyle =
+          node.kind === "core" ? "#08090b" : hot ? "#f5f7fa" : "#8a94a6";
+        ctx.fillText(
+          node.kind === "core" ? "WW" : node.label,
+          point.x,
+          point.y + (node.kind === "core" ? 4 : node.r + 15),
+        );
       });
     }
 
@@ -115,7 +139,8 @@ export function KnowledgeGraph() {
         const point = pos(nodes[i], i);
         const dx = mx - point.x;
         const dy = my - point.y;
-        if (dx * dx + dy * dy < (nodes[i].r + 8) * (nodes[i].r + 8)) return nodes[i];
+        if (dx * dx + dy * dy < (nodes[i].r + 8) * (nodes[i].r + 8))
+          return nodes[i];
       }
       return null;
     };
@@ -163,5 +188,11 @@ export function KnowledgeGraph() {
     };
   }, []);
 
-  return <canvas ref={ref} className="knowledge-canvas" aria-label="Draggable knowledge graph" />;
+  return (
+    <canvas
+      ref={ref}
+      className="knowledge-canvas"
+      aria-label="Draggable knowledge graph"
+    />
+  );
 }
