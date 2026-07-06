@@ -32,9 +32,8 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Full-bleed fixed background: grid + soft gradient glows. Sits above the
-   opaque html base and below all page content, so it covers every viewport
-   edge-to-edge (no centered "rectangle"). */
+/* Full-bleed fixed background. Sits above the opaque html base and below all
+   page content, giving the site one continuous canvas while scrolling. */
 .site-atmosphere {
   position: fixed;
   inset: 0;
@@ -42,16 +41,12 @@ body {
   pointer-events: none;
   overflow: hidden;
   background:
-    radial-gradient(62% 42% at 78% 8%, rgba(201, 255, 59, 0.075), transparent 70%),
-    radial-gradient(56% 48% at 8% 88%, rgba(76, 201, 240, 0.065), transparent 72%),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.024) 1px, transparent 1px),
+    radial-gradient(70% 56% at 78% 8%, rgba(201, 255, 59, 0.055), transparent 72%),
+    radial-gradient(64% 54% at 8% 88%, rgba(76, 201, 240, 0.045), transparent 74%),
     var(--bg);
   background-size:
     100% 100%,
     100% 100%,
-    80px 80px,
-    80px 80px,
     100% 100%;
 }
 
@@ -63,15 +58,7 @@ body {
 }
 
 .site-atmosphere::before {
-  inset: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.045);
-  border-radius: 18px;
-  background:
-    linear-gradient(90deg, transparent, rgba(201, 255, 59, 0.08), transparent) top / 42% 1px no-repeat,
-    linear-gradient(180deg, transparent, rgba(76, 201, 240, 0.07), transparent) right / 1px 48% no-repeat,
-    linear-gradient(90deg, transparent, rgba(201, 255, 59, 0.055), transparent) bottom / 34% 1px no-repeat;
-  filter: drop-shadow(0 0 20px rgba(201, 255, 59, 0.035));
-  animation: frame-energy 18s ease-in-out infinite;
+  display: none;
 }
 
 .site-atmosphere::after {
@@ -127,14 +114,7 @@ main#top {
 }
 
 main#top::before {
-  content: "";
-  position: absolute;
-  inset: 26px clamp(10px, 2.2vw, 28px);
-  z-index: -1;
-  border: 1px solid rgba(255, 255, 255, 0.045);
-  border-radius: 18px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.018), rgba(255, 255, 255, 0.006) 48%, transparent);
-  pointer-events: none;
+  display: none;
 }
 
 .sr-only {
@@ -446,22 +426,18 @@ input {
 }
 
 .hero-grid {
-  background:
-    linear-gradient(90deg, rgba(201, 255, 59, 0.03), transparent 34%),
-    linear-gradient(135deg, rgba(76, 201, 240, 0.045), transparent 28%);
-  filter: blur(8px);
+  display: none;
 }
 
 .hero-sweep {
-  background: linear-gradient(110deg, transparent, rgba(255, 255, 255, 0.055), transparent);
-  opacity: 0.4;
-  transform: translateX(-25%);
-  animation: sweep 13s ease-in-out infinite;
+  display: none;
 }
 
 .hero-copy {
   position: relative;
   z-index: 3;
+  width: min(100%, 625px);
+  min-width: 0;
   max-width: 625px;
 }
 
@@ -553,12 +529,17 @@ h3 {
 }
 
 .constellation {
+  /* --orbit-center-x, --orbit-center-y, --constellation-scale are set by JS */
   --orbit-center-x: 84%;
   --orbit-center-y: 54%;
+  --constellation-scale: 1;
   position: absolute;
   inset: 0;
   z-index: 2;
   pointer-events: none;
+  transform: scale(var(--constellation-scale));
+  transform-origin: var(--orbit-center-x) var(--orbit-center-y);
+  transition: transform 0.3s ease-out;
 }
 
 .constellation::before,
@@ -731,9 +712,6 @@ h3 {
   max-width: var(--max);
   margin: -10px auto 0;
   padding: 38px clamp(18px, 4vw, 44px);
-  border-top: 1px solid rgba(255, 255, 255, 0.035);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.035);
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.018), transparent);
 }
 
 .stats-band div {
@@ -773,20 +751,11 @@ h3 {
 
 .section-band {
   position: relative;
-  border-top: 1px solid rgba(255, 255, 255, 0.035);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.028);
-  background:
-    radial-gradient(54% 80% at 8% 18%, rgba(201, 255, 59, 0.032), transparent 72%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.016), rgba(255, 255, 255, 0.006) 48%, transparent);
   content-visibility: auto;
 }
 
 .section-band::before {
-  content: "";
-  position: absolute;
-  inset: 0 clamp(12px, 2.5vw, 34px);
-  border-inline: 1px solid rgba(255, 255, 255, 0.025);
-  pointer-events: none;
+  display: none;
 }
 
 .section-heading {
@@ -1296,11 +1265,7 @@ h3 {
 }
 
 .contact-cta::before {
-  content: "";
-  position: absolute;
-  inset: 20px 0 auto;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(201, 255, 59, 0.5), transparent);
+  display: none;
 }
 
 .contact-cta p:not(.kicker) {
@@ -1320,7 +1285,6 @@ h3 {
   max-width: var(--max);
   margin: 0 auto;
   padding: 38px clamp(18px, 4vw, 44px) 52px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .site-footer p {
@@ -2111,10 +2075,7 @@ h3 {
     max-width: 460px;
   }
 
-  .constellation {
-    transform: scale(0.82);
-    transform-origin: 84% 54%;
-  }
+  /* constellation responsive scaling is now handled by JS */
 
   .selected-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2157,6 +2118,21 @@ h3 {
 
   .hero-inner {
     padding-top: 118px;
+  }
+
+  .hero-copy {
+    width: 100%;
+    max-width: 100%;
+    flex: 0 1 auto;
+  }
+
+  .hero-lede,
+  .hero-proof {
+    max-width: 100%;
+  }
+
+  .hero-lede strong {
+    overflow-wrap: anywhere;
   }
 
   .hero h1 {
