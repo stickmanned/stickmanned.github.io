@@ -12,6 +12,7 @@ export type Project = {
   categories: ProjectCategory[];
   tags: string[];
   blurb: string;
+  emoji?: string;
 };
 
 export type CaseStudy = Project & {
@@ -36,18 +37,26 @@ export type CaseStudy = Project & {
   changelog?: { date: string; note: string }[];
 };
 
-export const socials = [
-  { label: "GitHub", href: "https://github.com/stickmanned" },
-  { label: "YouTube / FHC Tech", href: "https://www.youtube.com/@fhctech" },
+export type SocialIcon = "github" | "youtube" | "discord" | "mail";
+
+export const socials: { label: string; href: string; icon: SocialIcon }[] = [
+  { label: "GitHub", href: "https://github.com/stickmanned", icon: "github" },
+  {
+    label: "YouTube / FHC Tech",
+    href: "https://www.youtube.com/@fhctech",
+    icon: "youtube",
+  },
   {
     label: "Discord",
     href: "https://discordapp.com/users/911011264120119336/",
+    icon: "discord",
   },
 ];
 
 export const featuredProjects: Project[] = [
   {
     slug: "pine-a64-gaming-pc",
+    emoji: "🕹️",
     title: "Pine A64 Gaming PC",
     year: "2026",
     dateISO: "2026-07-02",
@@ -61,6 +70,7 @@ export const featuredProjects: Project[] = [
   },
   {
     slug: "blossom",
+    emoji: "🌸",
     title: "Blossom",
     year: "2026",
     dateISO: "2026-04-02",
@@ -74,6 +84,7 @@ export const featuredProjects: Project[] = [
   },
   {
     slug: "ai-nerf-aimbot",
+    emoji: "🎯",
     title: "AI Nerf Gun Aimbot",
     year: "2025",
     dateISO: "2025-03-15",
@@ -87,6 +98,7 @@ export const featuredProjects: Project[] = [
   },
   {
     slug: "spacegoose",
+    emoji: "🪿",
     title: "SpaceGoose",
     year: "2025",
     dateISO: "2025-04-05",
@@ -100,6 +112,7 @@ export const featuredProjects: Project[] = [
   },
   {
     slug: "lamp-pro",
+    emoji: "💡",
     title: "Lamp Pro",
     year: "2025",
     dateISO: "2025-10-16",
@@ -112,6 +125,7 @@ export const featuredProjects: Project[] = [
   },
   {
     slug: "ncase-m2",
+    emoji: "🖥️",
     title: "NCASE M2 SFF Build",
     year: "2025",
     dateISO: "2025-08-24",
@@ -127,6 +141,7 @@ export const featuredProjects: Project[] = [
 export const extraProjects: Project[] = [
   {
     slug: "amp-cover",
+    emoji: "🔊",
     title: "AMP Cover for IRGG Amplifier",
     year: "2025",
     dateISO: "2025-08-22",
@@ -139,6 +154,7 @@ export const extraProjects: Project[] = [
   },
   {
     slug: "pet-simulator",
+    emoji: "🐾",
     title: "Pet Simulator X/99",
     year: "2021",
     dateISO: "2021-11-17",
@@ -152,6 +168,7 @@ export const extraProjects: Project[] = [
   },
   {
     slug: "chaotic-war-simulator",
+    emoji: "⚔️",
     title: "Chaotic War Simulator",
     year: "2023",
     dateISO: "2023-04-25",
@@ -165,6 +182,7 @@ export const extraProjects: Project[] = [
   },
   {
     slug: "beyblade-masters-2",
+    emoji: "🌀",
     title: "Beyblade Masters 2",
     year: "2023",
     dateISO: "2023-10-01",
@@ -177,6 +195,7 @@ export const extraProjects: Project[] = [
   },
   {
     slug: "simple-rng-template",
+    emoji: "🎲",
     title: "Simple RNG Template",
     year: "2024",
     dateISO: "2024-09-15",
@@ -189,6 +208,7 @@ export const extraProjects: Project[] = [
   },
   {
     slug: "ultimate-easy-obby",
+    emoji: "🟩",
     title: "Ultimate Easy Obby",
     year: "2023",
     dateISO: "2023-04-22",
@@ -201,6 +221,7 @@ export const extraProjects: Project[] = [
   },
   {
     slug: "car-racing-extreme",
+    emoji: "🏎️",
     title: "Car Racing EXTREME",
     year: "2020",
     dateISO: "2020-05-15",
@@ -214,6 +235,7 @@ export const extraProjects: Project[] = [
   },
   {
     slug: "ninja-legends",
+    emoji: "🥷",
     title: "Ninja Legends (Scratch)",
     year: "2019",
     dateISO: "2019-10-10",
@@ -227,6 +249,7 @@ export const extraProjects: Project[] = [
   },
   {
     slug: "epic-tonk-battles",
+    emoji: "💥",
     title: "Epic TONK Battles (Scratch)",
     year: "2020",
     dateISO: "2020-02-01",
@@ -240,6 +263,7 @@ export const extraProjects: Project[] = [
   },
   {
     slug: "shopping-simulator",
+    emoji: "🛒",
     title: "Shopping Simulator (Scratch)",
     year: "2021",
     dateISO: "2020-03-01",
@@ -252,6 +276,7 @@ export const extraProjects: Project[] = [
   },
   {
     slug: "egg-hatching-template",
+    emoji: "🥚",
     title: "Egg Hatching Template (Scratch)",
     year: "2021",
     dateISO: "2021-04-07",
@@ -264,6 +289,7 @@ export const extraProjects: Project[] = [
   },
   {
     slug: "scratch-manhunt-2",
+    emoji: "🐈‍⬛",
     title: "Scratch Manhunt 2 (Scratch)",
     year: "2021",
     dateISO: "2021-08-16",
@@ -277,6 +303,7 @@ export const extraProjects: Project[] = [
   },
   {
     slug: "beyblade-masters",
+    emoji: "🌀",
     title: "Beyblade Masters! (Scratch)",
     year: "2021",
     dateISO: "2021-08-25",
@@ -289,6 +316,7 @@ export const extraProjects: Project[] = [
   },
   {
     slug: "pet-simulator-classic",
+    emoji: "🐾",
     title: "Pet Simulator X/99 CLASSIC (Scratch)",
     year: "2022",
     dateISO: "2022-01-10",
@@ -301,6 +329,7 @@ export const extraProjects: Project[] = [
   },
   {
     slug: "save-the-floppa",
+    emoji: "🐱",
     title: "Save the Floppa (Roblox)",
     year: "2022",
     dateISO: "2022-06-13",
@@ -313,6 +342,7 @@ export const extraProjects: Project[] = [
   },
   {
     slug: "bigwars",
+    emoji: "💣",
     title: "BigWars! (Roblox)",
     year: "2022",
     dateISO: "2022-06-29",
@@ -326,6 +356,7 @@ export const extraProjects: Project[] = [
   },
   {
     slug: "just-drive",
+    emoji: "🚗",
     title: "Just Drive! (Scratch)",
     year: "2021",
     dateISO: "2021-09-01",
@@ -339,6 +370,7 @@ export const extraProjects: Project[] = [
   },
   {
     slug: "ontheground-war",
+    emoji: "🪖",
     title: "Ontheground War! (Roblox)",
     year: "2023",
     dateISO: "2023-05-01",
@@ -353,6 +385,7 @@ export const extraProjects: Project[] = [
   },
   {
     slug: "climb-stairs",
+    emoji: "🪜",
     title: "Climb Stairs and Reach new Heights (Roblox)",
     year: "2023",
     dateISO: "2023-02-04",
@@ -367,6 +400,7 @@ export const extraProjects: Project[] = [
   },
   {
     slug: "pet-square-root",
+    emoji: "➗",
     title: "Pet Square Root Simulator",
     year: "2023",
     dateISO: "2023-05-09",
@@ -379,6 +413,7 @@ export const extraProjects: Project[] = [
   },
   {
     slug: "superhero-story",
+    emoji: "🦸",
     title: "Superhero Story (Scratch School Project)",
     year: "2023",
     dateISO: "2023-11-05",
@@ -391,6 +426,7 @@ export const extraProjects: Project[] = [
   },
   {
     slug: "pet-simulator-hardcore",
+    emoji: "🔥",
     title: "Pet Simulator X/99 Hardcore! (Scratch)",
     year: "2023",
     dateISO: "2023-02-23",
@@ -404,6 +440,7 @@ export const extraProjects: Project[] = [
   },
   {
     slug: "escape-the-skibi",
+    emoji: "🚽",
     title: "Escape The Skibi The Toilet Obby! (Roblox)",
     year: "2023",
     dateISO: "2023-06-17",
@@ -1329,22 +1366,22 @@ export const stats = [
   { value: 8, suffix: "+", label: "Years building" },
 ];
 
-export const toolbox = [
-  "Python",
-  "Java",
-  "JavaScript",
-  "TypeScript",
-  "C++",
-  "HTML / CSS",
-  "React",
-  "Godot",
-  "Unity",
-  "Roblox / Luau",
-  "Scratch",
-  "AutoCAD",
-  "OpenSCAD",
-  "3D Printing",
-  "Git",
+export const toolbox: { name: string; icon: string }[] = [
+  { name: "Python", icon: "🐍" },
+  { name: "Java", icon: "☕" },
+  { name: "JavaScript", icon: "🟨" },
+  { name: "TypeScript", icon: "🔷" },
+  { name: "C++", icon: "⚙️" },
+  { name: "HTML / CSS", icon: "🎨" },
+  { name: "React", icon: "⚛️" },
+  { name: "Godot", icon: "🤖" },
+  { name: "Unity", icon: "🎮" },
+  { name: "Roblox / Luau", icon: "🟥" },
+  { name: "Scratch", icon: "🐱" },
+  { name: "AutoCAD", icon: "📐" },
+  { name: "OpenSCAD", icon: "📦" },
+  { name: "3D Printing", icon: "🖨️" },
+  { name: "Git", icon: "🌿" },
 ];
 
 export const featuredWritings: WritingEntry[] = writingEntries.filter((w) =>

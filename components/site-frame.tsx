@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { socials } from "@/lib/site-data";
+import { SocialGlyph } from "@/components/social-icons";
 
 const navItems = [
   { label: "Home", href: "/" },
@@ -114,6 +115,8 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
   return (
     <>
       <InteractionBoot />
+      <div className="site-atmosphere" aria-hidden="true" />
+      <div className="cursor-glow" aria-hidden="true" />
       <header className="site-nav depth-4" data-depth="4">
         <Link href="/" className="brand" aria-label="William Wen home">
           <img src="/design-assets/logo.png" alt="" aria-hidden="true" />
@@ -168,11 +171,21 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
               href={social.href}
               target="_blank"
               rel="noreferrer"
+              className="social-link"
+              aria-label={social.label}
+              title={social.label}
             >
-              {social.label}
+              <SocialGlyph name={social.icon} />
             </a>
           ))}
-          <a href="mailto:williamwen25@gmail.com">Email</a>
+          <a
+            href="mailto:williamwen25@gmail.com"
+            className="social-link"
+            aria-label="Email William"
+            title="Email William"
+          >
+            <SocialGlyph name="mail" />
+          </a>
         </div>
       </footer>
 
@@ -385,6 +398,86 @@ function InteractionBoot() {
       countEls.forEach((el) => countIo.observe(el));
     }
 
+    const finePointer = window.matchMedia("(pointer: fine)").matches;
+    const cleanup: (() => void)[] = [];
+
+    if (!prefersReduced && finePointer) {
+      const glow = document.querySelector<HTMLElement>(".cursor-glow");
+      if (glow) {
+        let glowRaf = 0;
+        let lastEvent: MouseEvent | null = null;
+        let activeTarget: HTMLElement | null = null;
+        const interactives = () =>
+          Array.from(
+            document.querySelectorAll<HTMLElement>(
+              "a, button, [data-orbit-node], [data-graph-node]",
+            ),
+          ).filter((el) => {
+            const rect = el.getBoundingClientRect();
+            return rect.width > 0 && rect.height > 0;
+          });
+
+        const nearestInteractive = (event: MouseEvent) => {
+          let nearest: { el: HTMLElement; distance: number; x: number; y: number } | null = null;
+          for (const el of interactives()) {
+            const rect = el.getBoundingClientRect();
+            const x = Math.max(rect.left, Math.min(event.clientX, rect.right));
+            const y = Math.max(rect.top, Math.min(event.clientY, rect.bottom));
+            const dx = event.clientX - x;
+            const dy = event.clientY - y;
+            const distance = Math.hypot(dx, dy);
+            if (distance > 92) continue;
+            if (!nearest || distance < nearest.distance) nearest = { el, distance, x, y };
+          }
+          return nearest;
+        };
+
+        const onGlowMove = (event: MouseEvent) => {
+          lastEvent = event;
+          if (glowRaf) return;
+          glowRaf = requestAnimationFrame(() => {
+            glowRaf = 0;
+            if (!lastEvent) return;
+            const nearest = nearestInteractive(lastEvent);
+            glow.style.setProperty("--cursor-x", `${event.clientX}px`);
+            glow.style.setProperty("--cursor-y", `${event.clientY}px`);
+            if (nearest) {
+              const strength = Math.max(0, 1 - nearest.distance / 92);
+              glow.style.setProperty("--merge-x", `${nearest.x}px`);
+              glow.style.setProperty("--merge-y", `${nearest.y}px`);
+              glow.style.setProperty("--merge-opacity", String(0.1 + strength * 0.26));
+              glow.style.setProperty("--merge-scale", String(0.8 + strength * 0.65));
+              glow.classList.add("is-merging");
+              if (activeTarget !== nearest.el) {
+                activeTarget?.classList.remove("is-cursor-near");
+                activeTarget = nearest.el;
+                activeTarget.classList.add("is-cursor-near");
+              }
+            } else {
+              glow.classList.remove("is-merging");
+              activeTarget?.classList.remove("is-cursor-near");
+              activeTarget = null;
+            }
+            glow.style.opacity = "1";
+          });
+        };
+        const onGlowLeave = () => {
+          glow.style.opacity = "0";
+          glow.classList.remove("is-merging");
+          activeTarget?.classList.remove("is-cursor-near");
+          activeTarget = null;
+        };
+        window.addEventListener("mousemove", onGlowMove, { passive: true });
+        document.addEventListener("mouseleave", onGlowLeave);
+        cleanup.push(() => {
+          window.removeEventListener("mousemove", onGlowMove);
+          document.removeEventListener("mouseleave", onGlowLeave);
+          if (glowRaf) cancelAnimationFrame(glowRaf);
+          activeTarget?.classList.remove("is-cursor-near");
+        });
+      }
+    }
+
     if (!prefersReduced && !window.matchMedia("(pointer: coarse)").matches) {
       document.querySelectorAll<HTMLElement>("[data-tilt]").forEach((card) => {
         const onMove = (event: MouseEvent) => {
@@ -398,8 +491,16 @@ function InteractionBoot() {
         };
         card.addEventListener("mousemove", onMove);
         card.addEventListener("mouseleave", onLeave);
+        cleanup.push(() => {
+          card.removeEventListener("mousemove", onMove);
+          card.removeEventListener("mouseleave", onLeave);
+        });
       });
     }
+
+    return () => {
+      cleanup.forEach((fn) => fn());
+    };
   }, []);
 
   return null;

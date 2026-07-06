@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { KnowledgeGraph } from "@/components/knowledge-graph";
 import { ProjectConstellation } from "@/components/project-constellation";
-import { ProjectCard } from "@/components/project-grid";
-import { experienceItems, featuredProjects, stats, toolbox, writingEntries } from "@/lib/site-data";
+import { SelectedWork } from "@/components/selected-work";
+import { ToolIcon } from "@/components/icons";
+import { allProjects, experienceItems, stats, toolbox, writingEntries } from "@/lib/site-data";
 
 export default function HomePage() {
   const timeline = experienceItems.slice(0, 6);
@@ -13,8 +14,9 @@ export default function HomePage() {
       <section className="hero scene" data-scene="hero" aria-labelledby="hero-title">
         <div className="layer depth-0 hero-grid" data-depth="0" aria-hidden="true" />
         <div className="layer depth-1 hero-sweep" data-depth="1" aria-hidden="true" />
-        <ProjectConstellation />
-        <div className="hero-copy depth-4" data-depth="4">
+        <div className="hero-inner">
+          <ProjectConstellation />
+          <div className="hero-copy depth-4" data-depth="4">
           <p className="eyebrow">
             <span /> Student builder - hardware x software
           </p>
@@ -43,6 +45,7 @@ export default function HomePage() {
               Get in touch
             </Link>
           </div>
+          </div>
         </div>
       </section>
 
@@ -64,11 +67,7 @@ export default function HomePage() {
           <h2>Things I&apos;ve built.</h2>
           <span>A mix of hardware experiments, web apps, and games. Every one shipped, documented, and real.</span>
         </div>
-        <div className="featured-grid">
-          {featuredProjects.map((project, index) => (
-            <ProjectCard key={project.slug} project={project} wide={index === 0} />
-          ))}
-        </div>
+        <SelectedWork projects={allProjects} />
       </section>
 
       <section className="section-band" id="range">
@@ -77,25 +76,36 @@ export default function HomePage() {
             <p>02 - Range</p>
             <h2>Comfortable across the whole stack, solder to screen.</h2>
           </div>
-          <div className="capability-grid">
-            {[
-              ["Hardware & PCs", "SFF builds, custom cooling, single-board computers, and printed enclosures."],
-              ["Web Apps", "Full-stack sites and browser extensions with HTML, CSS, JS/TS, and React."],
-              ["Game Dev", "Games in Godot, Unity, Roblox, and Scratch, from jams to releases."],
-              ["3D & CAD Design", "Modeling in AutoCAD and OpenSCAD, then printing real parts."],
-              ["Writing", "Essays, short stories, and notes that communicate ideas clearly."],
-              ["Leadership", "Co-founded Fraser Hack Club, the largest coding club in Coquitlam, BC."]
-            ].map(([title, desc], index) => (
-              <article key={title} data-reveal>
-                <span>/{String(index + 1).padStart(2, "0")}</span>
-                <h3>{title}</h3>
-                <p>{desc}</p>
-              </article>
-            ))}
+          <div className="range-layout">
+            <figure className="graph-card range-map" data-reveal>
+              <KnowledgeGraph />
+              <span>Domain map - linked routes</span>
+            </figure>
+            <div className="capability-grid">
+              {[
+                ["Hardware & PCs", "SFF builds, custom cooling, single-board computers, and printed enclosures."],
+                ["Web Apps", "Full-stack sites and browser extensions with HTML, CSS, JS/TS, and React."],
+                ["Game Dev", "Games in Godot, Unity, Roblox, and Scratch, from jams to releases."],
+                ["3D & CAD Design", "Modeling in AutoCAD and OpenSCAD, then printing real parts."],
+                ["Writing", "Essays, short stories, and notes that communicate ideas clearly."],
+                ["Leadership", "Co-founded Fraser Hack Club, the largest coding club in Coquitlam, BC."]
+              ].map(([title, desc], index) => (
+                <article key={title} data-reveal>
+                  <span>/{String(index + 1).padStart(2, "0")}</span>
+                  <h3>{title}</h3>
+                  <p>{desc}</p>
+                </article>
+              ))}
+            </div>
           </div>
           <div className="toolbox" data-reveal>
             {toolbox.map((tool) => (
-              <span key={tool}>{tool}</span>
+              <span key={tool.name}>
+                <i aria-hidden="true">
+                  <ToolIcon name={tool.name} />
+                </i>
+                {tool.name}
+              </span>
             ))}
           </div>
         </div>
@@ -121,8 +131,8 @@ export default function HomePage() {
       </section>
 
       <section className="section-band" id="writing">
-        <div className="section-wrap writing-preview">
-          <div data-reveal>
+        <div className="section-wrap">
+          <div className="writing-intro" data-reveal>
             <p className="kicker">04 - Writing</p>
             <h2>A knowledgebase, not just a blog.</h2>
             <p>
@@ -131,10 +141,6 @@ export default function HomePage() {
             <Link className="text-link" href="/writing/">
               Read writing
             </Link>
-          </div>
-          <div className="graph-card" data-reveal>
-            <KnowledgeGraph />
-            <span>Knowledge graph - drag the nodes</span>
           </div>
         </div>
         <div className="section-wrap writing-cards">

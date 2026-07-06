@@ -1,136 +1,92 @@
-"use client";
-
 import Link from "next/link";
 import type { CSSProperties } from "react";
-import { useEffect, useRef } from "react";
 import { featuredProjects } from "@/lib/site-data";
+import { ProjectIcon } from "@/components/icons";
 
 const nodeMeta = [
   {
     slug: "pine-a64-gaming-pc",
-    mono: "Pi",
     short: "Pine A64",
-    left: "66%",
-    top: "18%",
     size: 58,
-    px: 30,
-    py: 30,
-  },
-  {
-    slug: "ncase-m2",
-    mono: "M2",
-    short: "NCASE",
-    left: "64%",
-    top: "46%",
-    size: 50,
-    px: 38,
-    py: 38,
-  },
-  {
-    slug: "ai-nerf-aimbot",
-    mono: "AI",
-    short: "Nerf",
-    left: "60%",
-    top: "68%",
-    size: 54,
-    px: 44,
-    py: 44,
+    radius: 258,
+    angle: -12,
+    duration: 34,
   },
   {
     slug: "blossom",
-    mono: "Bl",
     short: "Blossom",
-    left: "83%",
-    top: "38%",
     size: 48,
-    px: 22,
-    py: 22,
+    radius: 258,
+    angle: 108,
+    duration: 34,
+  },
+  {
+    slug: "ai-nerf-aimbot",
+    short: "Nerf",
+    size: 54,
+    radius: 258,
+    angle: 228,
+    duration: 34,
+  },
+  {
+    slug: "ncase-m2",
+    short: "NCASE",
+    size: 50,
+    radius: 372,
+    angle: 48,
+    duration: 48,
   },
   {
     slug: "spacegoose",
-    mono: "SG",
     short: "Goose",
-    left: "80%",
-    top: "70%",
     size: 46,
-    px: 28,
-    py: 28,
+    radius: 372,
+    angle: 168,
+    duration: 48,
   },
   {
     slug: "lamp-pro",
-    mono: "Lp",
     short: "Lamp",
-    left: "90%",
-    top: "14%",
     size: 42,
-    px: 16,
-    py: 16,
+    radius: 372,
+    angle: 288,
+    duration: 48,
   },
 ];
 
+type OrbitStyle = CSSProperties & Record<"--orbit-radius" | "--orbit-angle" | "--orbit-duration" | "--size", string>;
+
 export function ProjectConstellation() {
-  const stageRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const stage = stageRef.current;
-    if (!stage) return;
-    const reduced =
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
-      window.matchMedia("(pointer: coarse)").matches;
-    if (reduced) return;
-
-    let raf = 0;
-    const onMove = (event: MouseEvent) => {
-      if (raf) return;
-      raf = requestAnimationFrame(() => {
-        raf = 0;
-        const rect = stage.getBoundingClientRect();
-        const mx = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
-        const my = ((event.clientY - rect.top) / rect.height - 0.5) * 2;
-        stage.style.setProperty("--mx", mx.toFixed(3));
-        stage.style.setProperty("--my", my.toFixed(3));
-      });
-    };
-    window.addEventListener("mousemove", onMove, { passive: true });
-    return () => {
-      window.removeEventListener("mousemove", onMove);
-      if (raf) cancelAnimationFrame(raf);
-    };
-  }, []);
-
   return (
-    <div
-      className="constellation depth-2"
-      data-depth="2"
-      ref={stageRef}
-      aria-label="Project constellation"
-    >
+    <div className="constellation depth-2" data-depth="2" aria-label="Project constellation">
       <div className="depth-ring ring-a" aria-hidden="true" />
       <div className="depth-ring ring-b" aria-hidden="true" />
-      <div className="constellation-line" aria-hidden="true" />
       {nodeMeta.map((node) => {
-        const project = featuredProjects.find(
-          (item) => item.slug === node.slug,
-        );
+        const project = featuredProjects.find((item) => item.slug === node.slug);
         if (!project) return null;
         return (
           <Link
             key={node.slug}
             className="constellation-node"
             href={project.href}
+            aria-label={project.title}
+            data-orbit-node
             style={
               {
-                "--left": node.left,
-                "--top": node.top,
+                "--orbit-radius": `${node.radius}px`,
+                "--orbit-angle": `${node.angle}deg`,
+                "--orbit-duration": `${node.duration}s`,
                 "--size": `${node.size}px`,
-                "--px": `${node.px}px`,
-                "--py": `${node.py}px`,
-              } as CSSProperties
+              } as OrbitStyle
             }
           >
-            <span>{node.mono}</span>
-            <small>{node.short}</small>
-            <em>{project.title}</em>
+            <span className="constellation-node-shell">
+              <span className="constellation-node-icon" aria-hidden="true">
+                <ProjectIcon slug={node.slug} />
+              </span>
+              <small aria-hidden="true">{node.short}</small>
+              <em>{project.title}</em>
+            </span>
           </Link>
         );
       })}

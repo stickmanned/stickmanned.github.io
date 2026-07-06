@@ -27,13 +27,91 @@ html {
 body {
   margin: 0;
   color: var(--text);
-  background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.014) 1px, transparent 1px),
-    var(--bg);
-  background-size: 80px 80px;
+  background: transparent;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+/* Full-bleed fixed background: grid + soft gradient glows. Sits above the
+   opaque html base and below all page content, so it covers every viewport
+   edge-to-edge (no centered "rectangle"). */
+.site-atmosphere {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+  background:
+    radial-gradient(62% 42% at 78% 8%, rgba(201, 255, 59, 0.075), transparent 70%),
+    radial-gradient(56% 48% at 8% 88%, rgba(76, 201, 240, 0.065), transparent 72%),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.024) 1px, transparent 1px),
+    var(--bg);
+  background-size:
+    100% 100%,
+    100% 100%,
+    80px 80px,
+    80px 80px,
+    100% 100%;
+}
+
+.site-atmosphere::before,
+.site-atmosphere::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+
+.site-atmosphere::before {
+  inset: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.045);
+  border-radius: 18px;
+  background:
+    linear-gradient(90deg, transparent, rgba(201, 255, 59, 0.08), transparent) top / 42% 1px no-repeat,
+    linear-gradient(180deg, transparent, rgba(76, 201, 240, 0.07), transparent) right / 1px 48% no-repeat,
+    linear-gradient(90deg, transparent, rgba(201, 255, 59, 0.055), transparent) bottom / 34% 1px no-repeat;
+  filter: drop-shadow(0 0 20px rgba(201, 255, 59, 0.035));
+  animation: frame-energy 18s ease-in-out infinite;
+}
+
+.site-atmosphere::after {
+  inset: -12% -8%;
+  background:
+    radial-gradient(circle at 16% 28%, rgba(201, 255, 59, 0.055), transparent 26%),
+    radial-gradient(circle at 84% 68%, rgba(76, 201, 240, 0.045), transparent 28%);
+  filter: blur(22px);
+  opacity: 0.8;
+  animation: atmosphere-drift 26s ease-in-out infinite alternate;
+}
+
+/* Soft light that follows the cursor on pointer devices. Hidden by default and
+   only revealed via JS on fine pointers; degrades to nothing on touch. */
+.cursor-glow {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  background:
+    radial-gradient(
+      calc(170px * var(--merge-scale, 0.8)) calc(170px * var(--merge-scale, 0.8)) at var(--merge-x, 50%) var(--merge-y, 50%),
+      rgba(201, 255, 59, var(--merge-opacity, 0)),
+      rgba(76, 201, 240, calc(var(--merge-opacity, 0) * 0.5)) 45%,
+      transparent 70%
+    ),
+    radial-gradient(
+      260px 260px at var(--cursor-x, 50%) var(--cursor-y, 50%),
+      rgba(201, 255, 59, 0.095),
+      rgba(76, 201, 240, 0.045) 40%,
+      transparent 68%
+    );
+}
+
+@media (prefers-reduced-motion: reduce), (pointer: coarse) {
+  .cursor-glow {
+    display: none;
+  }
 }
 
 ::selection {
@@ -47,6 +125,21 @@ a {
 
 img {
   max-width: 100%;
+}
+
+main#top {
+  position: relative;
+}
+
+main#top::before {
+  content: "";
+  position: absolute;
+  inset: 26px clamp(10px, 2.2vw, 28px);
+  z-index: -1;
+  border: 1px solid rgba(255, 255, 255, 0.045);
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.018), rgba(255, 255, 255, 0.006) 48%, transparent);
+  pointer-events: none;
 }
 
 .sr-only {
@@ -235,6 +328,23 @@ input {
   background: rgba(255, 255, 255, 0.075);
 }
 
+a.is-cursor-near,
+button.is-cursor-near,
+.project-card.is-cursor-near,
+.knowledge-node.is-cursor-near,
+.constellation-node.is-cursor-near {
+  border-color: rgba(201, 255, 59, 0.38);
+  box-shadow:
+    0 0 0 1px rgba(201, 255, 59, 0.1),
+    0 12px 34px rgba(201, 255, 59, 0.08);
+}
+
+.accent-button.is-cursor-near {
+  box-shadow:
+    0 0 0 7px rgba(201, 255, 59, 0.08),
+    0 18px 42px rgba(201, 255, 59, 0.22);
+}
+
 .scene {
   position: relative;
   overflow: hidden;
@@ -246,7 +356,15 @@ input {
   pointer-events: none;
 }
 
+/* Section spans the full viewport so its decorative layers (grid tint + sweep)
+   reach every edge; the content column is centered by .hero-inner instead. */
 .hero {
+  min-height: 100svh;
+}
+
+.hero-inner {
+  position: relative;
+  z-index: 1;
   min-height: 100svh;
   display: flex;
   align-items: center;
@@ -363,64 +481,96 @@ h3 {
 }
 
 .constellation {
-  --mx: 0;
-  --my: 0;
+  --orbit-center-x: 72%;
+  --orbit-center-y: 54%;
   position: absolute;
   inset: 0;
   z-index: 2;
   pointer-events: none;
 }
 
+.constellation::before,
+.constellation::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.constellation::before {
+  width: 620px;
+  height: 620px;
+  top: calc(var(--orbit-center-y) - 310px);
+  left: calc(var(--orbit-center-x) - 310px);
+  background: radial-gradient(circle, rgba(201, 255, 59, 0.07), transparent 66%);
+  filter: blur(22px);
+  opacity: 0.7;
+  animation: constellation-glow 15s ease-in-out infinite;
+}
+
+.constellation::after {
+  width: 880px;
+  height: 880px;
+  top: calc(var(--orbit-center-y) - 440px);
+  left: calc(var(--orbit-center-x) - 440px);
+  border: 1px solid rgba(76, 201, 240, 0.055);
+  filter: blur(1px);
+  opacity: 0.45;
+}
+
 .depth-ring {
   position: absolute;
-  top: 50%;
-  right: 20%;
-  border: 1px solid rgba(255, 255, 255, 0.055);
+  top: var(--orbit-center-y);
+  left: var(--orbit-center-x);
+  border: 1px solid rgba(255, 255, 255, 0.11);
   border-radius: 50%;
-  transform: translate3d(calc(var(--mx) * 8px), calc(var(--my) * 8px), 0);
+  box-shadow:
+    inset 0 0 64px rgba(201, 255, 59, 0.028),
+    0 0 50px rgba(76, 201, 240, 0.025);
+  transform: translate3d(-50%, -50%, 0);
 }
 
 .ring-a {
   width: 520px;
   height: 520px;
-  margin: -260px -260px 0 0;
 }
 
 .ring-b {
   width: 760px;
   height: 760px;
-  margin: -380px -380px 0 0;
   opacity: 0.6;
-}
-
-.constellation-line {
-  position: absolute;
-  top: 20%;
-  right: 9%;
-  width: 36%;
-  height: 52%;
-  border: 1px solid rgba(201, 255, 59, 0.08);
-  clip-path: polygon(15% 0, 100% 28%, 74% 100%, 0 62%);
-  transform: translate3d(calc(var(--mx) * 6px), calc(var(--my) * 6px), 0);
 }
 
 .constellation-node {
   position: absolute;
-  left: var(--left);
-  top: var(--top);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 7px;
+  left: var(--orbit-center-x);
+  top: var(--orbit-center-y);
+  display: block;
+  width: 0;
+  height: 0;
   padding: 0;
   color: inherit;
   text-decoration: none;
   pointer-events: auto;
-  transform: translate3d(calc(var(--mx) * var(--px)), calc(var(--my) * var(--py)), 0);
-  transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transform: rotate(var(--orbit-angle));
+  transform-origin: 0 0;
+  animation: project-orbit var(--orbit-duration) linear infinite;
+  will-change: transform;
 }
 
-.constellation-node > span {
+.constellation-node-shell {
+  display: flex;
+  width: max-content;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  transform: translateX(var(--orbit-radius)) rotate(calc(-1 * var(--orbit-angle)));
+  transform-origin: 0 0;
+  animation: project-counter-orbit var(--orbit-duration) linear infinite;
+  will-change: transform;
+}
+
+.constellation-node-icon {
   display: grid;
   place-items: center;
   width: var(--size);
@@ -434,6 +584,13 @@ h3 {
     inset 0 0 0 4px rgba(8, 9, 11, 0.6);
   font-family: var(--font-space-mono), monospace;
   font-weight: 700;
+  font-size: calc(var(--size) * 0.46);
+  line-height: 1;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.24s,
+    background 0.24s,
+    transform 0.24s;
 }
 
 .constellation-node small {
@@ -446,6 +603,7 @@ h3 {
 .constellation-node em {
   position: absolute;
   bottom: calc(100% + 16px);
+  left: 50%;
   width: 210px;
   padding: 11px 12px;
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -458,22 +616,38 @@ h3 {
   font-size: 13px;
   text-align: center;
   pointer-events: none;
-  transform: translateY(5px);
+  transform: translate(-50%, 5px);
   transition:
     opacity 0.2s,
     transform 0.2s;
 }
 
-.constellation-node:hover > span {
+.constellation-node:hover,
+.constellation-node:focus-visible {
+  animation-play-state: paused;
+  outline: 0;
+}
+
+.constellation-node:hover .constellation-node-shell,
+.constellation-node:focus-visible .constellation-node-shell {
+  animation-play-state: paused;
+}
+
+.constellation-node:hover .constellation-node-icon,
+.constellation-node:focus-visible .constellation-node-icon,
+.constellation-node.is-cursor-near .constellation-node-icon {
   border-color: var(--accent);
   box-shadow:
     0 0 0 5px rgba(201, 255, 59, 0.12),
     0 14px 34px rgba(0, 0, 0, 0.55);
+  background: rgba(20, 24, 28, 0.94);
+  transform: translateY(-2px);
 }
 
-.constellation-node:hover em {
+.constellation-node:hover em,
+.constellation-node:focus-visible em {
   opacity: 1;
-  transform: translateY(0);
+  transform: translate(-50%, 0);
 }
 
 .stats-band {
@@ -481,10 +655,11 @@ h3 {
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 22px;
   max-width: var(--max);
-  margin: 0 auto;
+  margin: -10px auto 0;
   padding: 38px clamp(18px, 4vw, 44px);
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid rgba(255, 255, 255, 0.035);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.035);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.018), transparent);
 }
 
 .stats-band div {
@@ -523,10 +698,21 @@ h3 {
 }
 
 .section-band {
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.018), transparent);
+  position: relative;
+  border-top: 1px solid rgba(255, 255, 255, 0.035);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.028);
+  background:
+    radial-gradient(54% 80% at 8% 18%, rgba(201, 255, 59, 0.032), transparent 72%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.016), rgba(255, 255, 255, 0.006) 48%, transparent);
   content-visibility: auto;
+}
+
+.section-band::before {
+  content: "";
+  position: absolute;
+  inset: 0 clamp(12px, 2.5vw, 34px);
+  border-inline: 1px solid rgba(255, 255, 255, 0.025);
+  pointer-events: none;
 }
 
 .section-heading {
@@ -714,6 +900,9 @@ h3 {
 }
 
 .toolbox span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   padding: 7px 13px;
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -721,6 +910,24 @@ h3 {
   font-family: var(--font-space-mono), monospace;
   font-size: 12px;
   background: rgba(255, 255, 255, 0.018);
+  transition:
+    border-color 0.2s,
+    background 0.2s,
+    transform 0.2s;
+}
+
+.toolbox span:hover {
+  border-color: rgba(201, 255, 59, 0.3);
+  background: rgba(255, 255, 255, 0.04);
+  transform: translateY(-2px);
+}
+
+.toolbox span i {
+  display: inline-flex;
+  align-items: center;
+  font-size: 15px;
+  font-style: normal;
+  line-height: 1;
 }
 
 .compact-timeline {
@@ -798,16 +1005,124 @@ h3 {
 .graph-card {
   position: relative;
   aspect-ratio: 4 / 3;
-  overflow: hidden;
+  overflow: visible;
   border: 1px solid var(--border);
   border-radius: 8px;
   background: linear-gradient(135deg, rgba(201, 255, 59, 0.04), rgba(76, 201, 240, 0.035), transparent);
 }
 
-.knowledge-canvas {
+.knowledge-graph {
+  position: relative;
   width: 100%;
   height: 100%;
-  display: block;
+  min-height: 420px;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+.knowledge-graph::before {
+  content: "";
+  position: absolute;
+  inset: 12%;
+  border: 1px solid rgba(255, 255, 255, 0.045);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201, 255, 59, 0.04), transparent 64%);
+  animation: graph-pulse 9s ease-in-out infinite;
+}
+
+.knowledge-edges {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.knowledge-edges line {
+  stroke: rgba(255, 255, 255, 0.14);
+  stroke-width: 0.35;
+  vector-effect: non-scaling-stroke;
+}
+
+.knowledge-node {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  z-index: 1;
+  display: grid;
+  min-width: calc(var(--r) * 2);
+  min-height: calc(var(--r) * 2);
+  place-items: center;
+  gap: 4px;
+  padding: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  color: var(--muted-2);
+  background: rgba(14, 17, 22, 0.9);
+  box-shadow:
+    0 12px 34px rgba(0, 0, 0, 0.36),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.035);
+  text-decoration: none;
+  transform: translate(-50%, -50%);
+  transition:
+    color 0.2s,
+    border-color 0.2s,
+    box-shadow 0.24s,
+    background 0.24s,
+    transform 0.24s;
+}
+
+.knowledge-node svg {
+  width: calc(var(--r) * 0.72);
+  height: calc(var(--r) * 0.72);
+}
+
+.knowledge-node img {
+  width: calc(var(--r) * 1.1);
+  height: calc(var(--r) * 1.1);
+  border-radius: 10px;
+}
+
+.knowledge-node span {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  width: max-content;
+  max-width: 112px;
+  color: var(--muted);
+  font-family: var(--font-space-mono), monospace;
+  font-size: 10px;
+  line-height: 1.2;
+  text-align: center;
+  text-transform: uppercase;
+  transform: translateX(-50%);
+}
+
+.knowledge-node.is-core {
+  color: var(--bg);
+  border-color: rgba(201, 255, 59, 0.66);
+  background: var(--accent);
+}
+
+.knowledge-node.is-core span {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.knowledge-node:hover,
+.knowledge-node:focus-visible,
+.knowledge-node.is-cursor-near {
+  color: var(--text);
+  border-color: rgba(201, 255, 59, 0.58);
+  background: rgba(18, 22, 26, 0.97);
+  box-shadow:
+    0 0 0 6px rgba(201, 255, 59, 0.08),
+    0 18px 44px rgba(0, 0, 0, 0.48);
+  transform: translate(-50%, -50%) scale(1.04);
+}
+
+.knowledge-node:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
 }
 
 .graph-card > span {
@@ -1519,11 +1834,227 @@ h3 {
   }
 }
 
+@keyframes frame-energy {
+  0%,
+  100% {
+    background-position:
+      0 0,
+      100% 18%,
+      76% 100%;
+    opacity: 0.72;
+  }
+  50% {
+    background-position:
+      62% 0,
+      100% 72%,
+      12% 100%;
+    opacity: 0.95;
+  }
+}
+
+@keyframes atmosphere-drift {
+  from {
+    transform: translate3d(-1.2%, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(1.4%, -1.1%, 0) scale(1.03);
+  }
+}
+
+@keyframes constellation-glow {
+  0%,
+  100% {
+    opacity: 0.52;
+    transform: scale(0.98);
+  }
+  50% {
+    opacity: 0.78;
+    transform: scale(1.02);
+  }
+}
+
+@keyframes project-orbit {
+  from {
+    transform: rotate(var(--orbit-angle));
+  }
+  to {
+    transform: rotate(calc(var(--orbit-angle) + 360deg));
+  }
+}
+
+@keyframes project-counter-orbit {
+  from {
+    transform: translateX(var(--orbit-radius)) rotate(calc(-1 * var(--orbit-angle)));
+  }
+  to {
+    transform: translateX(var(--orbit-radius)) rotate(calc(-360deg - var(--orbit-angle)));
+  }
+}
+
+@keyframes graph-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.97);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.02);
+  }
+}
+
+/* Range: domain map (knowledge graph) beside the capability grid */
+.range-layout {
+  display: grid;
+  grid-template-columns: 0.95fr 1.05fr;
+  gap: 32px;
+  align-items: start;
+  margin-bottom: 8px;
+}
+
+.range-map {
+  position: sticky;
+  top: 88px;
+  margin: 0;
+  aspect-ratio: 1 / 1;
+}
+
+/* Selected work: compact grid + animated expand-all */
+.selected-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.selected-grid-rest {
+  margin-top: 18px;
+  animation: selected-reveal 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@keyframes selected-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.selected-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 28px;
+}
+
+.expand-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 11px 22px;
+  border-radius: 999px;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  cursor: pointer;
+  font-family: var(--font-space-mono), monospace;
+  font-size: 13px;
+  letter-spacing: 0.4px;
+  transition:
+    transform 0.18s,
+    border-color 0.2s,
+    background 0.2s;
+}
+
+.expand-button:hover {
+  transform: translateY(-2px);
+  border-color: rgba(201, 255, 59, 0.4);
+  background: rgba(201, 255, 59, 0.07);
+}
+
+.expand-button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.expand-chevron {
+  transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.expand-button[aria-expanded="true"] .expand-chevron {
+  transform: rotate(180deg);
+}
+
+/* Footer social icons */
+.social-link {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  color: var(--muted-2);
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.02);
+  transition:
+    color 0.2s,
+    border-color 0.2s,
+    background 0.2s,
+    transform 0.2s;
+}
+
+.social-link:hover {
+  color: var(--accent);
+  border-color: rgba(201, 255, 59, 0.35);
+  background: rgba(201, 255, 59, 0.06);
+  transform: translateY(-2px);
+}
+
+.social-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.writing-intro {
+  max-width: 640px;
+}
+
+.writing-intro h2 {
+  margin: 0 0 18px;
+  font-size: clamp(2rem, 4.4vw, 3rem);
+}
+
+.writing-intro p:not(.kicker) {
+  color: var(--muted);
+  line-height: 1.7;
+}
+
 @media (max-width: 900px) {
   .desktop-nav,
   .key-button,
   .nav-actions .small {
     display: none;
+  }
+
+  .range-layout {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .range-map {
+    position: relative;
+    top: 0;
+    max-width: 460px;
+  }
+
+  .constellation {
+    transform: scale(0.82);
+    transform-origin: 72% 54%;
+  }
+
+  .selected-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .menu-button {
@@ -1556,13 +2087,21 @@ h3 {
     display: none;
   }
 
-  .hero {
+  .hero,
+  .hero-inner {
     min-height: auto;
+  }
+
+  .hero-inner {
     padding-top: 118px;
   }
 
   .hero h1 {
     font-size: 3.5rem;
+  }
+
+  .knowledge-graph {
+    min-height: 360px;
   }
 
   .section-heading {
@@ -1584,8 +2123,22 @@ h3 {
     grid-template-columns: 1fr;
   }
 
+  .knowledge-graph {
+    min-height: 320px;
+  }
+
+  .knowledge-node {
+    padding: 5px;
+  }
+
+  .knowledge-node span {
+    max-width: 78px;
+    font-size: 8.5px;
+  }
+
   .featured-grid,
   .project-grid,
+  .selected-grid,
   .writing-cards,
   .writing-grid,
   .gallery-grid,
