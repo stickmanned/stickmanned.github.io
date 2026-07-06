@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { usePathname } from "next/navigation";
 import { createPortal } from "react-dom";
 import { socials } from "@/lib/site-data";
 import { SocialGlyph } from "@/components/social-icons";
@@ -315,10 +316,14 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
 }
 
 function InteractionBoot() {
+  const pathname = usePathname();
+
   useEffect(() => {
     const prefersReduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
+
+    const cleanup: (() => void)[] = [];
 
     const revealEls = Array.from(
       document.querySelectorAll<HTMLElement>("[data-reveal]"),
@@ -336,6 +341,7 @@ function InteractionBoot() {
         }
       });
       mo.observe(document.body, { childList: true, subtree: true });
+      cleanup.push(() => mo.disconnect());
     } else {
       const io = new IntersectionObserver(
         (entries) => {
@@ -360,6 +366,10 @@ function InteractionBoot() {
         }
       });
       mo.observe(document.body, { childList: true, subtree: true });
+      cleanup.push(() => {
+        io.disconnect();
+        mo.disconnect();
+      });
     }
 
     const countEls = Array.from(
@@ -396,10 +406,10 @@ function InteractionBoot() {
         { threshold: 0.5 },
       );
       countEls.forEach((el) => countIo.observe(el));
+      cleanup.push(() => countIo.disconnect());
     }
 
     const finePointer = window.matchMedia("(pointer: fine)").matches;
-    const cleanup: (() => void)[] = [];
 
     if (!prefersReduced && finePointer) {
       const glow = document.querySelector<HTMLElement>(".cursor-glow");
@@ -407,27 +417,45 @@ function InteractionBoot() {
         let glowRaf = 0;
         let lastEvent: MouseEvent | null = null;
         let activeTarget: HTMLElement | null = null;
-        const interactives = () =>
-          Array.from(
+        let targetCache: { el: HTMLElement; rect: DOMRect }[] = [];
+        let cacheDirty = true;
+
+        const clearTarget = (target: HTMLElement | null) => {
+          if (!target) return;
+          target.classList.remove("is-cursor-near");
+          target.style.removeProperty("--cursor-local-x");
+          target.style.removeProperty("--cursor-local-y");
+          target.style.removeProperty("--cursor-proximity");
+        };
+
+        const markCacheDirty = () => {
+          cacheDirty = true;
+        };
+
+        const refreshTargets = () => {
+          targetCache = Array.from(
             document.querySelectorAll<HTMLElement>(
-              "a, button, [data-orbit-node], [data-graph-node]",
+              ".accent-button, .quiet-button, .key-button, .menu-button, .close-button, .expand-button, .project-card, .desktop-nav a, .text-link, .writing-cards a, .writing-grid a, .social-link, [data-orbit-node], [data-graph-node]",
             ),
-          ).filter((el) => {
-            const rect = el.getBoundingClientRect();
-            return rect.width > 0 && rect.height > 0;
-          });
+          )
+            .filter((el) => !el.hasAttribute("disabled") && el.getAttribute("aria-hidden") !== "true")
+            .map((el) => ({ el, rect: el.getBoundingClientRect() }))
+            .filter(({ rect }) => rect.width > 0 && rect.height > 0);
+          cacheDirty = false;
+        };
 
         const nearestInteractive = (event: MouseEvent) => {
-          let nearest: { el: HTMLElement; distance: number; x: number; y: number } | null = null;
-          for (const el of interactives()) {
-            const rect = el.getBoundingClientRect();
+          if (cacheDirty) refreshTargets();
+
+          let nearest: { el: HTMLElement; distance: number; x: number; y: number; rect: DOMRect } | null = null;
+          for (const { el, rect } of targetCache) {
             const x = Math.max(rect.left, Math.min(event.clientX, rect.right));
             const y = Math.max(rect.top, Math.min(event.clientY, rect.bottom));
             const dx = event.clientX - x;
             const dy = event.clientY - y;
             const distance = Math.hypot(dx, dy);
-            if (distance > 92) continue;
-            if (!nearest || distance < nearest.distance) nearest = { el, distance, x, y };
+            if (distance > 110) continue;
+            if (!nearest || distance < nearest.distance) nearest = { el, distance, x, y, rect };
           }
           return nearest;
         };
@@ -439,23 +467,24 @@ function InteractionBoot() {
             glowRaf = 0;
             if (!lastEvent) return;
             const nearest = nearestInteractive(lastEvent);
-            glow.style.setProperty("--cursor-x", `${event.clientX}px`);
-            glow.style.setProperty("--cursor-y", `${event.clientY}px`);
+            glow.style.setProperty("--cursor-x", `${lastEvent.clientX}px`);
+            glow.style.setProperty("--cursor-y", `${lastEvent.clientY}px`);
             if (nearest) {
-              const strength = Math.max(0, 1 - nearest.distance / 92);
-              glow.style.setProperty("--merge-x", `${nearest.x}px`);
-              glow.style.setProperty("--merge-y", `${nearest.y}px`);
-              glow.style.setProperty("--merge-opacity", String(0.1 + strength * 0.26));
-              glow.style.setProperty("--merge-scale", String(0.8 + strength * 0.65));
-              glow.classList.add("is-merging");
+              const strength = Math.max(0, 1 - nearest.distance / 110);
+              glow.style.setProperty("--cursor-alpha", String(0.07 - strength * 0.02));
+              glow.style.setProperty("--cursor-size", `${260 - strength * 34}px`);
               if (activeTarget !== nearest.el) {
-                activeTarget?.classList.remove("is-cursor-near");
+                clearTarget(activeTarget);
                 activeTarget = nearest.el;
                 activeTarget.classList.add("is-cursor-near");
               }
+              activeTarget.style.setProperty("--cursor-local-x", `${nearest.x - nearest.rect.left}px`);
+              activeTarget.style.setProperty("--cursor-local-y", `${nearest.y - nearest.rect.top}px`);
+              activeTarget.style.setProperty("--cursor-proximity", strength.toFixed(3));
             } else {
-              glow.classList.remove("is-merging");
-              activeTarget?.classList.remove("is-cursor-near");
+              glow.style.setProperty("--cursor-alpha", "0.095");
+              glow.style.setProperty("--cursor-size", "260px");
+              clearTarget(activeTarget);
               activeTarget = null;
             }
             glow.style.opacity = "1";
@@ -463,17 +492,25 @@ function InteractionBoot() {
         };
         const onGlowLeave = () => {
           glow.style.opacity = "0";
-          glow.classList.remove("is-merging");
-          activeTarget?.classList.remove("is-cursor-near");
+          glow.style.setProperty("--cursor-alpha", "0.095");
+          glow.style.setProperty("--cursor-size", "260px");
+          clearTarget(activeTarget);
           activeTarget = null;
         };
+        const mutationObserver = new MutationObserver(markCacheDirty);
+        mutationObserver.observe(document.body, { childList: true, subtree: true });
         window.addEventListener("mousemove", onGlowMove, { passive: true });
+        window.addEventListener("scroll", markCacheDirty, { passive: true });
+        window.addEventListener("resize", markCacheDirty);
         document.addEventListener("mouseleave", onGlowLeave);
         cleanup.push(() => {
           window.removeEventListener("mousemove", onGlowMove);
+          window.removeEventListener("scroll", markCacheDirty);
+          window.removeEventListener("resize", markCacheDirty);
           document.removeEventListener("mouseleave", onGlowLeave);
+          mutationObserver.disconnect();
           if (glowRaf) cancelAnimationFrame(glowRaf);
-          activeTarget?.classList.remove("is-cursor-near");
+          clearTarget(activeTarget);
         });
       }
     }
@@ -501,7 +538,7 @@ function InteractionBoot() {
     return () => {
       cleanup.forEach((fn) => fn());
     };
-  }, []);
+  }, [pathname]);
 
   return null;
 }

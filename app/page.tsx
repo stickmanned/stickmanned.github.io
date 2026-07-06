@@ -79,7 +79,6 @@ export default function HomePage() {
           <div className="range-layout">
             <figure className="graph-card range-map" data-reveal>
               <KnowledgeGraph />
-              <span>Domain map - linked routes</span>
             </figure>
             <div className="capability-grid">
               {[

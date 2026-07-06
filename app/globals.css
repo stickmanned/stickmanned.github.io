@@ -87,25 +87,20 @@ body {
 /* Soft light that follows the cursor on pointer devices. Hidden by default and
    only revealed via JS on fine pointers; degrades to nothing on touch. */
 .cursor-glow {
+  --cursor-alpha: 0.095;
+  --cursor-size: 260px;
   position: fixed;
   inset: 0;
   z-index: -1;
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.4s ease;
-  background:
-    radial-gradient(
-      calc(170px * var(--merge-scale, 0.8)) calc(170px * var(--merge-scale, 0.8)) at var(--merge-x, 50%) var(--merge-y, 50%),
-      rgba(201, 255, 59, var(--merge-opacity, 0)),
-      rgba(76, 201, 240, calc(var(--merge-opacity, 0) * 0.5)) 45%,
-      transparent 70%
-    ),
-    radial-gradient(
-      260px 260px at var(--cursor-x, 50%) var(--cursor-y, 50%),
-      rgba(201, 255, 59, 0.095),
-      rgba(76, 201, 240, 0.045) 40%,
-      transparent 68%
-    );
+  background: radial-gradient(
+    var(--cursor-size) var(--cursor-size) at var(--cursor-x, 50%) var(--cursor-y, 50%),
+    rgba(201, 255, 59, var(--cursor-alpha)),
+    rgba(76, 201, 240, calc(var(--cursor-alpha) * 0.46)) 42%,
+    transparent 68%
+  );
 }
 
 @media (prefers-reduced-motion: reduce), (pointer: coarse) {
@@ -328,21 +323,98 @@ input {
   background: rgba(255, 255, 255, 0.075);
 }
 
-a.is-cursor-near,
-button.is-cursor-near,
-.project-card.is-cursor-near,
-.knowledge-node.is-cursor-near,
-.constellation-node.is-cursor-near {
-  border-color: rgba(201, 255, 59, 0.38);
-  box-shadow:
-    0 0 0 1px rgba(201, 255, 59, 0.1),
-    0 12px 34px rgba(201, 255, 59, 0.08);
+.accent-button,
+.quiet-button,
+.key-button,
+.menu-button,
+.close-button,
+.expand-button,
+.project-card,
+.desktop-nav a,
+.text-link,
+.writing-cards a,
+.writing-grid a,
+.social-link,
+.knowledge-node,
+.constellation-node {
+  --cursor-proximity: 0;
+  --cursor-local-x: 50%;
+  --cursor-local-y: 50%;
 }
 
-.accent-button.is-cursor-near {
+.accent-button,
+.quiet-button,
+.key-button,
+.menu-button,
+.close-button,
+.expand-button,
+.desktop-nav a,
+.text-link,
+.project-card,
+.writing-cards a,
+.writing-grid a,
+.social-link,
+.knowledge-node {
+  position: relative;
+  isolation: isolate;
+}
+
+.accent-button::after,
+.quiet-button::after,
+.key-button::after,
+.menu-button::after,
+.close-button::after,
+.expand-button::after,
+.project-card::after,
+.desktop-nav a::after,
+.text-link::after,
+.writing-cards a::after,
+.writing-grid a::after,
+.social-link::after,
+.knowledge-node::after,
+.constellation-node-icon::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: 1;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: calc(var(--cursor-proximity) * 0.72);
+  background:
+    radial-gradient(
+      150px circle at var(--cursor-local-x) var(--cursor-local-y),
+      rgba(201, 255, 59, 0.24),
+      rgba(76, 201, 240, 0.08) 44%,
+      transparent 70%
+    ),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.045), transparent 44%);
+  transition: opacity 0.12s ease;
+}
+
+.accent-button.is-cursor-near,
+.quiet-button.is-cursor-near,
+.key-button.is-cursor-near,
+.menu-button.is-cursor-near,
+.close-button.is-cursor-near,
+.expand-button.is-cursor-near,
+.project-card.is-cursor-near,
+.desktop-nav a.is-cursor-near,
+.text-link.is-cursor-near,
+.writing-cards a.is-cursor-near,
+.writing-grid a.is-cursor-near,
+.social-link.is-cursor-near,
+.knowledge-node.is-cursor-near {
+  border-color: rgba(201, 255, 59, 0.3);
   box-shadow:
-    0 0 0 7px rgba(201, 255, 59, 0.08),
-    0 18px 42px rgba(201, 255, 59, 0.22);
+    0 0 0 1px rgba(201, 255, 59, calc(var(--cursor-proximity) * 0.1)),
+    0 12px 30px rgba(201, 255, 59, calc(var(--cursor-proximity) * 0.065));
+}
+
+.constellation-node.is-cursor-near .constellation-node-icon {
+  border-color: rgba(201, 255, 59, 0.34);
+  box-shadow:
+    0 0 0 4px rgba(201, 255, 59, calc(var(--cursor-proximity) * 0.11)),
+    0 12px 30px rgba(0, 0, 0, 0.5);
 }
 
 .scene {
@@ -481,7 +553,7 @@ h3 {
 }
 
 .constellation {
-  --orbit-center-x: 72%;
+  --orbit-center-x: 84%;
   --orbit-center-y: 54%;
   position: absolute;
   inset: 0;
@@ -498,10 +570,10 @@ h3 {
 }
 
 .constellation::before {
-  width: 620px;
-  height: 620px;
-  top: calc(var(--orbit-center-y) - 310px);
-  left: calc(var(--orbit-center-x) - 310px);
+  width: 540px;
+  height: 540px;
+  top: calc(var(--orbit-center-y) - 270px);
+  left: calc(var(--orbit-center-x) - 270px);
   background: radial-gradient(circle, rgba(201, 255, 59, 0.07), transparent 66%);
   filter: blur(22px);
   opacity: 0.7;
@@ -509,10 +581,10 @@ h3 {
 }
 
 .constellation::after {
-  width: 880px;
-  height: 880px;
-  top: calc(var(--orbit-center-y) - 440px);
-  left: calc(var(--orbit-center-x) - 440px);
+  width: 780px;
+  height: 780px;
+  top: calc(var(--orbit-center-y) - 390px);
+  left: calc(var(--orbit-center-x) - 390px);
   border: 1px solid rgba(76, 201, 240, 0.055);
   filter: blur(1px);
   opacity: 0.45;
@@ -531,13 +603,13 @@ h3 {
 }
 
 .ring-a {
-  width: 520px;
-  height: 520px;
+  width: 460px;
+  height: 460px;
 }
 
 .ring-b {
-  width: 760px;
-  height: 760px;
+  width: 660px;
+  height: 660px;
   opacity: 0.6;
 }
 
@@ -571,14 +643,17 @@ h3 {
 }
 
 .constellation-node-icon {
+  position: relative;
   display: grid;
   place-items: center;
   width: var(--size);
   height: var(--size);
+  overflow: hidden;
   color: var(--text);
   background: rgba(18, 20, 24, 0.86);
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 50%;
+  isolation: isolate;
   box-shadow:
     0 10px 30px rgba(0, 0, 0, 0.45),
     inset 0 0 0 4px rgba(8, 9, 11, 0.6);
@@ -634,8 +709,7 @@ h3 {
 }
 
 .constellation-node:hover .constellation-node-icon,
-.constellation-node:focus-visible .constellation-node-icon,
-.constellation-node.is-cursor-near .constellation-node-icon {
+.constellation-node:focus-visible .constellation-node-icon {
   border-color: var(--accent);
   box-shadow:
     0 0 0 5px rgba(201, 255, 59, 0.12),
@@ -1109,8 +1183,7 @@ h3 {
 }
 
 .knowledge-node:hover,
-.knowledge-node:focus-visible,
-.knowledge-node.is-cursor-near {
+.knowledge-node:focus-visible {
   color: var(--text);
   border-color: rgba(201, 255, 59, 0.58);
   background: rgba(18, 22, 26, 0.97);
@@ -1125,17 +1198,7 @@ h3 {
   outline-offset: 4px;
 }
 
-.graph-card > span {
-  position: absolute;
-  bottom: 12px;
-  left: 14px;
-  color: #5a6272;
-  font-family: var(--font-space-mono), monospace;
-  font-size: 10.5px;
-  letter-spacing: 1px;
-  pointer-events: none;
-  text-transform: uppercase;
-}
+
 
 .writing-cards {
   display: grid;
@@ -2050,7 +2113,7 @@ h3 {
 
   .constellation {
     transform: scale(0.82);
-    transform-origin: 72% 54%;
+    transform-origin: 84% 54%;
   }
 
   .selected-grid {
