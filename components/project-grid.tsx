@@ -1,13 +1,21 @@
 "use client";
 
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
 import type { Project, ProjectCategory } from "@/lib/site-data";
 
 const categories: ProjectCategory[] = ["Featured", "Hardware", "Web Apps", "Games", "Experiments"];
 
+// The 3D gallery (and three.js with it) is only fetched when it opens.
+const ProjectGallery = dynamic(
+  () => import("@/components/project-gallery"),
+  { ssr: false, loading: () => <div className="gallery-overlay gallery-status">Opening the gallery…</div> }
+);
+
 export function ProjectGrid({ projects }: { projects: Project[] }) {
   const [active, setActive] = useState<ProjectCategory>("Featured");
+  const [galleryOpen, setGalleryOpen] = useState(false);
   const visible = useMemo(
     () => projects.filter((project) => project.categories.includes(active)),
     [active, projects]
@@ -15,18 +23,30 @@ export function ProjectGrid({ projects }: { projects: Project[] }) {
 
   return (
     <div>
-      <div className="segmented-control" role="tablist" aria-label="Project categories">
-        {categories.map((category) => (
-          <button
-            key={category}
-            type="button"
-            className={active === category ? "is-active" : ""}
-            onClick={() => setActive(category)}
-          >
-            {category}
-          </button>
-        ))}
+      <div className="project-toolbar">
+        <div className="segmented-control" role="tablist" aria-label="Project categories">
+          {categories.map((category) => (
+            <button
+              key={category}
+              type="button"
+              className={active === category ? "is-active" : ""}
+              onClick={() => setActive(category)}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+        <button
+          type="button"
+          className="sort-button gallery-enter-button"
+          onClick={() => setGalleryOpen(true)}
+        >
+          🖼️ Enter Gallery
+        </button>
       </div>
+      {galleryOpen && (
+        <ProjectGallery projects={projects} onExit={() => setGalleryOpen(false)} />
+      )}
       <div className="project-grid">
         {visible.map((project) => (
           <ProjectCard key={project.slug} project={project} />

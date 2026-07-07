@@ -27,7 +27,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" data-scroll-behavior="smooth">
+    // suppressHydrationWarning: the theme-init script below sets data-theme
+    // before hydration, which React would otherwise report as a mismatch.
+    <html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
         {/* Apply the stored theme before first paint to avoid a flash. */}
         <Script id="theme-init" strategy="beforeInteractive">
