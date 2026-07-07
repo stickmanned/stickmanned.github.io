@@ -888,6 +888,11 @@ h3 {
   line-height: 1.6;
 }
 
+.gallery-section-heading.is-centered {
+  justify-content: center;
+  text-align: center;
+}
+
 .featured-grid,
 .project-grid,
 .writing-grid,
@@ -1596,6 +1601,22 @@ h3 {
   padding: 12px 14px;
   color: var(--muted-2);
   font-size: 0.9rem;
+}
+
+.video-embed {
+  overflow: hidden;
+  max-width: 960px;
+  margin: 0 auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(var(--line-rgb), 0.02);
+}
+
+.video-embed iframe {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  display: block;
+  border: 0;
 }
 
 .spec-table-wrap {

@@ -30,6 +30,10 @@ export default async function ProjectCaseStudy({ params }: Props) {
   const { slug } = await params;
   const project = projectBySlug.get(slug);
   if (!project) notFound();
+  const galleryHeading = project.galleryHeading ?? {
+    eyebrow: "Gallery",
+    title: "Project evidence.",
+  };
 
   return (
     <main className="case-study">
@@ -147,20 +151,40 @@ export default async function ProjectCaseStudy({ params }: Props) {
         </section>
       ) : null}
 
-      <section className="section-wrap">
-        <div className="section-heading">
-          <p>Gallery</p>
-          <h2>Project evidence.</h2>
-        </div>
-        <div className="gallery-grid">
-          {project.gallery.map((image) => (
-            <figure key={image.src} data-reveal>
-              <img src={image.src} alt={image.alt} loading="lazy" />
-              <figcaption>{image.caption}</figcaption>
-            </figure>
-          ))}
-        </div>
-      </section>
+      {project.video ? (
+        <section className="section-wrap">
+          <div className={`section-heading gallery-section-heading${project.video.centered ? " is-centered" : ""}`}>
+            <div>
+              <h2>{project.video.title}</h2>
+            </div>
+          </div>
+          <div className="video-embed" data-reveal>
+            <iframe
+              src={project.video.embedUrl}
+              title={project.video.iframeTitle}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            />
+          </div>
+        </section>
+      ) : project.gallery ? (
+        <section className="section-wrap">
+          <div className={`section-heading gallery-section-heading${galleryHeading.centered ? " is-centered" : ""}`}>
+            <div>
+              {galleryHeading.eyebrow ? <p>{galleryHeading.eyebrow}</p> : null}
+              <h2>{galleryHeading.title}</h2>
+            </div>
+          </div>
+          <div className="gallery-grid">
+            {project.gallery.map((image) => (
+              <figure key={image.src} data-reveal>
+                <img src={image.src} alt={image.alt} loading="lazy" />
+                <figcaption>{image.caption}</figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       {project.changelog ? (
         <section className="section-wrap">

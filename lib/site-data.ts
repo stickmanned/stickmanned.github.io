@@ -25,7 +25,18 @@ export type CaseStudy = Project & {
     bullets?: string[];
     links?: { label: string; href: string }[];
   }[];
+  galleryHeading?: {
+    title: string;
+    eyebrow?: string;
+    centered?: boolean;
+  };
   gallery: { src: string; alt: string; caption: string }[];
+  video?: {
+    title: string;
+    embedUrl: string;
+    iframeTitle: string;
+    centered?: boolean;
+  };
   components?: {
     heading: string;
     note?: string;
@@ -60,13 +71,13 @@ export const featuredProjects: Project[] = [
     title: "Pine A64 Gaming PC",
     year: "2026",
     dateISO: "2026-07-02",
-    image: "/design-assets/pinea64.jpeg",
+    image: "/img/projects/pine-a64-gaming-pc/finished_case_fan_spinning.jpeg",
     href: "/projects/pine-a64-gaming-pc/",
     externalHref: "https://github.com/stickmanned/Pine-A64-Gaming-PC",
     categories: ["Featured", "Hardware"],
     tags: ["Hardware", "CAD / OpenSCAD", "Linux", "3D Print"],
     blurb:
-      "A Pine A64 single-board computer converted into a custom-cooled, 3D-printed cloud gaming PC that streams games over Moonlight.",
+      "I turned an old Pine A64 board into a custom-cooled, 3D-printed Moonlight gaming client with DietPi, wiring, CAD, and DRM/KMS debugging.",
   },
   {
     slug: "blossom",
@@ -74,13 +85,13 @@ export const featuredProjects: Project[] = [
     title: "Blossom",
     year: "2026",
     dateISO: "2026-04-02",
-    image: "/design-assets/blossom.png",
+    image: "/img/projects/blossom/repo/icon-128.png",
     href: "/projects/blossom/",
     externalHref: "https://github.com/stickmanned/Blossom",
     categories: ["Featured", "Web Apps"],
-    tags: ["Chrome Extension", "JavaScript", "UI"],
+    tags: ["Chrome Extension", "Manifest V3", "JavaScript", "Local Storage"],
     blurb:
-      "A gamified Chrome extension that grows a virtual garden while you focus, with a timer, distraction blocking, and a coin-based garden shop.",
+      "A Manifest V3 focus extension where I turned timers, blocked sites, coins, tree growth, and a draggable garden into one small productivity game.",
   },
   {
     slug: "ai-nerf-aimbot",
@@ -92,9 +103,9 @@ export const featuredProjects: Project[] = [
     href: "/projects/ai-nerf-aimbot/",
     externalHref: "https://github.com/stickmanned/AI-Nerf-gun-Aimbot",
     categories: ["Featured", "Hardware", "Experiments"],
-    tags: ["Computer Vision", "Python", "Arduino"],
+    tags: ["Computer Vision", "Python", "Arduino", "OpenCV"],
     blurb:
-      "An automatic Nerf blaster aimbot using camera detection, tracking, motion prediction, and pan/tilt servo control.",
+      "A webcam-to-Arduino aiming prototype that uses MediaPipe pose tracking, serial commands, and two servos to point a Nerf turret at a detected target.",
   },
   {
     slug: "spacegoose",
@@ -106,9 +117,9 @@ export const featuredProjects: Project[] = [
     href: "/projects/spacegoose/",
     externalHref: "https://fraserhackclub.itch.io/spacegoose",
     categories: ["Featured", "Games"],
-    tags: ["Game", "Game Jam"],
+    tags: ["Godot", "GDScript", "Game Jam"],
     blurb:
-      "A game-jam project about a goose retrieving the almighty Golden Egg from D00M Duck through intergalactic obstacles.",
+      "A Godot platformer I helped build for Juice 2025, with score-gated planets, juice powerups, inventory, weapons, and a final Doom Duck boss.",
   },
   {
     slug: "lamp-pro",
@@ -460,9 +471,9 @@ export const allProjects = [...featuredProjects, ...extraProjects];
 export const caseStudies: CaseStudy[] = [
   {
     ...featuredProjects[0],
-    eyebrow: "Hardware flagship",
+    eyebrow: "Hardware / Hack Club Horizons",
     summary:
-      "Converting a low-power ARM64 Pine A64 board into a custom-cooled cloud and retro gaming PC.",
+      "I turned a low-power Pine A64 single-board computer into a custom-cooled, custom-enclosed gaming client, then documented the whole process from teardown to final Moonlight streaming test.",
     links: [
       {
         label: "Project repo",
@@ -476,82 +487,187 @@ export const caseStudies: CaseStudy[] = [
         label: "Bill of materials",
         href: "https://github.com/stickmanned/Pine-A64-Gaming-PC/blob/main/Pine%20A64%20PC%20Bill%20of%20Materials.csv",
       },
+      {
+        label: "Build timelapses",
+        href: "https://drive.google.com/drive/folders/1OZEimO6eNiohD2dQr07wJ2Tfkh4ZQb1m?usp=sharing",
+      },
     ],
     sections: [
       {
-        title: "Problem",
+        title: "Overview",
         body: [
-          "The Pine A64 is a cheap 2GB ARM64 board with almost no game-rendering capability, but it can become a useful gaming client if the heavy rendering is offloaded to a host PC.",
-          "The build had to keep the board cool, make hardware-accelerated video decode work under Linux, and package everything into an enclosure that felt like a real product.",
+          "This project started as a simple question: could I make an old Pine A64 feel like a tiny gaming PC if I stopped asking it to render games locally and instead treated it like a purpose-built streaming appliance?",
+          "The answer became a full hardware and software build. I used a Pine A64 2GB Rev B board running DietPi, streamed games from a host PC with Moonlight, added active cooling with a Noctua 60 mm fan, wired a real external power button, and designed a custom 3D-printed enclosure around the board.",
+          "I built it for Hack Club Horizons, so the project also had to be reviewable and reproducible. The repo includes the hourly devlog, CAD files, wiring schematic, firmware config, BOM, photos, and final assembly notes instead of just a finished glamour shot.",
         ],
       },
       {
-        title: "What I Built",
+        title: "Why I Built It",
         body: [
-          "A DietPi-based Moonlight streaming client with active Noctua cooling, a 12V fan rail boosted from the 5V supply, a momentary power switch on the EXP header, and a custom 3D-printed enclosure.",
-          "The board streams games from a host gaming PC while the Pine A64 handles video decode and input.",
+          "I wanted to build something that sat between a normal PC build and a small embedded project. The Pine A64 is not powerful in the way a gaming machine usually is, which made it interesting: the project was not about brute force, it was about constraints, routing, thermals, Linux graphics, and packaging.",
+          "The main idea was to prove that the board could become a useful cloud gaming client if the hard rendering work happened on a stronger host PC. That meant my job was to make the Pine A64 boot reliably, decode and display the stream, stay cool, handle input, and live inside a case that felt intentional.",
+          "It also mattered to me as a portfolio project because it shows the messy middle of engineering: reading pinouts, debugging boot failures, changing the software architecture when the first approach is wrong, revising CAD after a part does not physically fit, and writing down enough detail that someone else can understand the build.",
         ],
       },
       {
-        title: "My Role",
+        title: "The Build Process",
         body: [
-          "William handled the physical assembly, wiring, CAD modeling, custom OpenSCAD keycap work, software bring-up, DRM/KMS debugging, and documentation.",
+          "I started by removing the stock acrylic enclosure and exposing the Pine A64 board so I could plan the thermal and mounting layout. From there I finalized the BOM around a Noctua NF-A6x25 FLX fan, copper heatsinks, an MT3608 boost converter, jumper wiring, M3 hardware, a Cherry MX-compatible momentary switch, and 3D printing materials.",
+          "Before wiring anything permanently, I mapped the board headers. The fan power path used the Pi-2 bus 5 V and GND pins as the input side for the MT3608 boost converter, while the external power button connected to the EXP header pin 5, `Pwr/Stb Sw`, and pin 6, `GND`. I deliberately used the power-button signal instead of putting a switch in series with the main 5 V line, because hard-cutting power while DietPi is running can corrupt the microSD card.",
+          "On the software side I flashed DietPi, worked through HDMI and boot problems, and moved toward a minimal Moonlight setup. The important fix was forcing HDMI to `1920x1080@60` in `/boot/dietpiEnv.txt` before Linux started, which kept the Allwinner A64 DRM/KMS display stack from exhausting the CMA memory pool. I also removed the XFCE desktop path so Moonlight could run closer to an appliance-style setup instead of carrying a full desktop environment in the background.",
+          "The enclosure was designed in Fusion 360 using imported reference geometry, a Noctua fan model, and a Cherry MX switch model. I designed fan mounting pillars, a side power-button cutout, a top fan opening with chamfered edges, and separate top and bottom shells. After a test print showed the fan could not slide past all four pillars, I revised the CAD by removing one pillar while keeping enough structure for the fan to mount securely.",
+          "One small detail turned into its own mini project: the sourced keycaps were too large for the cutout I had designed. Instead of remodeling a cap from scratch, I used the KeyV2 OpenSCAD library to generate a smaller 16 mm by 16 mm Cherry-compatible keycap with a 7 mm depth and an engraved power icon.",
         ],
       },
       {
-        title: "Tech Stack",
-        body: [],
+        title: "Technical Decisions",
+        body: [
+          "The build split power into two roles: the Pine A64 stayed on a regulated 5 V supply, and the Noctua fan got its own 12 V rail from the MT3608 boost converter. The golden rule in the devlog was that 12 V powers only the fan and never touches the Pine A64 headers.",
+          "For networking and streaming, the project leaned on Moonlight and a host gaming PC. Ethernet was preferred over Wi-Fi for lower latency and stability. The Pine A64 handled the client side: boot, display output, input devices, and the streaming session.",
+          "For reproducibility, I committed the DietPi boot snippet, Moonlight autostart block, KMS/input udev rule, installer script, wiring schematic, Fusion 360 archive, STL/3MF exports, BOM, and devlog. That documentation became part of the engineering work, not an afterthought.",
+        ],
         bullets: [
           "Pine A64 2GB Rev B running DietPi",
-          "Moonlight / moonlight-qt",
-          "Noctua NF-A6x25 FLX fan and MT3608 boost converter",
-          "Fusion 360, OpenSCAD, KeyV2, PLA 3D printing",
-        ],
-      },
-      {
-        title: "Build Process",
-        body: [
-          "The project moved through teardown, cooling, OS setup, video decode debugging, CAD enclosure design, final wiring, and the custom keycap.",
-          "A key software fix was forcing HDMI to 1080p before Linux started with video=HDMI-A-1:1920x1080@60, then running Moonlight directly on DRM/KMS instead of through a desktop.",
+          "Moonlight / moonlight-qt streaming from a host gaming PC",
+          "Allwinner A64 DRM/KMS display stack with a 1080p HDMI boot cap",
+          "Noctua NF-A6x25 FLX fan, copper heatsinks, and MT3608 boost converter",
+          "EXP header momentary power switch instead of hard-cutting main power",
+          "Fusion 360 enclosure, OpenSCAD KeyV2 keycap, STL/3MF print exports",
         ],
       },
       {
         title: "Challenges",
         body: [
-          "The Allwinner A64 graphics stack exhausted contiguous memory during display initialization until the HDMI mode and desktop stack were simplified.",
-          "Physical issues included USB hot-plug brownouts, a fan-mount pillar blocking the fan, and tight cable management inside the shell.",
+          "The hardest part was not one single bug. It was the way small constraints stacked on top of each other. Early bring-up had black-screen HDMI failures, USB hotplug brownouts, unreliable network discovery, and repeated boot instability. I had to switch between hardware isolation, better power delivery, SSH-first setup, router/DHCP detective work, and display debugging just to get a stable path into the board.",
+          "Moonlight exposed another constraint: the Pine A64 is a very limited client. The devlog records an early stream running at about 2 FPS when the system fell back to software decoding. Re-enabling the modern display path and capping HDMI at 1080p improved the situation, but the project also made clear that the graphics stack, Mali-400 driver limitations, startup races, and rendering backend choices all mattered.",
+          "The autostart flow went through several experiments. EGLFS helped move away from a desktop, but it also brought cursor and SDL display issues. I added delay logic, fixed runtime directory problems, and installed a udev rule so the normal DietPi user could access DRM and input devices. The devlog is honest that after Hour 11 the stack was functionally correct but architecturally misaligned; the final repo files document the cleaner boot, udev, and autostart setup used for review.",
+          "The physical build had its own version of that same lesson. A CAD design can look clean and still fail when the fan physically cannot slide into place. The power button needed a custom keycap because the real cutout was smaller than the keycaps I had. Even cable routing mattered, so the final assembly uses hot glue for strain relief and to keep wiring away from the heatsinks.",
         ],
       },
       {
-        title: "Result",
+        title: "What I Learned",
         body: [
-          "A working low-power cloud gaming client that boots into Moonlight, stays actively cooled, and has reproducible CAD, firmware config, wiring schematic, BOM, and devlog artifacts.",
+          "Technically, I learned how much embedded Linux work happens below the visible app. A gaming stream is not just Moonlight launching successfully. It depends on boot resolution, memory allocation, DRM/KMS availability, input permissions, startup timing, display backend behavior, and power stability.",
+          "I also learned to treat hardware documentation as a design tool. The pinout work in Hour 2 shaped the whole electrical architecture: where the fan power came from, where the power button signal went, and why the 12 V fan rail had to stay separate from the board.",
+          "Personally, this project taught me to keep going after the first version technically works but still feels wrong. The build improved because I kept writing down failures, checking assumptions, and letting real test results change the design.",
+        ],
+      },
+      {
+        title: "Final Result / Current Status",
+        body: [
+          "The final build is a working low-power Moonlight gaming client inside a custom 3D-printed enclosure. The power button starts and shuts down the board, the fan spins immediately and moves air across the heatsinks, DietPi boots into the Moonlight launch flow, and the completed enclosed unit streamed a live session from the host PC end-to-end.",
+          "What worked: the active cooling, the separate 12 V fan rail, the EXP-header power button, the revised enclosure, the custom keycap, the 1080p HDMI boot cap, and the final assembly process. What did not work cleanly at first: the desktop-based approach, early HDMI handling, hot-plug USB behavior, EGLFS/rendering experiments, and the first four-pillar fan mount.",
+          "If I kept improving it, I would focus on making the startup architecture more service-based, testing latency and frame pacing more formally, and refining the enclosure for easier maintenance. Even with those next steps, this is one of my stronger portfolio projects because it shows the full loop: concept, sourcing, wiring, OS bring-up, CAD, printing, debugging, final testing, and documentation.",
         ],
       },
     ],
+    galleryHeading: {
+      title: "Gallery",
+      centered: true,
+    },
     gallery: [
       {
-        src: "https://raw.githubusercontent.com/stickmanned/Pine-A64-Gaming-PC/main/Photos/cad_final_render_fan_angle.png",
-        alt: "Fusion 360 render of the finished enclosure",
-        caption: "Fusion 360 enclosure render",
+        src: "/img/projects/pine-a64-gaming-pc/teardown_bare_board.jpg",
+        alt: "Bare Pine A64 board after removing the stock acrylic enclosure",
+        caption: "Bare-board teardown",
       },
       {
-        src: "https://raw.githubusercontent.com/stickmanned/Pine-A64-Gaming-PC/main/Photos/final_assembly_fan_and_board.jpeg",
+        src: "/img/projects/pine-a64-gaming-pc/noctua_fan.jpg",
+        alt: "Noctua NF-A6x25 FLX 12V fan used for active cooling",
+        caption: "Noctua 12V fan",
+      },
+      {
+        src: "/img/projects/pine-a64-gaming-pc/bom_sourcing_cart.png",
+        alt: "Sourcing cart for power, thermal, and prototyping hardware",
+        caption: "BOM sourcing",
+      },
+      {
+        src: "/img/projects/pine-a64-gaming-pc/cad_inner_pillars.png",
+        alt: "Fusion 360 view of internal mounting pillars for the cooling fan",
+        caption: "Fan mounting pillars",
+      },
+      {
+        src: "/img/projects/pine-a64-gaming-pc/cad_power_button.png",
+        alt: "Fusion 360 side-panel cutout for the Cherry MX power switch",
+        caption: "Power-button cutout",
+      },
+      {
+        src: "/img/projects/pine-a64-gaming-pc/cad_top_cutout.png",
+        alt: "Fusion 360 top cover with chamfered fan cutout",
+        caption: "Top fan cutout",
+      },
+      {
+        src: "/img/projects/pine-a64-gaming-pc/cad_pillar_fix.png",
+        alt: "CAD revision showing the fan clearance fix after removing one pillar",
+        caption: "Pillar clearance fix",
+      },
+      {
+        src: "/img/projects/pine-a64-gaming-pc/final_wiring_hardware.jpeg",
+        alt: "MT3608 boost converter, USB cable, and Dupont wiring staged for final wiring",
+        caption: "Final wiring hardware",
+      },
+      {
+        src: "/img/projects/pine-a64-gaming-pc/pi2_bus_fan_power_wiring.jpeg",
+        alt: "Fan power leads soldered to the Pi-2 bus header power and ground pins",
+        caption: "Pi-2 bus fan power tap",
+      },
+      {
+        src: "/img/projects/pine-a64-gaming-pc/power_switch_lead_soldering.jpeg",
+        alt: "Power switch leads being soldered while the switch is held in a printed jig",
+        caption: "Power switch soldering",
+      },
+      {
+        src: "/img/projects/pine-a64-gaming-pc/exp_header_power_button_wiring.jpeg",
+        alt: "Power button leads connected to the EXP header with hot glue strain relief",
+        caption: "EXP header power button",
+      },
+      {
+        src: "/img/projects/pine-a64-gaming-pc/final_assembly_fan_and_board.jpeg",
         alt: "Fan mounted inside the printed enclosure next to the Pine A64 board",
         caption: "Fan and board assembly",
       },
       {
-        src: "https://raw.githubusercontent.com/stickmanned/Pine-A64-Gaming-PC/main/Photos/moonlight_streaming_verified.jpeg",
-        alt: "Moonlight streaming session running on the connected display",
-        caption: "Moonlight streaming verified",
+        src: "/img/projects/pine-a64-gaming-pc/cable_management_hot_glue.jpeg",
+        alt: "Fan leads and MT3608 secured inside the shell with hot glue",
+        caption: "Cable management",
+      },
+      {
+        src: "/img/projects/pine-a64-gaming-pc/finished_case_fan_spinning.jpeg",
+        alt: "Finished enclosure with the fan spinning through the top cutout",
+        caption: "Finished enclosure",
+      },
+      {
+        src: "/img/projects/pine-a64-gaming-pc/moonlight_streaming_verified.jpeg",
+        alt: "Moonlight streaming session running on a connected display",
+        caption: "Moonlight verified",
+      },
+      {
+        src: "/img/projects/pine-a64-gaming-pc/openscad_keycap_custom_dimensions.png",
+        alt: "OpenSCAD KeyV2 configuration for the custom power-button keycap",
+        caption: "OpenSCAD keycap dimensions",
+      },
+      {
+        src: "/img/projects/pine-a64-gaming-pc/keycap_slicer_power_icon.png",
+        alt: "Slicer preview of the custom keycap with an engraved power icon",
+        caption: "Power-icon keycap preview",
+      },
+      {
+        src: "/img/projects/pine-a64-gaming-pc/cad_final_render_fan_angle.png",
+        alt: "Fusion 360 render of the final enclosure from the fan side",
+        caption: "Final CAD render, fan angle",
+      },
+      {
+        src: "/img/projects/pine-a64-gaming-pc/cad_final_render_button_angle.png",
+        alt: "Fusion 360 render of the final enclosure from the power-button side",
+        caption: "Final CAD render, button angle",
       },
     ],
   },
   {
     ...featuredProjects[1],
-    eyebrow: "Chrome extension",
+    eyebrow: "Chrome extension / productivity game",
     summary:
-      "A local-first productivity extension that turns focus sessions into a growing virtual garden.",
+      "I built and published a Chrome extension that turns focus time into a tiny garden: you plant a tree, stay away from blocked sites, earn coins, and use those coins to grow a larger, stranger forest.",
     links: [
       {
         label: "Chrome Web Store",
@@ -562,57 +678,179 @@ export const caseStudies: CaseStudy[] = [
     ],
     sections: [
       {
-        title: "Problem",
+        title: "Overview",
         body: [
-          "Blossom started from the idea that staying on task could feel more like a game and less like being nagged by a timer.",
+          "Blossom started from a feeling I kept running into: focus tools often feel like punishment. They tell you what not to do, but they do not give you much to look forward to. I wanted to build a focus extension that still blocked distractions, but made the process feel more like growing something.",
+          "The result is a Manifest V3 Chrome extension with a popup-based focus timer, a draggable garden plot, planted trees that visually grow over time, a blocked-domain system, coins, a tree shop, garden expansion, and local progress stored in the browser.",
+          "The version documented here is the built extension from the GitHub repo and the public Chrome Web Store listing. The repo describes Blossom as a gamified productivity companion: plant a seed, focus, avoid distractions, earn coins, and spend those coins on new tree variants.",
         ],
       },
       {
-        title: "What I Built",
+        title: "Why I Built It",
         body: [
-          "A Manifest V3 Chrome extension with a focus timer, distraction blocking, local garden state, coins, shop purchases, and multiple tree species with visual growth stages.",
+          "I wanted the core action to be physical and visual, not just pressing start on another timer. In Blossom, starting a session means entering planting mode, choosing a tree type, and clicking a specific spot on the garden plot. That little interaction makes the session feel like it belongs somewhere.",
+          "The project was also a good way to explore browser-extension architecture. I had to split work between a popup UI, a background service worker, a content script, and Chrome's local storage, while keeping the user experience simple enough to understand from a small extension window.",
+          "For my portfolio, Blossom matters because it shows product thinking and implementation together. It is not only a JavaScript exercise; it has game mechanics, state persistence, UI animation, permissions, privacy considerations, and a public Web Store release.",
         ],
       },
       {
-        title: "My Role",
+        title: "Product Flow",
         body: [
-          "William designed and built Blossom with Paya Maroufi during Equinox Vancouver, then cleaned it up, drew additional tree species and growth stages, and published it to the Chrome Web Store.",
+          "The main flow starts in the popup. I click the timer button, Blossom switches into planting mode, and I choose which tree to plant. Blossom is always available for free, while Fire and Glowberry come from the shop inventory.",
+          "When I click the garden plot, the extension stores a new planted tree with a type, position, creation time, and active tree ID. The timer starts, the UI updates once per second, and the active tree changes stages as the session continues.",
+          "When I stop the session, the background script calculates elapsed focus time, converts it into coins, finalizes the active tree's growth time, and adds the focused seconds to the lifetime total. The popup then animates the conversion by counting the timer down and counting coins up, with coin sounds layered in so stopping a session feels rewarding.",
+        ],
+      },
+      {
+        title: "How It Works",
+        body: [
+          "The background service worker is the source of truth for timer, currency, focus stats, and garden state. It stores those pieces under separate `chrome.storage.local` keys, sanitizes loaded values, and responds to popup messages such as `TIMER_GET_STATE`, `TIMER_TOGGLE`, `GARDEN_BUY_TREE`, and `GARDEN_EXPAND`.",
+          "The popup script handles the interactive layer: rendering the timer, blocked-domain panel, shop, tree selector, garden viewport, planted tree sprites, and focus stats. It also manages planting mode, pan/drag behavior, purchase quantities, MAX buying, garden expansion, and the coin animation after a session ends.",
+          "The content script handles the distraction blocker. It runs on pages, reads the local timer and blocklist state, normalizes the current hostname, and only applies the lock when a focus session is active and the current domain matches the user's blocked list. The lock blurs the page, disables interaction behind the overlay, and shows the message `Stay focused, you are doing great.` with the current focused time.",
         ],
       },
       {
         title: "Tech Stack",
-        body: [],
+        body: [
+          "Blossom is intentionally local-first. The manifest uses the `storage` permission, the popup and background communicate through Chrome runtime messages, and the content script uses local state to decide whether the current tab should be blocked.",
+        ],
         bullets: [
           "Manifest V3 Chrome extension",
           "Vanilla JavaScript, HTML, CSS",
           "Webpack via Chrome Extension CLI",
-          "chrome.storage.local for local-first data",
+          "`chrome.storage.local` for timer, coins, focus stats, blocklist, inventory, and garden state",
+          "Background service worker for state transitions and point calculations",
+          "Content script for blocked-domain overlay during active focus sessions",
+          "Popup UI with custom tree art, shop panels, draggable garden viewport, and coin sounds",
         ],
       },
       {
-        title: "Build Process",
+        title: "Game Mechanics",
         body: [
-          "The extension uses a popup UI for timer, plot, and shop interactions; a background service worker for session state and coins; and content scripts for the focus overlay on blocked domains.",
+          "The tree system gives the timer a visible outcome. Blossom has five growth stages over an hour. Fire has three stages and earns 2 coins per minute. Glowberry has four stages, takes much longer to grow, and earns 5 coins per minute.",
+          "Coins are not just a number in the corner. They unlock the shop loop: spend coins on special tree inventory, choose those trees for future sessions, and expand the garden when the original 6 by 6 tile world starts feeling cramped. Expansion costs scale up as the garden grows.",
+          "The garden itself is stored as data rather than a static image. Each planted tree keeps percentage-based coordinates, so when the garden expands the background script can shift existing tree positions into the larger world instead of losing the layout.",
         ],
       },
       {
         title: "Challenges",
         body: [
-          "The product needed to block distractions while preserving user trust, so focus duration, coins, garden layout, and blocklists stay local in the browser.",
+          "The hardest part was making a tiny extension popup feel like a complete product. There are a lot of states hiding inside that small window: idle, planting, running, stopping, shopping, buying, blocked-domain editing, garden dragging, and garden expansion.",
+          "Another challenge was keeping state reliable. A focus session can outlive the popup window, so the background worker has to preserve the timer start time and active tree. When the popup opens again, it asks for current state and reconstructs the visible timer, garden, coins, and shop from storage.",
+          "The blocker also needed to be strict without feeling mysterious. I normalized domains, handled subdomains, watched storage changes, and polled once per second so the overlay still responds on single-page apps and changing browser state.",
+          "The repo also shows a few rough edges I would improve next: the quickstart file is still mostly boilerplate from Chrome Extension CLI, and the extension has a hidden developer panel for testing coins/timer state that I would keep out of a polished public-facing build or guard more clearly.",
         ],
       },
       {
-        title: "Result",
+        title: "What I Learned",
         body: [
-          "Blossom placed second at the Equinox Vancouver Hackathon, shipped publicly on the Chrome Web Store, and is open source under the MIT license.",
+          "Technically, I learned how to design a browser extension as several cooperating pieces instead of one page of JavaScript. The popup is the interface, the background script is the state machine, and the content script is the part that touches the web page.",
+          "I also learned that game mechanics need balancing even in small tools. Coin rates, tree costs, growth times, garden expansion costs, and purchase quantities all affect whether the loop feels motivating or confusing.",
+          "Personally, this project taught me that productivity software can have a softer personality. Blossom still blocks distractions, but the main emotional hook is building a garden that proves I spent time focusing.",
+        ],
+      },
+      {
+        title: "Final Result / Current Status",
+        body: [
+          "Blossom is open source on GitHub and published on the Chrome Web Store. The public listing describes it as a focused garden for productivity, and the repo includes the extension source, manifest, popup UI, background worker, content script, tree art, coin art, garden tile, sounds, and build configuration.",
+          "What worked well was the full loop: plant a tree, start focusing, block distractions, earn coins, buy new tree types, and expand the garden. What I would improve next is documentation, onboarding, extension-state cleanup, and more polished progression balancing as the garden gets larger.",
         ],
       },
     ],
+    galleryHeading: {
+      title: "Gallery",
+      centered: true,
+    },
     gallery: [
       {
-        src: "/design-assets/blossom.png",
-        alt: "Blossom project visual",
-        caption: "Garden focus product visual",
+        src: "/img/projects/blossom/store/store-screenshot-1.png",
+        alt: "Chrome Web Store screenshot of the Blossom extension popup with timer and garden",
+        caption: "Store screenshot - timer and garden",
+      },
+      {
+        src: "/img/projects/blossom/store/store-screenshot-2.png",
+        alt: "Chrome Web Store screenshot showing Blossom's garden and focus interface",
+        caption: "Store screenshot - focus interface",
+      },
+      {
+        src: "/img/projects/blossom/store/store-screenshot-3.png",
+        alt: "Chrome Web Store screenshot showing Blossom's shop and progression UI",
+        caption: "Store screenshot - shop and progression",
+      },
+      {
+        src: "/img/projects/blossom/repo/icon-128.png",
+        alt: "Blossom extension icon",
+        caption: "Extension icon",
+      },
+      {
+        src: "/img/projects/blossom/repo/garden-plot.png",
+        alt: "Tile artwork used for Blossom's draggable garden plot",
+        caption: "Garden plot tile",
+      },
+      {
+        src: "/img/projects/blossom/repo/coin.png",
+        alt: "Coin artwork used for Blossom's currency",
+        caption: "Coin currency asset",
+      },
+      {
+        src: "/img/projects/blossom/repo/blossom 1.png",
+        alt: "Blossom starter tree first growth stage",
+        caption: "Blossom tree - stage 1",
+      },
+      {
+        src: "/img/projects/blossom/repo/blossom 2.png",
+        alt: "Blossom starter tree second growth stage",
+        caption: "Blossom tree - stage 2",
+      },
+      {
+        src: "/img/projects/blossom/repo/blossom 3.png",
+        alt: "Blossom starter tree third growth stage",
+        caption: "Blossom tree - stage 3",
+      },
+      {
+        src: "/img/projects/blossom/repo/blossom 4.png",
+        alt: "Blossom starter tree fourth growth stage",
+        caption: "Blossom tree - stage 4",
+      },
+      {
+        src: "/img/projects/blossom/repo/blossom 5.png",
+        alt: "Blossom starter tree final growth stage",
+        caption: "Blossom tree - final stage",
+      },
+      {
+        src: "/img/projects/blossom/repo/fire 1.png",
+        alt: "Fire tree first growth stage",
+        caption: "Fire tree - stage 1",
+      },
+      {
+        src: "/img/projects/blossom/repo/fire 2.png",
+        alt: "Fire tree second growth stage",
+        caption: "Fire tree - stage 2",
+      },
+      {
+        src: "/img/projects/blossom/repo/fire 3.png",
+        alt: "Fire tree final growth stage",
+        caption: "Fire tree - final stage",
+      },
+      {
+        src: "/img/projects/blossom/repo/glow 1.png",
+        alt: "Glowberry tree first growth stage",
+        caption: "Glowberry tree - stage 1",
+      },
+      {
+        src: "/img/projects/blossom/repo/glow 2.png",
+        alt: "Glowberry tree second growth stage",
+        caption: "Glowberry tree - stage 2",
+      },
+      {
+        src: "/img/projects/blossom/repo/glow 3.png",
+        alt: "Glowberry tree third growth stage",
+        caption: "Glowberry tree - stage 3",
+      },
+      {
+        src: "/img/projects/blossom/repo/glow 4.png",
+        alt: "Glowberry tree final growth stage",
+        caption: "Glowberry tree - final stage",
       },
     ],
   },
@@ -620,75 +858,102 @@ export const caseStudies: CaseStudy[] = [
     ...featuredProjects[2],
     eyebrow: "Computer vision hardware",
     summary:
-      "A Scrapyard 2025 prototype for autonomous target detection, tracking, and Nerf blaster aiming.",
+      "I built a computer-vision aiming prototype that connects a webcam, Python pose tracking, serial communication, and an Arduino-controlled pan/tilt mount for a Nerf turret.",
     links: [
       {
         label: "GitHub",
         href: "https://github.com/stickmanned/AI-Nerf-gun-Aimbot/",
       },
+      {
+        label: "Demo video",
+        href: "https://www.youtube.com/watch?v=meBMtv7MJ30",
+      },
     ],
     sections: [
       {
-        title: "Problem",
+        title: "Overview",
         body: [
-          "The project goal was an autonomous Nerf blaster that detects targets, predicts motion, and actuates aim.",
+          "This project was my attempt to make a Nerf blaster feel like it had its own vision system. The repo is small, but the core loop is real: a Python program watches the webcam, detects a person with MediaPipe Pose, chooses the nose landmark as the target, maps that screen position into servo angles, and sends those angles to an Arduino over serial.",
+          "The Arduino side receives those target angles and moves two servos, one for horizontal aim and one for vertical aim. The code does not include an automated trigger, so I describe this honestly as an aiming prototype rather than a fully self-firing turret.",
         ],
       },
       {
-        title: "What I Built",
+        title: "Why I Built It",
         body: [
-          "A camera-feed-to-control-loop system: detection, tracking, motion prediction, and servo-driven pan/tilt actuation.",
+          "I wanted to explore the part of robotics that sits between software confidence and physical motion. It is one thing to draw a target point on a camera feed; it is another to turn that point into stable servo movement without jittering, overshooting, or fighting the limits of the mechanism.",
+          "A Nerf aiming rig was a fun way to make that problem visible. The project let me connect computer vision, coordinate mapping, serial protocols, embedded code, and mechanical constraints in one compact build.",
         ],
       },
       {
-        title: "My Role",
+        title: "How It Works",
         body: [
-          "William worked on the hardware platform, Python and Arduino C++ control code, and the documented face-tracking API/code path.",
+          "The Python script starts by auto-detecting a likely Arduino serial port, looking for device names such as `usbmodem` or `usbserial`. Once connected at 9600 baud, it sends an `INIT` command and asks the Arduino for its current default servo position.",
+          "After that handshake, OpenCV opens the webcam at a 451 by 480 frame size and MediaPipe Pose runs on each frame. When pose landmarks are available, the script uses landmark 0, the nose, as the target. It converts the normalized landmark position into pixel coordinates, draws a green target marker for debugging, and maps the target point into servo angles.",
+          "The horizontal mapping is inverted so movement in the camera frame corresponds to the physical direction of the turret. The vertical mapping stays normal, with the top of the frame mapped upward and the bottom mapped downward. The Python side also keeps the movement within a window around the Arduino's default position: X is allowed to move about 60 degrees each way, while Y is kept much tighter at about 10 degrees each way.",
         ],
       },
       {
         title: "Tech Stack",
         body: [],
         bullets: [
-          "Arduino UNO microcontroller",
-          "Tower Pro servos",
-          "12V battery source",
-          "Python and Arduino C++",
+          "Python with OpenCV for webcam capture and debug display",
+          "MediaPipe Pose for human landmark detection",
+          "PySerial for USB serial communication",
+          "Arduino sketch using the Servo library",
+          "Two-servo pan/tilt control, with servos attached to Arduino pins 3 and 5",
+          "A simple serial protocol: `INIT`, `DEFAULT,x,y`, and `newX,newY` angle commands",
         ],
       },
       {
-        title: "Build Process",
+        title: "Control Loop",
         body: [
-          "The documented control flow initializes servo positions, receives target coordinates over serial, constrains each axis, steps the servos toward the target, and fires.",
+          "The Arduino sketch starts both servos at 90 degrees and reports that default as `DEFAULT,90,90`. When it receives a new `x,y` command, it parses the values, constrains X between 30 and 150 degrees, and constrains Y between 80 and 100 degrees.",
+          "I handled servo motion gradually instead of instantly jumping to the target. The Arduino moves each axis toward the new angle in small steps, using 2-degree increments when it is far away and 1-degree increments when it gets close, with a 10 ms delay inside the movement loop. That makes the motion smoother and reduces abrupt mechanical twitching.",
+          "The Python side also avoids spamming repeated commands by remembering the previous X and Y angles. It only sends a new serial command when the mapped target angle changes, with a short 50 ms pause after each send.",
         ],
       },
       {
         title: "Challenges",
         body: [
-          "Future improvements listed in the original writeup include a custom 3D-printed shroud, on-device quantized model, ballistic curve calibration, and a live-feed web dashboard.",
+          "The main challenge was translating camera coordinates into physical movement. The camera sees a flat frame, but the servos move through constrained angles, and the useful range is not symmetrical. The code reflects that by inverting the horizontal mapping and keeping the vertical range narrow.",
+          "Another challenge was making the software and hardware agree about their starting point. Instead of hardcoding everything only on the Python side, the program asks the Arduino for its default position before calculating limits. That handshake made the system easier to reason about while testing.",
+          "There are also limits in the current version. The repo does not show ballistic compensation, target prediction, automatic firing, or a finished enclosure. It is a working aiming loop and a strong prototype, but not a completed productized turret.",
         ],
       },
       {
-        title: "Result",
+        title: "What I Learned",
         body: [
-          "A Scrapyard Vancouver 2025 submission demonstrating a complete hardware/software loop for vision-guided aiming.",
+          "This project taught me that robotics code has to be written with the physical system in mind. A detection model can update quickly, but servos need limits, smoothing, and a control protocol that does not flood the microcontroller.",
+          "I also learned the value of visible debugging. Drawing the target point on the OpenCV frame made it much easier to see whether the vision system was wrong, the mapping was wrong, or the servo movement was wrong.",
+          "As a portfolio project, this matters because it shows I can connect AI-style perception to hardware actuation. It is not just a model running in a notebook; it is software that talks to a real controller and moves a real mechanism.",
+        ],
+      },
+      {
+        title: "Final Result / Current Status",
+        body: [
+          "The final repo demonstrates a working webcam-to-servo aiming pipeline. Python detects the target, maps it into angles, and sends commands; the Arduino receives those commands, constrains them to safe ranges, and moves the pan/tilt servos smoothly.",
+          "What worked well was the end-to-end connection between MediaPipe tracking and Arduino motion. What I would improve next is the rest of the turret system: a more documented mechanical mount, calibration tools, target filtering, latency testing, and, if I wanted it to become a true automated Nerf system, a separately designed and safely controlled firing mechanism.",
         ],
       },
     ],
-    gallery: [
-      {
-        src: "/img/projects/nerf.png",
-        alt: "AI Nerf Gun Aimbot prototype",
-        caption: "Prototype image from the project archive",
-      },
-    ],
+    video: {
+      title: "Video",
+      embedUrl: "https://www.youtube.com/embed/meBMtv7MJ30",
+      iframeTitle: "AI Nerf Gun Aimbot demo video",
+      centered: true,
+    },
+    gallery: [],
   },
   {
     ...featuredProjects[3],
-    eyebrow: "Game jam",
+    eyebrow: "Godot platformer / Juice 2025",
     summary:
-      "A Hack Club Juice 2025 game-jam entry about a goose, the Golden Egg, and intergalactic obstacles.",
+      "I helped build a Godot platformer for Juice 2025 where a spacefaring goose collects eggs, bread, juice powerups, and score across planet-themed levels before confronting Doom Duck for the Golden Egg.",
     links: [
+      {
+        label: "GitHub repo",
+        href: "https://github.com/FraserHackClub/SpaceGoose",
+      },
       {
         label: "Play on itch.io",
         href: "https://fraserhackclub.itch.io/spacegoose",
@@ -696,46 +961,142 @@ export const caseStudies: CaseStudy[] = [
     ],
     sections: [
       {
-        title: "Problem",
+        title: "Overview",
         body: [
-          "SpaceGoose was made for Juice 2025, a Hack Club game jam in Shanghai.",
+          "SpaceGoose started as a Hack Club Juice 2025 game-jam project with a direct premise: play as a goose, travel through space, collect what you can, and eventually get the Golden Egg back from Doom Duck.",
+          "The repo shows a real Godot 4.4 project rather than a one-screen prototype. It has a main menu, level selector, persistent inventory, score-gated progression, multiple world scenes, custom pixel-art sprites, juice powerups, a weapon pickup, bullets and fireballs, hazards, teleporters, pause handling, and a final boss scene.",
+          "I am describing this as a collaborative game-jam build because the repository lives under Fraser Hack Club and has many feature branches and pull requests. My write-up focuses on the parts I can verify from the project files instead of pretending the README contains a polished devlog.",
         ],
       },
       {
         title: "What I Built",
         body: [
-          "A game where you play a goose trying to retrieve the almighty Golden Egg from D00M Duck and return it to the Golden Goose while facing intergalactic obstacles.",
+          "I worked on a 2D platformer loop where movement, collection, survival, and level progression all feed into each other. The player goose can walk, jump, double-jump, crouch, glide, interact with level exits, collect eggs and bread for score, lose eggs on death, and carry progress between runs through an inventory save file.",
+          "The game is organized around a sequence of level scenes listed in `global.gd`. The tracked progression path includes 16 playable level entries, moving from early Earth-style stages into Moon, Mars, asteroid, and final boss areas. Score requirements gate later stages, so collecting items and finishing levels matters beyond just reaching the exit.",
+          "The more playful systems are the juice powerups. Apple juice boosts speed, grape juice grants timed invincibility with a separate timer display, and orange juice works with the gun system by reloading fireballs when the player has picked up the weapon.",
         ],
       },
       {
-        title: "My Role",
+        title: "My Process",
         body: [
-          "The old site lists SpaceGoose as William's game-jam project; the public itch.io page is the source link for the playable build.",
+          "I started from the core platformer feeling: the goose had to be readable, responsive, and funny without becoming impossible to control. That meant tuning speed, jump velocity, crouching, wall or invincibility jumps, gravity, and animation states so the character could move through long tile-based levels and tight obstacle sections.",
+          "Once the movement loop existed, I built outward into progression. I connected pickups to inventory counts, score, HUD labels, and persistent storage, then used that score to decide when the next level should load and when the level selector should appear instead. That made the game feel less like disconnected scenes and more like one campaign.",
+          "The final pass was about making the game feel complete enough to ship for a jam: menus, level selection, pause handling, help-sign toggles, juice UI, export presets for Windows, Linux, and web, and release tags in the repo leading up to `v1.2.1`.",
         ],
       },
       {
         title: "Tech Stack",
-        body: [],
-        bullets: ["Game jam build", "itch.io release"],
-      },
-      {
-        title: "Build Process",
         body: [
-          "This is intentionally a lighter case study because the old repo has no dedicated SpaceGoose writeup.",
+          "The project is built in Godot and scripted with GDScript. The repo uses Godot scenes for the player, pickups, hazards, level worlds, UI, camera, weapons, projectiles, and Doom Duck.",
+        ],
+        bullets: [
+          "Godot 4.4 with the GL Compatibility renderer",
+          "GDScript for movement, inventory, menus, camera logic, pickups, weapons, and boss behavior",
+          "Godot `.tscn` scenes for levels, UI panels, characters, hazards, projectiles, and interactables",
+          "`user://inventory.json` persistence for items, score, Golden Egg state, and current level",
+          "Keyboard, mouse, and some controller input mappings for movement, shooting, pause, restart, help, and juice",
+          "Export presets for Windows, Linux, and web builds",
         ],
       },
       {
-        title: "Result",
+        title: "Systems I Worked Through",
         body: [
-          "A shipped game-jam entry and a concrete example of William's game development work.",
+          "The inventory system became the backbone. It stores eggs, bread, apple juice, orange juice, grape juice, score, current level, and whether the Golden Egg has been collected. That data is fetched when the main menu or a level loads, updated when items are collected or used, and committed before level transitions or game-over states.",
+          "The level flow uses a central list of scene paths and score requirements. When I finish a level, leftover time converts into score, the game checks whether I have enough score for the next level, and then either loads the next scene or sends me to the level selector. That kept progression explicit and easier to debug.",
+          "The powerup system sits on top of the same inventory. Juice items spawn in levels, animate as collectables, and then trigger different player effects through a small action map: speed for apple, fireball ammo for orange, and invincibility for grape.",
+          "The weapon system is intentionally simple but useful: the gun stays hidden until picked up, rotates toward the mouse, reloads, tracks ammo, shoots bullet or fireball scenes from a barrel marker, and shakes when empty. That gave the boss fight and later levels a different rhythm from pure platforming.",
+          "For Doom Duck, the repo shows a boss with health, chase behavior, jumps, spawned enemy ducks, body and head hit detection, rage/golden states, and a Golden Egg spawn on defeat. I treated that as the endgame moment rather than just another hazard.",
+        ],
+      },
+      {
+        title: "Challenges",
+        body: [
+          "The hardest part was keeping a jam game from collapsing under its own ideas. A platformer with inventory, score gates, powerups, weapons, teleports, camera sections, menus, and a boss can get messy quickly, especially when scenes are being added in parallel.",
+          "One challenge was state. The player, main scene, level selector, camera, juice menu, and inventory file all need to agree about the current level and current items. I handled that by putting shared values in `Global`, saving inventory to JSON, and re-fetching inventory at important transitions.",
+          "Another challenge was camera and level scale. The project uses long levels, sublevel teleports, level-specific camera settings, and a chunk-management path, so I had to think beyond one static screen. Teleporters update both player position and camera section data so moving between parts of a world does not break the view.",
+          "The repo also shows the normal rough edges of a jam project: debug prints, old branch names, a minimal README, and some duplicate or experimental scene files. I am keeping those out of the portfolio copy because they are not the point, but I also do not want to pretend the repo is cleaner than it is.",
+        ],
+      },
+      {
+        title: "What I Learned",
+        body: [
+          "I learned that game development is mostly systems agreeing with each other. The moment I added persistent inventory, every other part of the game had to respect it: pickups, UI labels, death, level completion, score gates, menus, and boss rewards.",
+          "I also learned how much polish comes from small transitions. The finish sequence hides the goose, plays a blastoff animation and sound, counts remaining time into score, commits inventory, and then changes level. That kind of sequence makes progress feel earned.",
+          "Most of all, SpaceGoose taught me how to ship inside constraints. A jam build does not have infinite time for architecture, but it still needs enough structure that new levels, items, and mechanics can be added without everything becoming impossible to reason about.",
+        ],
+      },
+      {
+        title: "Final Result / Current Status",
+        body: [
+          "SpaceGoose shipped as a playable itch.io game and has an open GitHub repo with source scenes, scripts, assets, export presets, tags, branches, and pull requests. The main branch is tagged through `v1.2.1`, which matches a project that kept getting bug fixes and polish after the earliest jam version.",
+          "What worked well was the full game loop: move through levels, collect score items, use powerups, unlock later planets, pick up a weapon, and reach a final Doom Duck encounter. What I would improve next is documentation, scene organization, debug cleanup, and clearer contributor notes so the source is easier for someone new to understand.",
         ],
       },
     ],
+    galleryHeading: {
+      title: "Repo Images",
+      centered: true,
+    },
     gallery: [
       {
-        src: "/img/projects/spacegoose.png",
-        alt: "SpaceGoose screenshot",
-        caption: "SpaceGoose project image",
+        src: "/img/projects/spacegoose/loading.png",
+        alt: "SpaceGoose loading art with the game title in pixel-art style",
+        caption: "Loading / title art",
+      },
+      {
+        src: "/img/projects/spacegoose/icon.png",
+        alt: "SpaceGoose square app icon",
+        caption: "Godot app icon",
+      },
+      {
+        src: "/img/projects/spacegoose/goose-idle.png",
+        alt: "Pixel-art idle sprite sheet for the player goose",
+        caption: "Player goose sprite",
+      },
+      {
+        src: "/img/projects/spacegoose/doom-duck.png",
+        alt: "Pixel-art Doom Duck boss sprite",
+        caption: "Doom Duck boss",
+      },
+      {
+        src: "/img/projects/spacegoose/golden-goose.png",
+        alt: "Pixel-art Golden Goose sprite",
+        caption: "Golden Goose",
+      },
+      {
+        src: "/img/projects/spacegoose/golden-egg.png",
+        alt: "Pixel-art Golden Egg sprite",
+        caption: "Golden Egg reward",
+      },
+      {
+        src: "/img/projects/spacegoose/applejuice-icon.png",
+        alt: "Apple juice powerup icon",
+        caption: "Apple juice speed boost",
+      },
+      {
+        src: "/img/projects/spacegoose/orangejuice-icon.png",
+        alt: "Orange juice powerup icon",
+        caption: "Orange juice fireball reload",
+      },
+      {
+        src: "/img/projects/spacegoose/grapejuice-icon.png",
+        alt: "Grape juice powerup icon",
+        caption: "Grape juice invincibility",
+      },
+      {
+        src: "/img/projects/spacegoose/moon-sky.png",
+        alt: "Moon sky background asset from SpaceGoose",
+        caption: "Moon background",
+      },
+      {
+        src: "/img/projects/spacegoose/mars-sky.png",
+        alt: "Mars sky background asset from SpaceGoose",
+        caption: "Mars background",
+      },
+      {
+        src: "/img/projects/spacegoose/asteroids.png",
+        alt: "Asteroid planet selection artwork from SpaceGoose",
+        caption: "Asteroid world art",
       },
     ],
   },
