@@ -13,33 +13,25 @@ import {
 } from "react-icons/lu";
 import { musicTracks, STARTUP_SRC } from "@/lib/music";
 
-const SESSION_KEY = "startup-audio-done";
 const DONE_EVENT = "startup-audio-done";
 
 type Phase = "boot" | "blocked" | "intro";
 
-// "Startup already played this session" is external state (sessionStorage),
-// exposed as a store so reads stay hydration-safe.
+// In-memory flag so the startup track replays on full page reload/visit,
+// but does not play again during client-side route transitions.
+let startupPlayed = false;
+
 function subscribeDone(onChange: () => void) {
   window.addEventListener(DONE_EVENT, onChange);
   return () => window.removeEventListener(DONE_EVENT, onChange);
 }
 
 function readDone() {
-  try {
-    return sessionStorage.getItem(SESSION_KEY) === "1";
-  } catch {
-    // No storage: skip the intro rather than replaying it on every render.
-    return true;
-  }
+  return startupPlayed;
 }
 
 function markDone() {
-  try {
-    sessionStorage.setItem(SESSION_KEY, "1");
-  } catch {
-    // Ignore; worst case the intro replays next full load.
-  }
+  startupPlayed = true;
   window.dispatchEvent(new Event(DONE_EVENT));
 }
 
@@ -65,24 +57,47 @@ export function MusicPlayer() {
     audio.addEventListener("ended", markDone);
     audio.addEventListener("error", markDone);
 
-    audio
-      .play()
-      .then(() => setPhase("intro"))
-      .catch(() => {
-        // Missing file surfaces as an error on the element; a blocked
-        // autoplay leaves the element intact and just rejects play().
-        if (audio.error) {
-          markDone();
-        } else {
-          setPhase("blocked");
-        }
-      });
+    const tryPlay = () => {
+      audio
+        .play()
+        .then(() => {
+          setPhase("intro");
+          removeListeners();
+        })
+        .catch(() => {
+          if (audio.error) {
+            markDone();
+            removeListeners();
+          } else {
+            setPhase("blocked");
+          }
+        });
+    };
+
+    const handleInteraction = () => {
+      tryPlay();
+    };
+
+    const removeListeners = () => {
+      window.removeEventListener("click", handleInteraction);
+      window.removeEventListener("keydown", handleInteraction);
+      window.removeEventListener("touchstart", handleInteraction);
+    };
+
+    // Try playing immediately
+    tryPlay();
+
+    // Listen for first interaction to trigger play if it was blocked
+    window.addEventListener("click", handleInteraction);
+    window.addEventListener("keydown", handleInteraction);
+    window.addEventListener("touchstart", handleInteraction);
 
     return () => {
       audio.removeEventListener("ended", markDone);
       audio.removeEventListener("error", markDone);
       audio.pause();
       startupRef.current = null;
+      removeListeners();
     };
   }, [done]);
 

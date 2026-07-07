@@ -54,8 +54,9 @@ export function ThemeToggle() {
       onClick={cycle}
       title={`Theme: ${current.label} (switch to ${next.label})`}
       aria-label={`Switch theme to ${next.label}`}
+      suppressHydrationWarning
     >
-      <LuPalette aria-hidden="true" />
+      <LuPalette aria-hidden="true" suppressHydrationWarning />
     </button>
   );
 }
