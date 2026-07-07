@@ -1,9 +1,15 @@
-import Link from "next/link";
+import { ToolIcon } from "@/components/icons";
 import { KnowledgeGraph } from "@/components/knowledge-graph";
 import { ProjectConstellation } from "@/components/project-constellation";
 import { SelectedWork } from "@/components/selected-work";
-import { ToolIcon } from "@/components/icons";
-import { allProjects, experienceItems, stats, toolbox, writingEntries } from "@/lib/site-data";
+import {
+  allProjects,
+  experienceItems,
+  stats,
+  toolbox,
+  writingEntries,
+} from "@/lib/site-data";
+import Link from "next/link";
 
 export default function HomePage() {
   const timeline = experienceItems.slice(0, 6);
@@ -11,40 +17,59 @@ export default function HomePage() {
 
   return (
     <main id="top">
-      <section className="hero scene" data-scene="hero" aria-labelledby="hero-title">
-        <div className="layer depth-0 hero-grid" data-depth="0" aria-hidden="true" />
-        <div className="layer depth-1 hero-sweep" data-depth="1" aria-hidden="true" />
+      <section
+        className="hero scene"
+        data-scene="hero"
+        aria-labelledby="hero-title"
+      >
+        <div
+          className="layer depth-0 hero-grid"
+          data-depth="0"
+          aria-hidden="true"
+        />
+        <div
+          className="layer depth-1 hero-sweep"
+          data-depth="1"
+          aria-hidden="true"
+        />
         <div className="hero-inner">
           <ProjectConstellation />
           <div className="hero-copy depth-4" data-depth="4">
-          <p className="eyebrow">
-            <span /> Student builder - hardware x software
-          </p>
-          <h1 id="hero-title">William Wen</h1>
-          <p className="hero-lede">
-            Hardware-focused student builder creating <strong>web apps, games, and physical computing</strong>{" "}
-            projects.
-          </p>
-          <div className="hero-proof">
-            <span>Now</span>
-            <p>
-              Co-founder of{" "}
-              <a href="http://fraser.hackclub.com/" target="_blank" rel="noreferrer">
-                Fraser Hack Club
-              </a>{" "}
-              and deep in hardware builds.
+            <p className="eyebrow">
+              <span /> Student builder - hardware x software
             </p>
-            <span>Prev</span>
-            <p>2nd place at Equinox Vancouver, Juice 2025 in Shanghai, and Scrapyard Vancouver.</p>
-          </div>
-          <div className="button-row">
-            <Link className="accent-button" href="/projects/">
-              View Projects
-            </Link>
-            <Link className="quiet-button" href="/contact/">
-              Get in touch
-            </Link>
-          </div>
+            <h1 id="hero-title">William Wen</h1>
+            <p className="hero-lede">
+              Hardware-focused student builder creating{" "}
+              <strong>web apps, games, and physical computing</strong> projects.
+            </p>
+            <div className="hero-proof">
+              <span>Now</span>
+              <p>
+                Co-founder of{" "}
+                <a
+                  href="http://fraser.hackclub.com/"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Fraser Hack Club
+                </a>{" "}
+                and deep in hardware builds.
+              </p>
+              <span>Prev</span>
+              <p>
+                2nd place at Equinox Vancouver, Juice 2025 in Shanghai, and
+                Scrapyard Vancouver.
+              </p>
+            </div>
+            <div className="button-row">
+              <Link className="accent-button" href="/projects/">
+                View Projects
+              </Link>
+              <Link className="quiet-button" href="/contact/">
+                Get in touch
+              </Link>
+            </div>
           </div>
         </div>
       </section>
@@ -65,7 +90,10 @@ export default function HomePage() {
         <div className="section-heading" data-reveal>
           <p>01 - Selected Work</p>
           <h2>Things I&apos;ve built.</h2>
-          <span>A mix of hardware experiments, web apps, and games. Every one shipped, documented, and real.</span>
+          <span>
+            A mix of hardware experiments, web apps, and games. Every one
+            shipped, documented, and real.
+          </span>
         </div>
         <SelectedWork projects={allProjects} />
       </section>
@@ -82,12 +110,30 @@ export default function HomePage() {
             </figure>
             <div className="capability-grid">
               {[
-                ["Hardware & PCs", "SFF builds, custom cooling, single-board computers, and printed enclosures."],
-                ["Web Apps", "Full-stack sites and browser extensions with HTML, CSS, JS/TS, and React."],
-                ["Game Dev", "Games in Godot, Unity, Roblox, and Scratch, from jams to releases."],
-                ["3D & CAD Design", "Modeling in AutoCAD and OpenSCAD, then printing real parts."],
-                ["Writing", "Essays, short stories, and notes that communicate ideas clearly."],
-                ["Leadership", "Co-founded Fraser Hack Club, the largest coding club in Coquitlam, BC."]
+                [
+                  "Hardware & PCs",
+                  "SFF builds, custom cooling, single-board computers, and printed enclosures.",
+                ],
+                [
+                  "Web Apps",
+                  "Full-stack sites and browser extensions with HTML, CSS, JS/TS, and React.",
+                ],
+                [
+                  "Game Dev",
+                  "Games in Godot, Unity, Roblox, and Scratch, from jams to releases.",
+                ],
+                [
+                  "3D & CAD Design",
+                  "Modeling in AutoCAD and OpenSCAD, then printing real parts.",
+                ],
+                [
+                  "Writing",
+                  "Essays, short stories, and notes that communicate ideas clearly.",
+                ],
+                [
+                  "Leadership",
+                  "Co-founded Fraser Hack Club, the largest coding club in Coquitlam, BC.",
+                ],
               ].map(([title, desc], index) => (
                 <article key={title} data-reveal>
                   <span>/{String(index + 1).padStart(2, "0")}</span>
@@ -133,9 +179,10 @@ export default function HomePage() {
         <div className="section-wrap">
           <div className="writing-intro" data-reveal>
             <p className="kicker">04 - Writing</p>
-            <h2>A knowledgebase, not just a blog.</h2>
+            <h2>A knowledge base, not just a blog.</h2>
             <p>
-              Essays, short stories, books, and notes: a connected record of what William is thinking and building.
+              Essays, short stories, books, and notes: a connected record of
+              what William is thinking and building.
             </p>
             <Link className="text-link" href="/writing/">
               Read writing
@@ -144,7 +191,12 @@ export default function HomePage() {
         </div>
         <div className="section-wrap writing-cards">
           {selectedWriting.map((entry) => (
-            <a key={entry.title} href={entry.href} target={entry.href.startsWith("http") ? "_blank" : undefined} rel="noreferrer">
+            <a
+              key={entry.title}
+              href={entry.href}
+              target={entry.href.startsWith("http") ? "_blank" : undefined}
+              rel="noreferrer"
+            >
               <img src={entry.image} alt="" loading="lazy" />
               <span>{entry.category}</span>
               <h3>{entry.title}</h3>
@@ -159,12 +211,14 @@ export default function HomePage() {
           <p className="kicker">05 - About</p>
           <h2>Curious since Grade 2, still building.</h2>
           <p>
-            William started coding in Grade 2 with Scratch and has since explored Python, Java, HTML, CSS,
-            JavaScript, TypeScript, C++, AP Computer Science A, full-stack web, game development, and small-form-factor
-            hardware.
+            William started coding in Grade 2 with Scratch and has since
+            explored Python, Java, HTML, CSS, JavaScript, TypeScript, C++, AP
+            Computer Science A, full-stack web, game development, and
+            small-form-factor hardware.
           </p>
           <p>
-            Away from the keyboard: golf, PC building, gaming, 3D printing, digital art, and planning the next project.
+            Away from the keyboard: golf, PC building, gaming, 3D printing,
+            digital art, and planning the next project.
           </p>
           <Link className="text-link" href="/about/">
             More about William
@@ -175,7 +229,10 @@ export default function HomePage() {
       <section className="contact-cta">
         <p className="kicker">06 - Contact</p>
         <h2>Let&apos;s build something.</h2>
-        <p>Open to internships, admissions conversations, collaborations, or talking hardware.</p>
+        <p>
+          Open to internships, admissions conversations, collaborations, or
+          talking hardware.
+        </p>
         <div className="button-row">
           <a className="accent-button" href="mailto:williamwen25@gmail.com">
             williamwen25@gmail.com
@@ -192,7 +249,11 @@ export default function HomePage() {
 function PortraitEgg() {
   return (
     <div className="portrait-card" data-reveal>
-      <img src="/design-assets/portrait.png" alt="William Wen" data-secret-portrait />
+      <img
+        src="/design-assets/portrait.png"
+        alt="William Wen"
+        data-secret-portrait
+      />
     </div>
   );
 }

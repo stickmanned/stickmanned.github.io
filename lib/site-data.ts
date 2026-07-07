@@ -108,7 +108,7 @@ export const featuredProjects: Project[] = [
     categories: ["Featured", "Games"],
     tags: ["Game", "Game Jam"],
     blurb:
-      "A game-jam project about a goose retrieving the all-mighty Golden Egg from D00M Duck through intergalactic obstacles.",
+      "A game-jam project about a goose retrieving the almighty Golden Egg from D00M Duck through intergalactic obstacles.",
   },
   {
     slug: "lamp-pro",
@@ -312,7 +312,7 @@ export const extraProjects: Project[] = [
     externalHref: "https://scratch.mit.edu/projects/558891308/",
     categories: ["Games"],
     tags: ["Scratch"],
-    blurb: "A fast paced game about beyblade battles!",
+    blurb: "A fast-paced game about Beyblade battles.",
   },
   {
     slug: "pet-simulator-classic",
@@ -396,7 +396,7 @@ export const extraProjects: Project[] = [
     categories: ["Games"],
     tags: ["Roblox"],
     blurb:
-      "A F2P game which has tons of unique stuff combined together and stairs, of course.",
+      "A free-to-play game that combines many different mechanics with stairs, of course.",
   },
   {
     slug: "pet-square-root",
@@ -422,7 +422,7 @@ export const extraProjects: Project[] = [
     externalHref: "https://scratch.mit.edu/projects/789620634/",
     categories: ["Games"],
     tags: ["Scratch"],
-    blurb: "A Scratch Story about saving AMOGUS from Cyborg Cat.",
+    blurb: "A Scratch story about saving AMOGUS from Cyborg Cat.",
   },
   {
     slug: "pet-simulator-hardcore",
@@ -451,7 +451,7 @@ export const extraProjects: Project[] = [
     categories: ["Games"],
     tags: ["Roblox"],
     blurb:
-      "OH NO! You watched too many YoTub shorts on Skibi Toilet!!! Now your thoughts are real!",
+      "Oh no. You watched too many YouTube Shorts about Skibi Toilet. Now your thoughts are real.",
   },
 ];
 
@@ -704,7 +704,7 @@ export const caseStudies: CaseStudy[] = [
       {
         title: "What I Built",
         body: [
-          "A game where you play a goose trying to retrieve the all-mighty Golden Egg from the D00M Duck and return it to the Golden Goose while facing intergalactic obstacles.",
+          "A game where you play a goose trying to retrieve the almighty Golden Egg from D00M Duck and return it to the Golden Goose while facing intergalactic obstacles.",
         ],
       },
       {
@@ -1262,7 +1262,7 @@ export const experienceItems: ExperienceItem[] = [
     dateISO: "2026-06-07",
     kind: "Hackathon",
     image: "/img/event/Project%20Stellar.JPG",
-    desc: 'A hackathon about "shooting for the stars"; William built Alien Dating Simulator.',
+    desc: 'William built Alien Dating Simulator for a hackathon themed around "shooting for the stars."',
   },
   {
     title: "Dr. Charles Best Secondary School Honours With Distinction",
@@ -1270,7 +1270,7 @@ export const experienceItems: ExperienceItem[] = [
     dateISO: "2026-06-01",
     kind: "Award",
     image: "/img/award/honours%20with%20distinctions.JPG",
-    desc: "Received after getting A (86%+) in 8+ courses at school.",
+    desc: "Received for earning A grades (86%+) in 8+ courses at school.",
   },
   {
     title: "Equinox Vancouver Hackathon",
@@ -1346,7 +1346,7 @@ export const experienceItems: ExperienceItem[] = [
     dateISO: "2024-02-24",
     kind: "Trip",
     image: "/img/event/quebec.jpg",
-    desc: "Citadel Middle School french-immersion trip to Québec, Canada.",
+    desc: "Citadel Middle School French immersion trip to Québec, Canada.",
   },
   {
     title: "Youth Tech Day 2024",

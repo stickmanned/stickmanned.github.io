@@ -5,6 +5,7 @@ import type { CSSProperties } from "react";
 import { useEffect, useRef, useState } from "react";
 import { featuredProjects } from "@/lib/site-data";
 import { ProjectIcon } from "@/components/icons";
+import { ConstellationHead } from "@/components/head-model";
 
 const nodeMeta = [
   {
@@ -62,6 +63,12 @@ type OrbitStyle = CSSProperties &
     "--orbit-radius" | "--orbit-angle" | "--orbit-duration" | "--size",
     string
   >;
+
+type ConstellationStyle = CSSProperties & {
+  "--orbit-center-x": string;
+  "--orbit-center-y": string;
+  "--constellation-scale": string;
+};
 
 /**
  * Compute the dynamic layout values for the constellation based on
@@ -132,7 +139,7 @@ export function ProjectConstellation() {
     return () => window.removeEventListener("resize", update);
   }, []);
 
-  const containerStyle: CSSProperties & Record<string, string> = {
+  const containerStyle: ConstellationStyle = {
     "--orbit-center-x": `${layout.centerX}%`,
     "--orbit-center-y": `${layout.centerY}%`,
     "--constellation-scale": `${layout.scale}`,
@@ -150,6 +157,7 @@ export function ProjectConstellation() {
     >
       <div className="depth-ring ring-a" aria-hidden="true" />
       <div className="depth-ring ring-b" aria-hidden="true" />
+      <ConstellationHead />
       {nodeMeta.map((node) => {
         const project = featuredProjects.find(
           (item) => item.slug === node.slug,

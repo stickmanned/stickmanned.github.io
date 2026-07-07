@@ -594,6 +594,37 @@ h3 {
   opacity: 0.6;
 }
 
+/* 3D head at the centre of the orbit rings. Sits below the project
+   nodes in DOM order; only the circular canvas takes pointer events
+   (for drag-to-rotate), and its 170px radius stays well inside the
+   228px node orbit, so links, labels, and hover states are unaffected. */
+.constellation-head {
+  position: absolute;
+  top: var(--orbit-center-y);
+  left: var(--orbit-center-x);
+  width: 340px;
+  height: 340px;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  transition: opacity 1.4s ease;
+}
+
+.constellation-head.is-loaded {
+  opacity: 1;
+}
+
+.constellation-head canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* Circular hit area: border-radius clips pointer hit-testing. */
+  border-radius: 50%;
+  pointer-events: auto;
+  touch-action: none;
+  -webkit-user-drag: none;
+}
+
 .constellation-node {
   position: absolute;
   left: var(--orbit-center-x);
@@ -1177,7 +1208,8 @@ h3 {
 }
 
 .writing-cards a,
-.writing-grid a {
+.writing-grid a,
+.writing-grid article {
   display: block;
   overflow: hidden;
   border: 1px solid var(--border);
@@ -1193,6 +1225,7 @@ h3 {
   aspect-ratio: 16 / 10;
   display: block;
   object-fit: cover;
+  object-position: center top;
 }
 
 .writing-cards span,
@@ -1342,6 +1375,40 @@ h3 {
   border-color: var(--accent);
   background: var(--accent);
   font-weight: 700;
+}
+
+.writing-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin: 16px 0;
+}
+
+.sort-button {
+  min-height: 40px;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--muted-2);
+  background: rgba(255, 255, 255, 0.025);
+  cursor: pointer;
+  font: inherit;
+  transition:
+    color 0.2s,
+    border-color 0.2s,
+    background 0.2s,
+    transform 0.18s;
+}
+
+.sort-button:hover {
+  color: var(--text);
+  border-color: rgba(201, 255, 59, 0.35);
+  background: rgba(201, 255, 59, 0.06);
+  transform: translateY(-1px);
+}
+
+.sort-button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
 }
 
 .case-study {

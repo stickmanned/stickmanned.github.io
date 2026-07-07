@@ -65,16 +65,10 @@ export function WritingGrid({ writings }: { writings: WritingEntry[] }) {
         ))}
       </div>
 
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "flex-end",
-          marginBottom: "1rem",
-          marginTop: "1rem",
-        }}
-      >
+      <div className="writing-toolbar">
         <button
-          className="button"
+          type="button"
+          className="sort-button"
           onClick={() => {
             if (sortMode === "date-desc") setSortMode("date-asc");
             else if (sortMode === "date-asc") setSortMode("title-asc");
@@ -83,9 +77,9 @@ export function WritingGrid({ writings }: { writings: WritingEntry[] }) {
         >
           Sort:{" "}
           {sortMode === "date-desc"
-            ? "Date ↓"
+            ? "Newest"
             : sortMode === "date-asc"
-              ? "Date ↑"
+              ? "Oldest"
               : "A-Z"}
         </button>
       </div>
@@ -94,20 +88,32 @@ export function WritingGrid({ writings }: { writings: WritingEntry[] }) {
         {visible.length === 0 && (
           <p style={{ opacity: 0.6 }}>No writing found in this category.</p>
         )}
-        {visible.map((entry) => (
-          <a
-            key={entry.title}
-            href={entry.href}
-            target={entry.href.startsWith("http") ? "_blank" : undefined}
-            rel="noreferrer"
-            data-reveal
-          >
-            <img src={entry.image} alt="" loading="lazy" />
-            <span>{entry.date}</span>
-            <h3>{entry.title}</h3>
-            <p>{entry.desc}</p>
-          </a>
-        ))}
+        {visible.map((entry) => {
+          const body = (
+            <>
+              <img src={entry.image} alt="" loading="lazy" />
+              <span>{entry.date}</span>
+              <h3>{entry.title}</h3>
+              <p>{entry.desc}</p>
+            </>
+          );
+
+          return entry.href === "#" ? (
+            <article key={entry.title} data-reveal>
+              {body}
+            </article>
+          ) : (
+            <a
+              key={entry.title}
+              href={entry.href}
+              target={entry.href.startsWith("http") ? "_blank" : undefined}
+              rel="noreferrer"
+              data-reveal
+            >
+              {body}
+            </a>
+          );
+        })}
       </div>
     </div>
   );
