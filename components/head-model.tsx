@@ -54,17 +54,32 @@ export function ConstellationHead() {
         const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 50);
         camera.position.set(0, 0, 5);
 
-        // Soft key light plus lime/cyan rims to match the site palette.
+        // Soft key light plus accent-colored rims that track the active
+        // theme's palette (read from the CSS variables on <html>).
         scene.add(new THREE.AmbientLight(0xffffff, 1.1));
         const key = new THREE.DirectionalLight(0xffffff, 1.6);
         key.position.set(1.5, 2, 3);
         scene.add(key);
-        const rimLime = new THREE.DirectionalLight(0xc9ff3b, 0.55);
-        rimLime.position.set(-3, 1, -2);
-        scene.add(rimLime);
+        const rimAccent = new THREE.DirectionalLight(0xc9ff3b, 0.55);
+        rimAccent.position.set(-3, 1, -2);
+        scene.add(rimAccent);
         const rimCyan = new THREE.DirectionalLight(0x4cc9f0, 0.45);
         rimCyan.position.set(3, -1, -2);
         scene.add(rimCyan);
+
+        function applyThemeLights() {
+          const styles = getComputedStyle(document.documentElement);
+          const accent = styles.getPropertyValue("--accent").trim();
+          const cyan = styles.getPropertyValue("--cyan").trim();
+          if (accent) rimAccent.color.set(accent);
+          if (cyan) rimCyan.color.set(cyan);
+        }
+        applyThemeLights();
+        const themeObserver = new MutationObserver(applyThemeLights);
+        themeObserver.observe(document.documentElement, {
+          attributes: true,
+          attributeFilter: ["data-theme"],
+        });
 
         const gltf = await new GLTFLoader().loadAsync(MODEL_URL);
         if (disposed) {
@@ -177,6 +192,7 @@ export function ConstellationHead() {
         cleanup = () => {
           cancelAnimationFrame(rafId);
           observer.disconnect();
+          themeObserver.disconnect();
           mount.removeEventListener("pointerdown", onPointerDown);
           window.removeEventListener("pointermove", onPointerMove);
           window.removeEventListener("pointerup", onPointerUp);

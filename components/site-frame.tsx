@@ -6,6 +6,8 @@ import { usePathname } from "next/navigation";
 import { createPortal } from "react-dom";
 import { socials } from "@/lib/site-data";
 import { SocialGlyph } from "@/components/social-icons";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { MusicPlayer } from "@/components/music-player";
 
 const navItems = [
   { label: "Home", href: "/" },
@@ -116,7 +118,11 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
   return (
     <>
       <InteractionBoot />
-      <div className="site-atmosphere" aria-hidden="true" />
+      <div className="site-atmosphere" aria-hidden="true">
+        <span className="ambient-orb orb-a" />
+        <span className="ambient-orb orb-b" />
+        <span className="ambient-orb orb-c" />
+      </div>
       <div className="cursor-glow" aria-hidden="true" />
       <header className="site-nav depth-4" data-depth="4">
         <Link href="/" className="brand" aria-label="William Wen home">
@@ -131,6 +137,7 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
           ))}
         </nav>
         <div className="nav-actions">
+          <ThemeToggle />
           <button
             className="key-button"
             type="button"
@@ -159,6 +166,8 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
       </header>
 
       {children}
+
+      <MusicPlayer />
 
       <footer className="site-footer">
         <div>
