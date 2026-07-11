@@ -13,8 +13,8 @@ export default function WritingPage() {
         <p className="kicker">Writing</p>
         <h1>Essays, short stories, books, and notes.</h1>
         <p>
-          Writing is a secondary strength here: organized, readable, and tied
-          back to curiosity.
+          From competition essays to self-published books — the ideas behind
+          the projects, written down.
         </p>
       </section>
 

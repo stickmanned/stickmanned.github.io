@@ -100,9 +100,7 @@ export function ConstellationHead() {
         pivot.scale.setScalar(scale);
         scene.add(pivot);
 
-        const reducedMotion = window.matchMedia(
-          "(prefers-reduced-motion: reduce)",
-        );
+        const reducedMotion = { matches: false };
 
         let baseYaw = 0;
         let isDragging = false;

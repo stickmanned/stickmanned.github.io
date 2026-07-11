@@ -36,7 +36,7 @@ export default function HomePage() {
           <ProjectConstellation />
           <div className="hero-copy depth-4" data-depth="4">
             <p className="eyebrow">
-              <span /> Student builder - hardware x software
+              <span /> Student builder — hardware × software
             </p>
             <h1 id="hero-title">William Wen</h1>
             <p className="hero-lede">
@@ -182,7 +182,7 @@ export default function HomePage() {
             <h2>A knowledge base, not just a blog.</h2>
             <p>
               Essays, short stories, books, and notes: a connected record of
-              what William is thinking and building.
+              what I&apos;m thinking and building.
             </p>
             <Link className="text-link" href="/writing/">
               Read writing
@@ -211,17 +211,17 @@ export default function HomePage() {
           <p className="kicker">05 - About</p>
           <h2>Curious since Grade 2, still building.</h2>
           <p>
-            William started coding in Grade 2 with Scratch and has since
-            explored Python, Java, HTML, CSS, JavaScript, TypeScript, C++, AP
-            Computer Science A, full-stack web, game development, and
-            small-form-factor hardware.
+            I started coding in Grade 2 with Scratch and have since explored
+            Python, Java, HTML, CSS, JavaScript, TypeScript, C++, AP Computer
+            Science A, full-stack web, game development, and small-form-factor
+            hardware.
           </p>
           <p>
             Away from the keyboard: golf, PC building, gaming, 3D printing,
             digital art, and planning the next project.
           </p>
           <Link className="text-link" href="/about/">
-            More about William
+            More about me
           </Link>
         </div>
       </section>

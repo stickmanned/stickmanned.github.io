@@ -6,10 +6,9 @@ import {
   LuMusic,
   LuPause,
   LuPlay,
+  LuShuffle,
   LuSkipBack,
   LuSkipForward,
-  LuVolume2,
-  LuVolumeX,
 } from "react-icons/lu";
 import { musicTracks, type MusicTrack } from "@/lib/music";
 
@@ -52,7 +51,7 @@ function TrackPlayer() {
   const artRef = useRef<HTMLImageElement>(null);
   const [index, setIndex] = useState(0);
   const [playing, setPlaying] = useState(false);
-  const [muted, setMuted] = useState(false);
+  const [shuffle, setShuffle] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [closing, setClosing] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -61,14 +60,32 @@ function TrackPlayer() {
 
   const track = musicTracks[index];
 
-  const step = (direction: 1 | -1) => {
+  const resetTrackState = () => {
     setErrored(false);
     setArtFailed(false);
     setProgress(0);
-    setIndex(
-      (value) =>
-        (value + direction + musicTracks.length) % musicTracks.length,
-    );
+  };
+
+  // Previous keeps sequential order regardless of shuffle.
+  const prev = () => {
+    resetTrackState();
+    setIndex((value) => (value - 1 + musicTracks.length) % musicTracks.length);
+  };
+
+  // Forward (and auto-advance on end) jumps to a random track when shuffle is
+  // on, otherwise steps to the next one in order.
+  const next = () => {
+    resetTrackState();
+    setIndex((value) => {
+      if (shuffle && musicTracks.length > 1) {
+        let candidate = value;
+        while (candidate === value) {
+          candidate = Math.floor(Math.random() * musicTracks.length);
+        }
+        return candidate;
+      }
+      return (value + 1) % musicTracks.length;
+    });
   };
 
   // Keep the element in sync when the track changes while playing.
@@ -110,136 +127,127 @@ function TrackPlayer() {
     audio.currentTime = (value / 100) * audio.duration;
     setProgress(value);
   };
-  if (hidden) {
-    return (
-      <button
-        className="music-fab"
-        type="button"
-        aria-label="Show music player"
-        onClick={() => {
-          setClosing(false);
-          setHidden(false);
-        }}
-      >
-        <LuMusic aria-hidden="true" />
-      </button>
-    );
-  }
-
   const title = formatTitle(track.title);
   const displayTitle = errored ? `${title} — unavailable` : title;
 
+  // The <audio> element stays mounted whether or not the player UI is shown,
+  // so playback keeps going after the visitor hides the player.
   return (
-    <div
-      className={`music-player${closing ? " music-player-closing" : ""}`}
-      role="region"
-      aria-label="Music player"
-      onAnimationEnd={(event) => {
-        // Only react to the container's own open/close animation, not the
-        // bubbled entrance animations of its children.
-        if (event.target === event.currentTarget && closing) {
-          setHidden(true);
-          setClosing(false);
-        }
-      }}
-    >
+    <>
       <audio
         ref={audioRef}
         src={track.src}
-        muted={muted}
         onTimeUpdate={(event) => {
           const audio = event.currentTarget;
           if (Number.isFinite(audio.duration) && audio.duration > 0) {
             setProgress((audio.currentTime / audio.duration) * 100);
           }
         }}
-        onEnded={() => step(1)}
+        onEnded={next}
         onError={() => {
           setErrored(true);
           setPlaying(false);
         }}
       />
-      <div className="music-player-body">
-        <div className="music-art" aria-hidden="true">
-          {artFailed ? (
-            <div className="music-art-fallback">
-              <LuMusic aria-hidden="true" />
+      {hidden ? (
+        <button
+          className="music-fab"
+          type="button"
+          aria-label="Show music player"
+          onClick={() => {
+            setClosing(false);
+            setHidden(false);
+          }}
+        >
+          <LuMusic aria-hidden="true" />
+        </button>
+      ) : (
+        <div
+          className={`music-player${closing ? " music-player-closing" : ""}`}
+          role="region"
+          aria-label="Music player"
+          onAnimationEnd={(event) => {
+            // Only react to the container's own open/close animation, not the
+            // bubbled entrance animations of its children.
+            if (event.target === event.currentTarget && closing) {
+              setHidden(true);
+              setClosing(false);
+            }
+          }}
+        >
+          <div className="music-player-body">
+            <div className="music-art" aria-hidden="true">
+              {artFailed ? (
+                <div className="music-art-fallback">
+                  <LuMusic aria-hidden="true" />
+                </div>
+              ) : (
+                // Static export uses unoptimized images, so a plain <img>
+                // matches the rest of the site. The title text is the label,
+                // so the cover is decorative (alt="").
+                <img
+                  ref={artRef}
+                  src={artFor(track)}
+                  alt=""
+                  loading="lazy"
+                  draggable={false}
+                  onError={() => setArtFailed(true)}
+                />
+              )}
             </div>
-          ) : (
-            // Static export uses unoptimized images, so a plain <img> matches
-            // the rest of the site. The title text is the label, so the cover
-            // is decorative (alt="").
-            <img
-              ref={artRef}
-              src={artFor(track)}
-              alt=""
-              loading="lazy"
-              draggable={false}
-              onError={() => setArtFailed(true)}
+            <span className="music-player-title" title={displayTitle}>
+              {displayTitle}
+            </span>
+            <div className="music-player-controls">
+              <button type="button" aria-label="Previous track" onClick={prev}>
+                <LuSkipBack aria-hidden="true" />
+              </button>
+              <button
+                className="music-play"
+                type="button"
+                aria-label={playing ? "Pause" : "Play"}
+                onClick={togglePlay}
+              >
+                {playing ? (
+                  <LuPause aria-hidden="true" />
+                ) : (
+                  <LuPlay aria-hidden="true" />
+                )}
+              </button>
+              <button type="button" aria-label="Next track" onClick={next}>
+                <LuSkipForward aria-hidden="true" />
+              </button>
+              <button
+                type="button"
+                className={shuffle ? "music-toggle-on" : undefined}
+                aria-label="Shuffle"
+                aria-pressed={shuffle}
+                onClick={() => setShuffle((value) => !value)}
+              >
+                <LuShuffle aria-hidden="true" />
+              </button>
+              <button
+                type="button"
+                aria-label="Hide music player"
+                onClick={() => setClosing(true)}
+              >
+                <LuChevronDown aria-hidden="true" />
+              </button>
+            </div>
+            <input
+              className="music-progress"
+              type="range"
+              min={0}
+              max={100}
+              step={0.1}
+              value={progress}
+              style={{ "--progress": `${progress}%` } as React.CSSProperties}
+              onChange={(event) => seek(Number(event.target.value))}
+              aria-label="Track progress"
             />
-          )}
+          </div>
         </div>
-        <span className="music-player-title" title={displayTitle}>
-          {displayTitle}
-        </span>
-        <div className="music-player-controls">
-          <button
-            type="button"
-            aria-label="Previous track"
-            onClick={() => step(-1)}
-          >
-            <LuSkipBack aria-hidden="true" />
-          </button>
-          <button
-            className="music-play"
-            type="button"
-            aria-label={playing ? "Pause" : "Play"}
-            onClick={togglePlay}
-          >
-            {playing ? (
-              <LuPause aria-hidden="true" />
-            ) : (
-              <LuPlay aria-hidden="true" />
-            )}
-          </button>
-          <button
-            type="button"
-            aria-label="Next track"
-            onClick={() => step(1)}
-          >
-            <LuSkipForward aria-hidden="true" />
-          </button>
-          <button
-            type="button"
-            aria-label={muted ? "Unmute" : "Mute"}
-            onClick={() => setMuted((value) => !value)}
-          >
-            {muted ? (
-              <LuVolumeX aria-hidden="true" />
-            ) : (
-              <LuVolume2 aria-hidden="true" />
-            )}
-          </button>
-          <button
-            type="button"
-            aria-label="Hide music player"
-            onClick={() => setClosing(true)}
-          >
-            <LuChevronDown aria-hidden="true" />
-          </button>
-        </div>
-        <input
-          className="music-progress"
-          type="range"
-          min={0}
-          max={100}
-          step={0.1}
-          value={progress}
-          style={{ "--progress": `${progress}%` } as React.CSSProperties}
-          onChange={(event) => seek(Number(event.target.value))}
-          aria-label="Track progress"
-        />
-      </div>
-    </div>
+      )}
+    </>
   );
 }

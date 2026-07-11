@@ -328,9 +328,7 @@ function InteractionBoot() {
   const pathname = usePathname();
 
   useEffect(() => {
-    const prefersReduced = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
+    const prefersReduced = false;
 
     const cleanup: (() => void)[] = [];
 

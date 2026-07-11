@@ -10,7 +10,7 @@ export default function ResumePage() {
       <section className="page-hero">
         <p className="kicker">Resume</p>
         <h1>Current resume.</h1>
-        <p>A clean preview of the resume image from the existing site, with a downloadable document link.</p>
+        <p>Preview it below, or download the full document.</p>
         <a className="accent-button" href="/resume/Resum%C3%A9.docx" download>
           Download resume
         </a>

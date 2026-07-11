@@ -13,7 +13,7 @@ export default function ExperiencePage() {
         <p className="kicker">Experience</p>
         <h1>Hackathons, leadership, awards, and milestones.</h1>
         <p>
-          A merged, filterable timeline of events from the old Events, Achievements, and Achievement Timeline pages.
+          Hackathon wins, leadership roles, awards, and the trips in between — one filterable timeline.
         </p>
       </section>
       <ExperienceTimeline items={experienceItems} />

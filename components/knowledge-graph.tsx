@@ -103,7 +103,7 @@ export function KnowledgeGraph() {
 
     const lineEls = Array.from(svg.querySelectorAll<SVGLineElement>("line"));
 
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduceMotion = false;
 
     let W = container.clientWidth;
     let H = container.clientHeight;

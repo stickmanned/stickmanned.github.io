@@ -13,8 +13,8 @@ export default function ProjectsPage() {
         <p className="kicker">Projects</p>
         <h1>Hardware, web apps, games, and experiments.</h1>
         <p>
-          A filterable work hub for William&apos;s strongest projects and earlier games, grounded in the old site&apos;s
-          project archive.
+          Everything I&apos;ve shipped — from featured hardware builds and web apps back to my earliest
+          Scratch games. Filter by category.
         </p>
       </section>
       <ProjectGrid projects={allProjects} />

@@ -1098,7 +1098,7 @@ export function ProjectGallery({
         const forward = new THREE.Vector3();
         const right = new THREE.Vector3();
         const wishDirection = new THREE.Vector3();
-        const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+        const reducedMotion = { matches: false };
         let bobPhase = 0;
         let currentRoom = "";
         let rafId = 0;

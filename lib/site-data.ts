@@ -1119,7 +1119,7 @@ export const caseStudies: CaseStudy[] = [
       {
         title: "Problem",
         body: [
-          "The assignment needed at least two distinct lamp designs, so William chose the Mac Pro perforation pattern for the sides and a Noctua fan grille motif for the top and bottom.",
+          "The assignment needed at least two distinct lamp designs, so I chose the Mac Pro perforation pattern for the sides and a Noctua fan grille motif for the top and bottom.",
         ],
       },
       {
@@ -1131,7 +1131,7 @@ export const caseStudies: CaseStudy[] = [
       {
         title: "My Role",
         body: [
-          "William imported STL references into Fusion 360, reduced meshes, created mesh-section sketches, exported DXF geometry, scaled and centered it in AutoCAD, then constructed the Mac Pro-inspired hole pattern.",
+          "I imported STL references into Fusion 360, reduced meshes, created mesh-section sketches, exported DXF geometry, scaled and centered it in AutoCAD, then constructed the Mac Pro-inspired hole pattern.",
         ],
       },
       {
@@ -1147,7 +1147,7 @@ export const caseStudies: CaseStudy[] = [
       {
         title: "Build Process",
         body: [
-          "For the top and bottom, William converted a Noctua grille model into 2D sketch geometry. For the sides, he adapted J. Peterson's Mac Pro hole math into a 2D approximation.",
+          "For the top and bottom, I converted a Noctua grille model into 2D sketch geometry. For the sides, I adapted J. Peterson's Mac Pro hole math into a 2D approximation.",
         ],
       },
       {
@@ -1623,7 +1623,7 @@ export const experienceItems: ExperienceItem[] = [
     dateISO: "2026-06-07",
     kind: "Hackathon",
     image: "/img/event/Project%20Stellar.JPG",
-    desc: 'William built Alien Dating Simulator for a hackathon themed around "shooting for the stars."',
+    desc: 'I built Alien Dating Simulator for a hackathon themed around "shooting for the stars."',
   },
   {
     title: "Dr. Charles Best Secondary School Honours With Distinction",
@@ -1648,7 +1648,7 @@ export const experienceItems: ExperienceItem[] = [
     dateISO: "2025-04-05",
     kind: "Hackathon",
     image: "/img/event/juice.jpg",
-    desc: "A Hack Club game jam in Shanghai, China; William built SpaceGoose.",
+    desc: "A Hack Club game jam in Shanghai, China, where I built SpaceGoose.",
     href: "/projects/spacegoose/",
   },
   {
@@ -1657,7 +1657,7 @@ export const experienceItems: ExperienceItem[] = [
     dateISO: "2025-03-15",
     kind: "Hackathon",
     image: "/img/event/scrapyard.png",
-    desc: "Hack Club's worldwide build-something-fun hackathon; William made AI Nerf Gun Aimbot.",
+    desc: "Hack Club's worldwide build-something-fun hackathon, where I made AI Nerf Gun Aimbot.",
     href: "/projects/ai-nerf-aimbot/",
   },
   {
@@ -1716,7 +1716,6 @@ export const experienceItems: ExperienceItem[] = [
     kind: "Tech",
     image: "/img/event/techday.jpg",
     desc: "Youth Tech Day hosted by Geek Squad, featuring various tech-related activities.",
-    href: "https://lttstore.com",
   },
 ];
 

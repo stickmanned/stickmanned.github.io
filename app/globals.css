@@ -159,7 +159,7 @@ body {
   );
 }
 
-@media (prefers-reduced-motion: reduce), (pointer: coarse) {
+@media (pointer: coarse) {
   .cursor-glow {
     display: none;
   }
@@ -2575,6 +2575,14 @@ h3 {
   filter: brightness(1.08);
 }
 
+/* Highlight the shuffle button while it's active. */
+.music-player button.music-toggle-on,
+.music-player button.music-toggle-on:hover,
+.music-player button.music-toggle-on:focus-visible {
+  color: var(--accent);
+  background: rgba(var(--line-rgb), 0.12);
+}
+
 .music-progress {
   width: 100%;
   height: 4px;
@@ -2688,37 +2696,8 @@ h3 {
   }
 }
 
-/* Reduced motion: the global rule above collapses every animation to ~0ms
-   (so the close animation still fires animationend and unmounts the player).
-   Here we also drop the entrance stagger delays so content appears instantly
-   instead of flashing in. */
-@media (prefers-reduced-motion: reduce) {
-  .music-player,
-  .music-player-body > *,
-  .music-fab {
-    animation-delay: 0ms !important;
-  }
-}
 
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    scroll-behavior: auto !important;
-    transition-duration: 0.01ms !important;
-  }
 
-  [data-reveal] {
-    opacity: 1;
-    transform: none;
-  }
-
-  .ambient-orb {
-    animation: none;
-  }
-}
 
 /* ---- 3D project gallery ------------------------------------------------ */
 

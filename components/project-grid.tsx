@@ -57,7 +57,8 @@ export function ProjectGrid({ projects }: { projects: Project[] }) {
 }
 
 export function ProjectCard({ project, wide = false }: { project: Project; wide?: boolean }) {
-  const internal = project.href !== "#";
+  const internal = project.href.startsWith("/");
+  const external = project.href.startsWith("http");
   const className = wide ? "project-card project-card-wide" : "project-card";
   const body = (
     <>
@@ -73,7 +74,9 @@ export function ProjectCard({ project, wide = false }: { project: Project; wide?
         </div>
         <h3>{project.title}</h3>
         <p>{project.blurb}</p>
-        <strong>{internal ? "View case study" : "Project note"}</strong>
+        <strong>
+          {internal ? "View case study" : external ? "Play / view project ↗" : "Write-up coming soon"}
+        </strong>
       </div>
     </>
   );
@@ -83,6 +86,21 @@ export function ProjectCard({ project, wide = false }: { project: Project; wide?
       <Link className={className} href={project.href} data-tilt data-reveal>
         {body}
       </Link>
+    );
+  }
+
+  if (external) {
+    return (
+      <a
+        className={className}
+        href={project.href}
+        target="_blank"
+        rel="noreferrer"
+        data-tilt
+        data-reveal
+      >
+        {body}
+      </a>
     );
   }
 
