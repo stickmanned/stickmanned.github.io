@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   LuChevronDown,
   LuMusic,
@@ -11,148 +11,59 @@ import {
   LuVolume2,
   LuVolumeX,
 } from "react-icons/lu";
-import { musicTracks, STARTUP_SRC } from "@/lib/music";
-
-const DONE_EVENT = "startup-audio-done";
-
-type Phase = "boot" | "blocked" | "intro";
-
-// In-memory flag so the startup track replays on full page reload/visit,
-// but does not play again during client-side route transitions.
-let startupPlayed = false;
-
-function subscribeDone(onChange: () => void) {
-  window.addEventListener(DONE_EVENT, onChange);
-  return () => window.removeEventListener(DONE_EVENT, onChange);
-}
-
-function readDone() {
-  return startupPlayed;
-}
-
-function markDone() {
-  startupPlayed = true;
-  window.dispatchEvent(new Event(DONE_EVENT));
-}
+import { musicTracks, type MusicTrack } from "@/lib/music";
 
 /**
- * Startup-song flow followed by a minimal playlist player.
- * - The startup song plays once per session; if autoplay is blocked a
- *   small pill invites one click, and if the file is missing everything
- *   is skipped silently (no errors, no UI).
+ * Minimal playlist player.
+ * - Renders paused on page load; nothing plays until the visitor presses
+ *   play. There is no autoplay.
  * - The player only renders when lib/music.ts lists at least one track.
  */
 export function MusicPlayer() {
-  const done = useSyncExternalStore(subscribeDone, readDone, () => false);
-  const [phase, setPhase] = useState<Phase>("boot");
-  const startupRef = useRef<HTMLAudioElement | null>(null);
+  return musicTracks.length > 0 ? <TrackPlayer /> : null;
+}
 
-  useEffect(() => {
-    if (done) return;
+/**
+ * Turn a stored/filename-derived title into a clean, readable one:
+ * drops any audio file extension, converts filename separators
+ * (underscores, repeated hyphens) to spaces, and collapses whitespace.
+ * Meaningful punctuation — single hyphens, parentheses, "feat.", etc. —
+ * is left intact.
+ */
+function formatTitle(raw: string): string {
+  return raw
+    .replace(/\.(mp3|wav|ogg|m4a|flac|aac)$/i, "")
+    .replace(/_/g, " ")
+    .replace(/\s*-{2,}\s*/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
 
-    const audio = new Audio(STARTUP_SRC);
-    startupRef.current = audio;
-    audio.preload = "auto";
-
-    audio.addEventListener("ended", markDone);
-    audio.addEventListener("error", markDone);
-
-    const tryPlay = () => {
-      audio
-        .play()
-        .then(() => {
-          setPhase("intro");
-          removeListeners();
-        })
-        .catch(() => {
-          if (audio.error) {
-            markDone();
-            removeListeners();
-          } else {
-            setPhase("blocked");
-          }
-        });
-    };
-
-    const handleInteraction = () => {
-      tryPlay();
-    };
-
-    const removeListeners = () => {
-      window.removeEventListener("click", handleInteraction);
-      window.removeEventListener("keydown", handleInteraction);
-      window.removeEventListener("touchstart", handleInteraction);
-    };
-
-    // Try playing immediately
-    tryPlay();
-
-    // Listen for first interaction to trigger play if it was blocked
-    window.addEventListener("click", handleInteraction);
-    window.addEventListener("keydown", handleInteraction);
-    window.addEventListener("touchstart", handleInteraction);
-
-    return () => {
-      audio.removeEventListener("ended", markDone);
-      audio.removeEventListener("error", markDone);
-      audio.pause();
-      startupRef.current = null;
-      removeListeners();
-    };
-  }, [done]);
-
-  const skipIntro = () => {
-    startupRef.current?.pause();
-    markDone();
-  };
-
-  if (done) {
-    return musicTracks.length > 0 ? <TrackPlayer /> : null;
-  }
-
-  if (phase === "blocked") {
-    return (
-      <button
-        className="audio-start-pill"
-        type="button"
-        onClick={() => {
-          startupRef.current
-            ?.play()
-            .then(() => setPhase("intro"))
-            .catch(skipIntro);
-        }}
-      >
-        <LuVolume2 aria-hidden="true" />
-        Enable sound
-      </button>
-    );
-  }
-
-  if (phase === "intro") {
-    return (
-      <button className="audio-start-pill" type="button" onClick={skipIntro}>
-        <LuVolumeX aria-hidden="true" />
-        Skip intro
-      </button>
-    );
-  }
-
-  return null;
+/** Matching cover extracted from the MP3, unless the track overrides it. */
+function artFor(track: MusicTrack): string {
+  return (
+    track.art ??
+    track.src.replace("/music/tracks/", "/music/art/").replace(/\.mp3$/i, ".jpg")
+  );
 }
 
 function TrackPlayer() {
   const audioRef = useRef<HTMLAudioElement>(null);
+  const artRef = useRef<HTMLImageElement>(null);
   const [index, setIndex] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [muted, setMuted] = useState(false);
   const [hidden, setHidden] = useState(false);
+  const [closing, setClosing] = useState(false);
   const [progress, setProgress] = useState(0);
   const [errored, setErrored] = useState(false);
+  const [artFailed, setArtFailed] = useState(false);
 
   const track = musicTracks[index];
 
   const step = (direction: 1 | -1) => {
     setErrored(false);
+    setArtFailed(false);
     setProgress(0);
     setIndex(
       (value) =>
@@ -168,6 +79,16 @@ function TrackPlayer() {
       audio.play().catch(() => setPlaying(false));
     }
   }, [index, playing]);
+
+  // Catch covers that already failed before hydration (the SSR'd <img> can
+  // fire its error event before React attaches onError), so the fallback
+  // still shows instead of a broken image.
+  useEffect(() => {
+    const img = artRef.current;
+    if (img && img.complete && img.naturalWidth === 0) {
+      setArtFailed(true);
+    }
+  }, [index]);
 
   const togglePlay = () => {
     const audio = audioRef.current;
@@ -189,22 +110,39 @@ function TrackPlayer() {
     audio.currentTime = (value / 100) * audio.duration;
     setProgress(value);
   };
-
   if (hidden) {
     return (
       <button
         className="music-fab"
         type="button"
         aria-label="Show music player"
-        onClick={() => setHidden(false)}
+        onClick={() => {
+          setClosing(false);
+          setHidden(false);
+        }}
       >
         <LuMusic aria-hidden="true" />
       </button>
     );
   }
 
+  const title = formatTitle(track.title);
+  const displayTitle = errored ? `${title} — unavailable` : title;
+
   return (
-    <div className="music-player" role="region" aria-label="Music player">
+    <div
+      className={`music-player${closing ? " music-player-closing" : ""}`}
+      role="region"
+      aria-label="Music player"
+      onAnimationEnd={(event) => {
+        // Only react to the container's own open/close animation, not the
+        // bubbled entrance animations of its children.
+        if (event.target === event.currentTarget && closing) {
+          setHidden(true);
+          setClosing(false);
+        }
+      }}
+    >
       <audio
         ref={audioRef}
         src={track.src}
@@ -221,9 +159,28 @@ function TrackPlayer() {
           setPlaying(false);
         }}
       />
-      <div className="music-player-top">
-        <span className="music-player-title">
-          {errored ? `${track.title} — unavailable` : track.title}
+      <div className="music-player-body">
+        <div className="music-art" aria-hidden="true">
+          {artFailed ? (
+            <div className="music-art-fallback">
+              <LuMusic aria-hidden="true" />
+            </div>
+          ) : (
+            // Static export uses unoptimized images, so a plain <img> matches
+            // the rest of the site. The title text is the label, so the cover
+            // is decorative (alt="").
+            <img
+              ref={artRef}
+              src={artFor(track)}
+              alt=""
+              loading="lazy"
+              draggable={false}
+              onError={() => setArtFailed(true)}
+            />
+          )}
+        </div>
+        <span className="music-player-title" title={displayTitle}>
+          {displayTitle}
         </span>
         <div className="music-player-controls">
           <button
@@ -266,23 +223,23 @@ function TrackPlayer() {
           <button
             type="button"
             aria-label="Hide music player"
-            onClick={() => setHidden(true)}
+            onClick={() => setClosing(true)}
           >
             <LuChevronDown aria-hidden="true" />
           </button>
         </div>
+        <input
+          className="music-progress"
+          type="range"
+          min={0}
+          max={100}
+          step={0.1}
+          value={progress}
+          style={{ "--progress": `${progress}%` } as React.CSSProperties}
+          onChange={(event) => seek(Number(event.target.value))}
+          aria-label="Track progress"
+        />
       </div>
-      <input
-        className="music-progress"
-        type="range"
-        min={0}
-        max={100}
-        step={0.1}
-        value={progress}
-        style={{ "--progress": `${progress}%` } as React.CSSProperties}
-        onChange={(event) => seek(Number(event.target.value))}
-        aria-label="Track progress"
-      />
     </div>
   );
 }

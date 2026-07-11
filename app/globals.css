@@ -2434,37 +2434,6 @@ h3 {
   border-color: var(--accent);
 }
 
-/* Startup-audio prompt: a single small pill, shown only when autoplay is
-   blocked. Never a popup. */
-.audio-start-pill {
-  position: fixed;
-  right: 18px;
-  bottom: 18px;
-  z-index: 60;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 9px 14px;
-  border: 1px solid var(--border-strong);
-  border-radius: 999px;
-  color: var(--text);
-  background: rgba(var(--surface-rgb), 0.92);
-  box-shadow: 0 12px 34px rgba(var(--shadow-rgb), 0.4);
-  backdrop-filter: blur(8px);
-  cursor: pointer;
-  font-size: 12.5px;
-  font-family: var(--font-space-mono), monospace;
-  transition:
-    border-color 0.2s,
-    color 0.2s;
-}
-
-.audio-start-pill:hover,
-.audio-start-pill:focus-visible {
-  color: var(--accent);
-  border-color: var(--accent);
-}
-
 /* Minimal music player: fixed bottom-right card, collapsible to a round
    floating button. */
 .music-player {
@@ -2480,28 +2449,95 @@ h3 {
   background: rgba(var(--surface-rgb), 0.94);
   box-shadow: 0 18px 50px rgba(var(--shadow-rgb), 0.45);
   backdrop-filter: blur(10px);
+  transform-origin: bottom right;
+  will-change: transform, opacity;
+  animation: music-player-in 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-.music-player-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 10px;
+/* Reverse of the entrance; kept firing (not disabled) under reduced motion
+   so the animationend handler still unmounts the player. */
+.music-player-closing {
+  animation: music-player-out 0.22s cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+/* Content settles in just after the container, lightly staggered. */
+.music-player-body > * {
+  animation: music-item-in 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.music-player-body > *:nth-child(1) {
+  animation-delay: 0.05s;
+}
+
+.music-player-body > *:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.music-player-body > *:nth-child(3) {
+  animation-delay: 0.14s;
+}
+
+.music-player-body > *:nth-child(4) {
+  animation-delay: 0.18s;
+}
+
+/* Album art: fixed aspect ratio reserves space up front so nothing shifts
+   while the cover loads. */
+.music-art {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin-bottom: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  background: rgba(var(--line-rgb), 0.08);
+}
+
+.music-art img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.music-art-fallback {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  color: var(--muted-2);
+  background: linear-gradient(
+    135deg,
+    rgba(var(--line-rgb), 0.14),
+    rgba(var(--line-rgb), 0.04)
+  );
+}
+
+.music-art-fallback svg {
+  width: 30px;
+  height: 30px;
+  opacity: 0.7;
 }
 
 .music-player-title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   overflow: hidden;
+  margin-bottom: 10px;
   color: var(--text-soft);
   font-size: 12.5px;
+  line-height: 1.35;
   font-family: var(--font-space-mono), monospace;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  overflow-wrap: anywhere;
 }
 
 .music-player-controls {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 6px;
 }
 
@@ -2587,9 +2623,11 @@ h3 {
   box-shadow: 0 12px 34px rgba(var(--shadow-rgb), 0.4);
   backdrop-filter: blur(8px);
   cursor: pointer;
+  transform-origin: bottom right;
   transition:
     color 0.2s,
     border-color 0.2s;
+  animation: music-fab-in 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .music-fab:hover,
@@ -2598,12 +2636,67 @@ h3 {
   border-color: var(--accent);
 }
 
+@keyframes music-player-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes music-player-out {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+  }
+}
+
+@keyframes music-item-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes music-fab-in {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @media (max-width: 480px) {
   .music-player,
-  .music-fab,
-  .audio-start-pill {
+  .music-fab {
     right: 12px;
     bottom: 12px;
+  }
+}
+
+/* Reduced motion: the global rule above collapses every animation to ~0ms
+   (so the close animation still fires animationend and unmounts the player).
+   Here we also drop the entrance stagger delays so content appears instantly
+   instead of flashing in. */
+@media (prefers-reduced-motion: reduce) {
+  .music-player,
+  .music-player-body > *,
+  .music-fab {
+    animation-delay: 0ms !important;
   }
 }
 
