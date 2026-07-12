@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { ExperienceItem } from "@/lib/site-data";
 
-const filters = ["All", "Hackathon", "Leadership", "Award", "Tech"] as const;
+const filters = ["All", "Hackathon", "Leadership", "Award", "Other Events"] as const;
 
 export function ExperienceTimeline({ items }: { items: ExperienceItem[] }) {
   const [active, setActive] = useState<(typeof filters)[number]>("All");

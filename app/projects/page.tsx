@@ -11,10 +11,10 @@ export default function ProjectsPage() {
     <main className="page-shell">
       <section className="page-hero">
         <p className="kicker">Projects</p>
-        <h1>Hardware, web apps, games, and experiments.</h1>
+        <h1>Hardware, software, games, and more!</h1>
         <p>
-          Everything I&apos;ve shipped — from featured hardware builds and web apps back to my earliest
-          Scratch games. Filter by category.
+          Everything I&apos;ve ever made so far, from featured projects to my earliest
+          games. Filter by category, and enter the Gallery for a truly immersive experience!
         </p>
       </section>
       <ProjectGrid projects={allProjects} />

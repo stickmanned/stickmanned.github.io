@@ -52,7 +52,9 @@ function TrackPlayer() {
   const [index, setIndex] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [shuffle, setShuffle] = useState(false);
-  const [hidden, setHidden] = useState(false);
+  // Starts minimized on page load; the first open picks a random track.
+  const [hidden, setHidden] = useState(true);
+  const openedRef = useRef(false);
   const [closing, setClosing] = useState(false);
   const [progress, setProgress] = useState(0);
   const [errored, setErrored] = useState(false);
@@ -155,6 +157,14 @@ function TrackPlayer() {
           type="button"
           aria-label="Show music player"
           onClick={() => {
+            // First open lands on a random track instead of always track 0.
+            if (!openedRef.current) {
+              openedRef.current = true;
+              if (musicTracks.length > 1) {
+                resetTrackState();
+                setIndex(Math.floor(Math.random() * musicTracks.length));
+              }
+            }
             setClosing(false);
             setHidden(false);
           }}

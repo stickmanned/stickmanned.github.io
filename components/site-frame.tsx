@@ -9,6 +9,8 @@ import { SocialGlyph } from "@/components/social-icons";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { MusicPlayer } from "@/components/music-player";
 
+import { LuCompass } from "react-icons/lu";
+
 const navItems = [
   { label: "Home", href: "/" },
   { label: "Projects", href: "/projects/" },
@@ -130,11 +132,14 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
           <span>William Wen</span>
         </Link>
         <nav className="desktop-nav" aria-label="Primary navigation">
-          {navItems.map((item) => (
-            <Link key={item.href} href={item.href}>
-              {item.label}
-            </Link>
-          ))}
+          {/* Resume is omitted here — the accent button on the right covers it. */}
+          {navItems
+            .filter((item) => item.href !== "/resume/")
+            .map((item) => (
+              <Link key={item.href} href={item.href}>
+                {item.label}
+              </Link>
+            ))}
         </nav>
         <div className="nav-actions">
           <ThemeToggle />
@@ -145,8 +150,9 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
               setSelected(0);
               setPaletteOpen(true);
             }}
+            title="Open command palette (Ctrl+K)"
           >
-            <span aria-hidden="true">Ctrl K</span>
+            <LuCompass aria-hidden="true" size={16} />
             <span className="sr-only">Open command palette</span>
           </button>
           <Link className="accent-button small" href="/resume/">
@@ -442,7 +448,7 @@ function InteractionBoot() {
         const refreshTargets = () => {
           targetCache = Array.from(
             document.querySelectorAll<HTMLElement>(
-              ".accent-button, .quiet-button, .key-button, .menu-button, .close-button, .expand-button, .project-card, .desktop-nav a, .text-link, .writing-cards a, .writing-grid a, .social-link, [data-orbit-node], [data-graph-node]",
+              "a[href], .key-button, .menu-button, .close-button, .expand-button, [data-orbit-node], [data-graph-node]",
             ),
           )
             .filter((el) => !el.hasAttribute("disabled") && el.getAttribute("aria-hidden") !== "true")

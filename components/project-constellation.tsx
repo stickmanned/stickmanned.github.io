@@ -89,11 +89,14 @@ function getConstellationLayout(viewportWidth: number) {
   // Left padding is clamp(18px, 4vw, 44px)
   const leftPadding = Math.max(18, Math.min(44, viewportWidth * 0.04));
   
-  // The text column is max-width 625px
-  const textWidth = 625;
+  // The visual width of the text column (aligned with container max-width 520px)
+  const textWidth = 520;
+  
+  // Spacing gap between text and constellation elements to prevent proximity crowding
+  const gap = 55;
   
   // Calculate the exact right edge of the text in pixels relative to viewport
-  const textRightEdge = leftMargin + leftPadding + textWidth + 20; // 20px safety gap
+  const textRightEdge = leftMargin + leftPadding + textWidth + gap;
   
   // The max radius of the orbiting project nodes is 328px + icon overhang.
   const projectRadius = 380; 
@@ -115,11 +118,14 @@ function getConstellationLayout(viewportWidth: number) {
     return { centerX: 50, centerY: 50, scale: 0, opacity: 0 };
   }
   
-  // Place the center exactly so it honors the right padding.
-  const centerX = viewportWidth - rightPadding - (projectRadius * scale);
+  // Place the center next to the text column with the minimal gap.
+  const centerX = leftMargin + leftPadding + textWidth + gap + (projectRadius * scale);
+
+  const containerWidth = Math.min(viewportWidth, containerMaxWidth);
+  const relativeCenterX = centerX - leftMargin;
 
   return { 
-    centerX: (centerX / viewportWidth) * 100, // CSS uses percentage
+    centerX: (relativeCenterX / containerWidth) * 100, // Percentage of the parent container
     centerY: 54, 
     scale,
     opacity: 1
@@ -183,7 +189,6 @@ export function ProjectConstellation() {
               <span className="constellation-node-icon" aria-hidden="true">
                 <ProjectIcon slug={node.slug} />
               </span>
-              <small aria-hidden="true">{node.short}</small>
               <em>{project.title}</em>
             </span>
           </Link>

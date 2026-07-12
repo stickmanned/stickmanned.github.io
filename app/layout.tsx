@@ -20,7 +20,7 @@ export const metadata: Metadata = {
       "Hardware-focused student builder creating web apps, games, and physical computing projects.",
     url: "https://williamwen.xyz",
     siteName: "William Wen",
-    images: ["/design-assets/portrait.png"],
+    images: ["/design-assets/portrait.jpg"],
     type: "website"
   }
 };

@@ -59,6 +59,7 @@ export function ProjectGrid({ projects }: { projects: Project[] }) {
 export function ProjectCard({ project, wide = false }: { project: Project; wide?: boolean }) {
   const internal = project.href.startsWith("/");
   const external = project.href.startsWith("http");
+  const isGame = project.categories.includes("Games");
   const className = wide ? "project-card project-card-wide" : "project-card";
   const body = (
     <>
@@ -75,7 +76,13 @@ export function ProjectCard({ project, wide = false }: { project: Project; wide?
         <h3>{project.title}</h3>
         <p>{project.blurb}</p>
         <strong>
-          {internal ? "View case study" : external ? "Play / view project ↗" : "Write-up coming soon"}
+          {internal
+            ? "View Project"
+            : isGame && external
+              ? "Play Game ↗"
+              : external
+                ? "View Project ↗"
+                : "Write-up coming soon"}
         </strong>
       </div>
     </>

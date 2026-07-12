@@ -35,13 +35,10 @@ export default function HomePage() {
         <div className="hero-inner">
           <ProjectConstellation />
           <div className="hero-copy depth-4" data-depth="4">
-            <p className="eyebrow">
-              <span /> Student builder — hardware × software
-            </p>
             <h1 id="hero-title">William Wen</h1>
             <p className="hero-lede">
-              Hardware-focused student builder creating{" "}
-              <strong>web apps, games, and physical computing</strong> projects.
+              High school student builder creating{" "}
+              <strong>apps, games, hardware, and more</strong>.
             </p>
             <div className="hero-proof">
               <span>Now</span>
@@ -54,7 +51,7 @@ export default function HomePage() {
                 >
                   Fraser Hack Club
                 </a>{" "}
-                and deep in hardware builds.
+                and deep in hardware projects.
               </p>
               <span>Prev</span>
               <p>
@@ -88,12 +85,9 @@ export default function HomePage() {
 
       <section className="section-wrap" id="work">
         <div className="section-heading" data-reveal>
-          <p>01 - Selected Work</p>
-          <h2>Things I&apos;ve built.</h2>
-          <span>
-            A mix of hardware experiments, web apps, and games. Every one
-            shipped, documented, and real.
-          </span>
+
+          <h2>Things I&apos;ve built</h2>
+
         </div>
         <SelectedWork projects={allProjects} />
       </section>
@@ -101,8 +95,7 @@ export default function HomePage() {
       <section className="section-band" id="range">
         <div className="section-wrap">
           <div className="section-heading" data-reveal>
-            <p>02 - Range</p>
-            <h2>Comfortable across the whole stack, solder to screen.</h2>
+            <h2>My stack</h2>
           </div>
           <div className="range-layout">
             <figure className="graph-card range-map" data-reveal>
@@ -124,7 +117,7 @@ export default function HomePage() {
                 ],
                 [
                   "3D & CAD Design",
-                  "Modeling in AutoCAD and OpenSCAD, then printing real parts.",
+                  "2D design in AutoCAD, 3D in Fusion and OpenSCAD, then 3D printing into real life!",
                 ],
                 [
                   "Writing",
@@ -158,8 +151,7 @@ export default function HomePage() {
 
       <section className="section-wrap" id="experience">
         <div className="section-heading" data-reveal>
-          <p>03 - Experience & Proof</p>
-          <h2>Hackathons, leadership, and wins.</h2>
+          <h2>Hackathons, leadership, and events.</h2>
         </div>
         <div className="compact-timeline">
           {timeline.map((item) => (
@@ -178,12 +170,7 @@ export default function HomePage() {
       <section className="section-band" id="writing">
         <div className="section-wrap">
           <div className="writing-intro" data-reveal>
-            <p className="kicker">04 - Writing</p>
             <h2>A knowledge base, not just a blog.</h2>
-            <p>
-              Essays, short stories, books, and notes: a connected record of
-              what I&apos;m thinking and building.
-            </p>
             <Link className="text-link" href="/writing/">
               Read writing
             </Link>
@@ -208,7 +195,6 @@ export default function HomePage() {
       <section className="section-wrap about-preview" id="about">
         <PortraitEgg />
         <div data-reveal>
-          <p className="kicker">05 - About</p>
           <h2>Curious since Grade 2, still building.</h2>
           <p>
             I started coding in Grade 2 with Scratch and have since explored
@@ -227,16 +213,15 @@ export default function HomePage() {
       </section>
 
       <section className="contact-cta">
-        <p className="kicker">06 - Contact</p>
-        <h2>Let&apos;s build something.</h2>
+        <h2>Contact me</h2>
         <p>
-          Open to internships, admissions conversations, collaborations, or
-          talking hardware.
+          Open to internships, admissions, collaborations, or
+          anything tech!
         </p>
         <div className="button-row">
-          <a className="accent-button" href="mailto:williamwen25@gmail.com">
-            williamwen25@gmail.com
-          </a>
+          <Link className="accent-button" href="/contact/">
+            Get in touch
+          </Link>
           <Link className="quiet-button" href="/resume/">
             Resume
           </Link>
@@ -250,7 +235,7 @@ function PortraitEgg() {
   return (
     <div className="portrait-card" data-reveal>
       <img
-        src="/design-assets/portrait.png"
+        src="/design-assets/portrait.jpg"
         alt="William Wen"
         data-secret-portrait
       />

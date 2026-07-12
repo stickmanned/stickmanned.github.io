@@ -1610,7 +1610,7 @@ export type ExperienceItem = {
   title: string;
   date: string;
   dateISO: string;
-  kind: "Hackathon" | "Leadership" | "Award" | "Trip" | "Talk" | "Tech";
+  kind: "Hackathon" | "Leadership" | "Award" | "Trip" | "Talk" | "Other Events";
   image: string;
   desc: string;
   href?: string;
@@ -1713,7 +1713,7 @@ export const experienceItems: ExperienceItem[] = [
     title: "Youth Tech Day 2024",
     date: "September 2024",
     dateISO: "2024-09-07",
-    kind: "Tech",
+    kind: "Other Events",
     image: "/img/event/techday.jpg",
     desc: "Youth Tech Day hosted by Geek Squad, featuring various tech-related activities.",
   },

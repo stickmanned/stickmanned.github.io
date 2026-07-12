@@ -9,46 +9,44 @@ export default function AboutPage() {
     <main className="page-shell">
       <section className="about-page-grid">
         <figure className="portrait-card">
-          <img src="/design-assets/portrait.png" alt="William Wen" data-secret-portrait />
+          <img src="/design-assets/portrait.jpg" alt="William Wen" data-secret-portrait />
         </figure>
         <div>
           <p className="kicker">About</p>
-          <h1>Friendly, technical, and always making something real.</h1>
+          <h1>Hey There! 👋</h1>
+          <h3 style={{marginTop: "var(--s-3)"}}>Who am I?</h3>
           <p>
-            Hey there — I&apos;m William, a high school student and co-founder of Fraser Hack Club. I build across
-            hardware, web apps, games, writing, and community projects.
+            I&apos;m William, a high school student and co-founder of <a href="/hack-club" className="link">Fraser Hack Club</a>. I build across
+            hardware, web apps, games, and anything that I find interesting.
           </p>
+          <h3 style={{marginTop: "var(--s-3)"}}>A bit about me</h3>
           <p>
-            I started coding in Grade 2 with Scratch and have since explored Python, Java, HTML, CSS, JavaScript,
-            TypeScript, C++, React, AP Computer Science A, Godot, Unity, Roblox, AutoCAD, OpenSCAD, and 3D printing.
+            I started programming in Grade 2 with Scratch. Since then, I have explored Python, Java, HTML, CSS, JavaScript,
+            TypeScript, C++, React, Godot, Unity, Roblox, & more.
           </p>
+          <h3 style={{marginTop: "var(--s-3)"}}>My Interests</h3>
           <p>
-            Hardware and PC building are a major thread: small form factor PCs, component selection, benchmarking,
-            thermal constraints, printed parts, and single-board-computer experiments.
+            I enjoy building, tinkering, and exploring everything tech! My favorite hobbies are 3D printing, PC building, gaming, and creating something amazing whether it&apos;s hardware or software.
           </p>
         </div>
       </section>
+      <h3 style={{marginTop: "var(--s-3)"}}>Some more about me</h3>
       <section className="section-wrap no-pad">
         <div className="capability-grid">
           {[
-            ["Coding", "Scratch in Grade 2, then Python, Java, JS/TS, C++, React, games, and web apps."],
-            ["PC Building", "SFF builds, high-performance parts, thermals, cable management, and benchmarking."],
-            ["3D Modeling", "Learning 3D modeling and printing parts that help with projects and daily life."],
-            ["Games", "Roblox, BeamNG.drive, Scratch projects, and game-jam experiments."],
-            ["Art", "Digital art in Procreate and a creative thread that shows up in project presentation."],
-            ["Pets", "The personal side: Bread the cat, guinea pigs, and goldfish."]
+            ["Coding Journey", "I started with Scratch, then Python, then C++, a bit of Roblox Lua, and a lot of web development, and eventually full game development. "],
+            ["PC Building", "I enjoy building SFF (Small Form Factor) PCs using high-performance parts, while keeping thermals and cable management under control."],
+            ["3D Modeling", "I mainly use Fusion for modelling stuff for my projects, but I have since explored programs such as Onshape, OpenSCAD, and Blender."],
+            ["Games", "My favorite games are Roblox and BeamNG.drive. I also enjoy creating games by myself or with my friends."],
+            ["Art", "I enjoy digital art using Procreate, as well as filmmaking and video editing."],
+            ["Pets", "I have a plethora of pets: 1 cat, 2 guinea pigs, and 2 goldfish."]
           ].map(([title, desc], index) => (
             <article key={title} data-reveal>
-              <span>/{String(index + 1).padStart(2, "0")}</span>
               <h3>{title}</h3>
               <p>{desc}</p>
             </article>
           ))}
         </div>
-      </section>
-      <section className="pet-strip">
-        <img src="/img/bread.jpg" alt="Bread the cat" loading="lazy" />
-        <img src="/img/guineapigs.jpg" alt="William's guinea pigs" loading="lazy" />
       </section>
     </main>
   );

@@ -291,7 +291,6 @@ input {
   font: inherit;
 }
 
-.key-button,
 .menu-button,
 .close-button {
   color: var(--muted);
@@ -299,12 +298,6 @@ input {
   border: 1px solid rgba(var(--line-rgb), 0.12);
   border-radius: 8px;
   cursor: pointer;
-}
-
-.key-button {
-  padding: 8px 12px;
-  font-family: var(--font-space-mono), monospace;
-  font-size: 12px;
 }
 
 .menu-button {
@@ -385,7 +378,8 @@ input {
 .writing-grid a,
 .social-link,
 .knowledge-node,
-.constellation-node {
+.constellation-node,
+a[href] {
   --cursor-proximity: 0;
   --cursor-local-x: 50%;
   --cursor-local-y: 50%;
@@ -403,7 +397,8 @@ input {
 .writing-cards a,
 .writing-grid a,
 .social-link,
-.knowledge-node {
+.knowledge-node,
+a[href]:not(.knowledge-node):not(.constellation-node) {
   position: relative;
   isolation: isolate;
 }
@@ -421,6 +416,7 @@ input {
 .writing-grid a::after,
 .social-link::after,
 .knowledge-node::after,
+a[href]:not(.constellation-node)::after,
 .constellation-node-icon::after {
   content: "";
   position: absolute;
@@ -466,6 +462,92 @@ input {
     0 12px 30px rgba(var(--shadow-rgb), 0.5);
 }
 
+/* Every link gets a quick, luminous sweep on hover. The narrow gradient reads
+   like a highlight without obscuring text, artwork, or card content. */
+a[href] {
+  --link-highlight-bottom: -0.18em;
+  --link-highlight-inset: 0;
+}
+
+a[href]:not(.accent-button):not(.quiet-button):not(.knowledge-node):not(.constellation-node)::before {
+  content: "";
+  position: absolute;
+  right: var(--link-highlight-inset);
+  bottom: var(--link-highlight-bottom);
+  left: var(--link-highlight-inset);
+  z-index: 3;
+  height: 2px;
+  border-radius: 999px;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(var(--cyan-rgb), 0.75) 20%,
+    var(--accent) 46%,
+    rgba(var(--line-rgb), 0.96) 52%,
+    var(--accent) 58%,
+    rgba(var(--cyan-rgb), 0.75) 80%,
+    transparent 100%
+  );
+  background-size: 220% 100%;
+  box-shadow:
+    0 0 8px rgba(var(--accent-rgb), 0.62),
+    0 0 18px rgba(var(--cyan-rgb), 0.28);
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition:
+    transform 0.36s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.16s ease;
+}
+
+a[href]:not(.accent-button):not(.quiet-button):not(.knowledge-node):not(.constellation-node):hover::before,
+a[href]:not(.accent-button):not(.quiet-button):not(.knowledge-node):not(.constellation-node):focus-visible::before {
+  opacity: 1;
+  transform: scaleX(1);
+  transform-origin: left center;
+  animation: link-highlight-shimmer 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+a[href]:not(.accent-button):not(.quiet-button):not(.knowledge-node):not(.constellation-node):hover {
+  text-shadow: 0 0 18px rgba(var(--accent-rgb), 0.3);
+}
+
+:where(
+  .project-card,
+  .writing-cards a,
+  .writing-grid a,
+  .contact-list a,
+  .desktop-nav a,
+  .mobile-menu a,
+  .social-link,
+  .brand
+) {
+  --link-highlight-bottom: 2px;
+  --link-highlight-inset: 10%;
+}
+
+a[href]:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+@keyframes link-highlight-shimmer {
+  from {
+    background-position: 115% 0;
+  }
+  to {
+    background-position: -85% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  a[href]:not(.accent-button):not(.quiet-button):not(.knowledge-node):not(.constellation-node)::before {
+    animation: none;
+    transition-duration: 0.01ms;
+  }
+}
+
 .scene {
   position: relative;
   overflow: hidden;
@@ -505,9 +587,9 @@ input {
 .hero-copy {
   position: relative;
   z-index: 3;
-  width: min(100%, 625px);
+  width: min(100%, 520px);
   min-width: 0;
-  max-width: 625px;
+  max-width: 520px;
 }
 
 .eyebrow,
@@ -567,7 +649,7 @@ h3 {
 
 .hero-proof {
   display: grid;
-  grid-template-columns: 52px 1fr;
+  grid-template-columns: auto 1fr;
   gap: 10px 14px;
   max-width: 570px;
   margin: 0 0 34px;
@@ -747,13 +829,6 @@ h3 {
     box-shadow 0.24s,
     background 0.24s,
     transform 0.24s;
-}
-
-.constellation-node small {
-  color: var(--muted);
-  font-family: var(--font-space-mono), monospace;
-  font-size: 10.5px;
-  white-space: nowrap;
 }
 
 .constellation-node em {
@@ -1324,6 +1399,10 @@ h3 {
   grid-template-columns: 0.85fr 1.15fr;
   gap: 52px;
   align-items: center;
+}
+
+.about-page-grid {
+  margin-bottom: 72px;
 }
 
 .portrait-card {
@@ -2411,8 +2490,9 @@ h3 {
   }
 }
 
-/* Theme cycle button in the nav. Matches .key-button styling. */
-.theme-button {
+/* Theme cycle button & command palette button in the nav. */
+.theme-button,
+.key-button {
   display: grid;
   place-items: center;
   width: 34px;
@@ -2429,7 +2509,9 @@ h3 {
 }
 
 .theme-button:hover,
-.theme-button:focus-visible {
+.theme-button:focus-visible,
+.key-button:hover,
+.key-button:focus-visible {
   color: var(--accent);
   border-color: var(--accent);
 }

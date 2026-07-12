@@ -12,9 +12,6 @@ export default function ExperiencePage() {
       <section className="page-hero">
         <p className="kicker">Experience</p>
         <h1>Hackathons, leadership, awards, and milestones.</h1>
-        <p>
-          Hackathon wins, leadership roles, awards, and the trips in between — one filterable timeline.
-        </p>
       </section>
       <ExperienceTimeline items={experienceItems} />
     </main>
