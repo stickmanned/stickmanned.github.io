@@ -31,6 +31,29 @@ const PLAYER_MARGIN = 0.55; // keep-out distance from walls
 const CARPET_COLOR = 0x9dc18b;
 const WARM_LIGHT = 0xffd9a0;
 
+// Photographic surface textures (2048px web copies of the 4K originals in
+// app/textures/). They are greyscale AO/detail maps, so each material tints
+// them via its `color` — white plaster picks up the theme wall colour, the
+// wood grain map is tinted dark brown, and so on.
+const TEXTURE_URLS = {
+  marbleFloor: "/textures/marble-tiles.jpg",
+  paintedPlaster: "/textures/painted-plaster.jpg",
+  greyPlaster: "/textures/plaster-grey.jpg",
+  darkWood: "/textures/dark-wood.jpg",
+} as const;
+// Physical size of one texture repeat, in metres. Every surface that shares
+// a texture derives its UVs from these, so scale stays consistent room to
+// room and object to object.
+const PLASTER_TILE = 3; // walls + roof plaster
+const MARBLE_TILE = 6; // ~30 cm marble tiles (20-tile grid per image)
+const WOOD_TILE = 1.4; // wood grain repeat across benches/frames/chandeliers
+
+// Dark-wood tints multiplied into the (near-white) wood grain map.
+const WOOD_SEAT = 0x5a4630;
+const WOOD_LEG = 0x33271a;
+const WOOD_CHANDELIER = 0x3d2f21;
+const WOOD_FRAME = 0x55412c;
+
 type Side = "n" | "e" | "s" | "w";
 type Dir = "N" | "E" | "S" | "W";
 type Rect = { minX: number; maxX: number; minZ: number; maxZ: number };
@@ -45,6 +68,47 @@ function roomKeyFor(project: Project): string {
 function roomLabelFor(project: Project): string {
   const key = roomKeyFor(project);
   return ROOM_ORDER.find((room) => room.key === key)?.label ?? key;
+}
+
+// Rescale a BoxGeometry's per-face UVs from 0..1 to world units so a
+// RepeatWrapping texture tiles at the same physical size on every box,
+// whatever its dimensions. BoxGeometry lays out 4 vertices per face in the
+// order +x, -x, +y, -y, +z, -z.
+function worldScaleBoxUVs(
+  geometry: import("three").BoxGeometry,
+  sx: number,
+  sy: number,
+  sz: number,
+  worldSize: number,
+) {
+  const uv = geometry.getAttribute("uv");
+  const faceDims: [number, number][] = [
+    [sz, sy],
+    [sz, sy],
+    [sx, sz],
+    [sx, sz],
+    [sx, sy],
+    [sx, sy],
+  ];
+  for (let i = 0; i < uv.count; i++) {
+    const [du, dv] = faceDims[Math.floor(i / 4)];
+    uv.setXY(i, (uv.getX(i) * du) / worldSize, (uv.getY(i) * dv) / worldSize);
+  }
+  uv.needsUpdate = true;
+}
+
+// Same idea for a PlaneGeometry (used by the roof caps).
+function worldScalePlaneUVs(
+  geometry: import("three").PlaneGeometry,
+  w: number,
+  h: number,
+  worldSize: number,
+) {
+  const uv = geometry.getAttribute("uv");
+  for (let i = 0; i < uv.count; i++) {
+    uv.setXY(i, (uv.getX(i) * w) / worldSize, (uv.getY(i) * h) / worldSize);
+  }
+  uv.needsUpdate = true;
 }
 
 // Tileable plank pattern for the floor, drawn in theme colours.
@@ -319,6 +383,11 @@ export function ProjectGallery({
         const THREE = await import("three");
         if (disposed || !mount) return;
 
+        // Canvas text is rasterized once, so wait for the active theme's web
+        // fonts before drawing signs and plaques to avoid baking in a fallback.
+        await document.fonts.ready;
+        if (disposed || !mount) return;
+
         const styles = getComputedStyle(document.documentElement);
         const cssColor = (name: string, fallback: string) =>
           styles.getPropertyValue(name).trim() || fallback;
@@ -326,6 +395,8 @@ export function ProjectGallery({
         const bg = cssColor("--bg", "#08090b");
         const panel = cssColor("--panel-2", "#12151a");
         const textColor = cssColor("--text-strong", "#f7f9fc");
+        const headingElement = document.querySelector<HTMLElement>("h1, h2, h3");
+        const headingFont = getComputedStyle(headingElement ?? document.body).fontFamily;
 
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -386,25 +457,92 @@ export function ProjectGallery({
 
         // ---- Materials -------------------------------------------------
         // Theme surfaces nudged toward the text colour so walls read as
-        // museum walls in every theme, with a subtle plaster texture so
-        // the floor isn't the only textured surface.
+        // museum walls in every theme. Each surface starts on its cheap
+        // procedural fallback and upgrades to the photographic JPEG once it
+        // arrives; a failed load simply keeps the fallback.
+        const textureLoader = new THREE.TextureLoader();
+        const maxAnisotropy = Math.min(
+          8,
+          renderer.capabilities.getMaxAnisotropy(),
+        );
+        function loadSurfaceTexture(
+          url: string,
+          onReady: (texture: import("three").Texture) => void,
+        ) {
+          textureLoader.load(
+            url,
+            (texture) => {
+              if (disposed) {
+                texture.dispose();
+                return;
+              }
+              track(texture);
+              texture.colorSpace = THREE.SRGBColorSpace;
+              texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+              texture.anisotropy = maxAnisotropy;
+              onReady(texture);
+            },
+            undefined,
+            () => {
+              console.warn(`Gallery texture failed to load: ${url}`);
+            },
+          );
+        }
+
+        // The plaster maps are near-white, so the material `color` carries
+        // the theme tint; the procedural fallbacks are drawn in white to
+        // match. Walls and roof share one map each — per-mesh scale comes
+        // from world-scaled UVs, never from texture.repeat.
         const wallBase = new THREE.Color(panel).lerp(new THREE.Color(textColor), 0.18);
-        const wallTexture = track(
-          makePlasterTexture(THREE, `#${wallBase.getHexString()}`),
-        );
+        const wallTexture = track(makePlasterTexture(THREE, "#ffffff"));
         const wallMaterial = track(
-          new THREE.MeshLambertMaterial({ map: wallTexture }),
+          new THREE.MeshStandardMaterial({
+            map: wallTexture,
+            color: wallBase,
+            roughness: 0.95,
+            metalness: 0,
+          }),
         );
+        loadSurfaceTexture(TEXTURE_URLS.paintedPlaster, (texture) => {
+          wallMaterial.map = texture;
+          wallMaterial.needsUpdate = true;
+        });
         const roofBase = new THREE.Color(panel).lerp(new THREE.Color(textColor), 0.08);
         const roofTexture = track(
           makePlasterTexture(THREE, `#${roofBase.getHexString()}`),
         );
         const roofMaterial = track(
-          new THREE.MeshLambertMaterial({
+          new THREE.MeshStandardMaterial({
             map: roofTexture,
+            roughness: 1,
+            metalness: 0,
             side: THREE.DoubleSide,
           }),
         );
+        loadSurfaceTexture(TEXTURE_URLS.greyPlaster, (texture) => {
+          // The grey plaster map is self-coloured (mid grey), so the roof
+          // keeps a white tint and shows the texture's natural colour.
+          roofMaterial.map = texture;
+          roofMaterial.needsUpdate = true;
+        });
+
+        // Dark wood is shared by benches, picture frames and chandeliers:
+        // one texture, several tint variants, registered here so the map
+        // can be attached to all of them in one place once it loads.
+        const woodMaterials: import("three").MeshStandardMaterial[] = [];
+        function makeWoodMaterial(color: number, roughness = 0.65) {
+          const material = track(
+            new THREE.MeshStandardMaterial({ color, roughness, metalness: 0 }),
+          );
+          woodMaterials.push(material);
+          return material;
+        }
+        loadSurfaceTexture(TEXTURE_URLS.darkWood, (texture) => {
+          for (const material of woodMaterials) {
+            material.map = texture;
+            material.needsUpdate = true;
+          }
+        });
         const moldingMaterial = track(
           new THREE.MeshLambertMaterial({
             color: new THREE.Color(panel).lerp(new THREE.Color(textColor), 0.32),
@@ -436,9 +574,23 @@ export function ProjectGallery({
           ),
         );
         floorTexture.repeat.set(Math.ceil(floorW / 3), Math.ceil(floorD / 3));
+        const floorMaterial = track(
+          new THREE.MeshStandardMaterial({
+            map: floorTexture,
+            roughness: 0.4,
+            metalness: 0,
+          }),
+        );
+        loadSurfaceTexture(TEXTURE_URLS.marbleFloor, (texture) => {
+          // Marble is exclusive to the floor, so texture.repeat is safe
+          // here; non-integer repeats are fine with RepeatWrapping.
+          texture.repeat.set(floorW / MARBLE_TILE, floorD / MARBLE_TILE);
+          floorMaterial.map = texture;
+          floorMaterial.needsUpdate = true;
+        });
         const floor = new THREE.Mesh(
           track(new THREE.PlaneGeometry(floorW, floorD)),
-          track(new THREE.MeshLambertMaterial({ map: floorTexture })),
+          floorMaterial,
         );
         floor.rotation.x = -Math.PI / 2;
         floor.position.set(
@@ -456,16 +608,21 @@ export function ProjectGallery({
         function addWall(cx: number, cz: number, length: number, alongX: boolean) {
           if (length <= 0.01) return;
           const height = alongX ? WALL_HEIGHT : WALL_HEIGHT - 0.015;
-          const wall = new THREE.Mesh(
-            track(
-              new THREE.BoxGeometry(
-                alongX ? length : WALL_T,
-                height,
-                alongX ? WALL_T : length,
-              ),
+          const wallGeometry = track(
+            new THREE.BoxGeometry(
+              alongX ? length : WALL_T,
+              height,
+              alongX ? WALL_T : length,
             ),
-            wallMaterial,
           );
+          worldScaleBoxUVs(
+            wallGeometry,
+            alongX ? length : WALL_T,
+            height,
+            alongX ? WALL_T : length,
+            PLASTER_TILE,
+          );
+          const wall = new THREE.Mesh(wallGeometry, wallMaterial);
           wall.position.set(cx, height / 2, cz);
           scene.add(wall);
           // Baseboard runs a hair short of the wall so its end faces never
@@ -499,16 +656,21 @@ export function ProjectGallery({
             if (alongX) addWall(mid, plane, len, true);
             else addWall(plane, mid, len, false);
           }
-          const lintel = new THREE.Mesh(
-            track(
-              new THREE.BoxGeometry(
-                alongX ? DOOR_HALF * 2 : WALL_T,
-                WALL_HEIGHT - DOOR_HEIGHT,
-                alongX ? WALL_T : DOOR_HALF * 2,
-              ),
+          const lintelGeometry = track(
+            new THREE.BoxGeometry(
+              alongX ? DOOR_HALF * 2 : WALL_T,
+              WALL_HEIGHT - DOOR_HEIGHT,
+              alongX ? WALL_T : DOOR_HALF * 2,
             ),
-            wallMaterial,
           );
+          worldScaleBoxUVs(
+            lintelGeometry,
+            alongX ? DOOR_HALF * 2 : WALL_T,
+            WALL_HEIGHT - DOOR_HEIGHT,
+            alongX ? WALL_T : DOOR_HALF * 2,
+            PLASTER_TILE,
+          );
+          const lintel = new THREE.Mesh(lintelGeometry, wallMaterial);
           lintel.position.set(
             alongX ? 0 : plane,
             DOOR_HEIGHT + (WALL_HEIGHT - DOOR_HEIGHT) / 2,
@@ -566,22 +728,24 @@ export function ProjectGallery({
             new THREE.Float32BufferAttribute(positions, 3),
           );
           // Planar UVs from world x/z so the plaster texture tiles across
-          // the sloped panels.
+          // the sloped panels at the same physical size as the walls.
           const uvs: number[] = [];
           for (let i = 0; i < positions.length; i += 3) {
-            uvs.push(positions[i] * 0.25, positions[i + 2] * 0.25);
+            uvs.push(
+              positions[i] / PLASTER_TILE,
+              positions[i + 2] / PLASTER_TILE,
+            );
           }
           geometry.setAttribute("uv", new THREE.Float32BufferAttribute(uvs, 2));
           geometry.computeVertexNormals();
           scene.add(new THREE.Mesh(geometry, roofMaterial));
 
           // Solid flat cap closing the roof.
-          const cap = new THREE.Mesh(
-            track(
-              new THREE.PlaneGeometry(inner.maxX - inner.minX, inner.maxZ - inner.minZ),
-            ),
-            roofMaterial,
-          );
+          const capW = inner.maxX - inner.minX;
+          const capD = inner.maxZ - inner.minZ;
+          const capGeometry = track(new THREE.PlaneGeometry(capW, capD));
+          worldScalePlaneUVs(capGeometry, capW, capD, PLASTER_TILE);
+          const cap = new THREE.Mesh(capGeometry, roofMaterial);
           cap.rotation.x = Math.PI / 2;
           cap.position.set(
             (inner.minX + inner.maxX) / 2,
@@ -604,7 +768,7 @@ export function ProjectGallery({
             makeTextTexture(THREE, text.toUpperCase(), {
               width: 1024,
               height: 192,
-              font: "700 96px 'Space Grotesk', sans-serif",
+              font: `700 96px ${headingFont}`,
               color: accent,
             }),
           );
@@ -621,10 +785,14 @@ export function ProjectGallery({
         // Circular keep-out zones around benches and planters.
         const colliders: { x: number; z: number; r: number }[] = [];
 
-        const benchSeatMaterial = track(new THREE.MeshLambertMaterial({ color: 0x51402f }));
-        const benchLegMaterial = track(new THREE.MeshLambertMaterial({ color: 0x241d15 }));
+        const benchSeatMaterial = makeWoodMaterial(WOOD_SEAT, 0.6);
+        const benchLegMaterial = makeWoodMaterial(WOOD_LEG, 0.7);
         const benchSeatGeometry = track(new THREE.BoxGeometry(1.7, 0.09, 0.55));
+        // Grain runs along the seat's length (the map's grain follows U,
+        // which world-scaled box UVs map to each face's long axis here).
+        worldScaleBoxUVs(benchSeatGeometry, 1.7, 0.09, 0.55, WOOD_TILE);
         const benchLegGeometry = track(new THREE.BoxGeometry(0.08, 0.42, 0.5));
+        worldScaleBoxUVs(benchLegGeometry, 0.08, 0.42, 0.5, WOOD_TILE);
         const potMaterial = track(new THREE.MeshLambertMaterial({ color: 0x2b2b30 }));
         const potGeometry = track(new THREE.CylinderGeometry(0.22, 0.17, 0.42, 10));
         const foliageMaterialA = track(new THREE.MeshLambertMaterial({ color: 0x3f7a4a }));
@@ -675,7 +843,7 @@ export function ProjectGallery({
         // up to the sloped roof, finished with a canopy so the fixture is
         // visibly mounted rather than floating. These are the room lights.
         const chandRingGeometry = track(new THREE.TorusGeometry(0.55, 0.045, 8, 20));
-        const chandMetalMaterial = track(new THREE.MeshLambertMaterial({ color: 0x2a2622 }));
+        const chandMetalMaterial = makeWoodMaterial(WOOD_CHANDELIER, 0.55);
         const bulbGeometry = track(new THREE.SphereGeometry(0.09, 8, 6));
         const bulbMaterial = track(new THREE.MeshBasicMaterial({ color: 0xffe9c4 }));
         const canopyGeometry = track(new THREE.CylinderGeometry(0.1, 0.16, 0.12, 10));
@@ -752,14 +920,9 @@ export function ProjectGallery({
         }
 
         // ---- Frames ----------------------------------------------------
-        const textureLoader = new THREE.TextureLoader();
         const artMeshes: import("three").Mesh[] = [];
-        const frameBorders = new Map<number, import("three").MeshLambertMaterial>();
+        const frameBorders = new Map<number, import("three").MeshStandardMaterial>();
         const frameGroups = new Map<number, import("three").Group>();
-        const borderBaseColor = new THREE.Color(panel).lerp(
-          new THREE.Color(textColor),
-          0.25,
-        );
         // Shared wall-wash glow + picture-lamp resources for every frame.
         const glowTexture = track(makeGlowTexture(THREE));
         const glowMaterial = track(
@@ -788,13 +951,20 @@ export function ProjectGallery({
           group.position.set(position.x, 2, position.z);
           group.rotation.y = position.rotY;
 
-          const borderMaterial = track(
-            new THREE.MeshLambertMaterial({ color: borderBaseColor.clone() }),
+          // Per-frame material (hover highlights one frame), all sharing
+          // the one dark-wood map via the wood-material registry.
+          const borderMaterial = makeWoodMaterial(WOOD_FRAME, 0.6);
+          const borderGeometry = track(
+            new THREE.BoxGeometry(ART_W + 0.18, ART_H + 0.18, 0.08),
           );
-          const border = new THREE.Mesh(
-            track(new THREE.BoxGeometry(ART_W + 0.18, ART_H + 0.18, 0.08)),
-            borderMaterial,
+          worldScaleBoxUVs(
+            borderGeometry,
+            ART_W + 0.18,
+            ART_H + 0.18,
+            0.08,
+            WOOD_TILE,
           );
+          const border = new THREE.Mesh(borderGeometry, borderMaterial);
           border.userData.projectIndex = index;
           group.add(border);
 
@@ -842,7 +1012,7 @@ export function ProjectGallery({
             makeTextTexture(THREE, `${project.emoji ?? "🖼️"} ${plaqueTitle} — ${project.year}`, {
               width: 1024,
               height: 128,
-              font: "500 52px 'Space Grotesk', sans-serif",
+              font: `500 52px ${headingFont}`,
               color: textColor,
               background: bg,
             }),
@@ -998,14 +1168,19 @@ export function ProjectGallery({
         function setHovered(index: number | null) {
           if (index === hoveredIndex) return;
           if (hoveredIndex !== null) {
-            frameBorders.get(hoveredIndex)?.color.copy(borderBaseColor);
+            frameBorders.get(hoveredIndex)?.emissive.setHex(0x000000);
             frameGroups.get(hoveredIndex)?.scale.setScalar(1);
           }
           hoveredIndex = index;
-          // Hover is only an affordance: accent border + pointer cursor.
-          // The preview panel itself opens on click.
+          // Hover is only an affordance: accent glow + pointer cursor. The
+          // glow is emissive rather than a colour swap so the wood-grain
+          // map keeps its dark tint underneath.
           if (index !== null) {
-            frameBorders.get(index)?.color.set(accent);
+            const material = frameBorders.get(index);
+            if (material) {
+              material.emissive.set(accent);
+              material.emissiveIntensity = 0.55;
+            }
             frameGroups.get(index)?.scale.setScalar(1.03);
           }
           renderer.domElement.style.cursor = index !== null ? "pointer" : "";
