@@ -177,8 +177,7 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
 
       <footer className="site-footer">
         <div>
-          <strong>William Wen</strong>
-          <p>Hardware, web apps, games, writing, and community projects.</p>
+          <strong>Copyright &copy; 2026 William Wen, all rights reserved.</strong>
         </div>
         <div className="footer-links">
           {socials.map((social) => (

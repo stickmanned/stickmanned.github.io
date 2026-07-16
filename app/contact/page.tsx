@@ -9,9 +9,8 @@ export default function ContactPage() {
   return (
     <main className="page-shell narrow">
       <section className="page-hero">
-        <p className="kicker">Contact</p>
-        <h1>Open to internships, admissions conversations, collaborations, and hardware chats.</h1>
-        <p>Reach out through email, GitHub, YouTube, or Discord.</p>
+
+        <h1>Open to internships, admissions, collaborations, and chats :)</h1>
       </section>
       <div className="contact-list">
         <a href="mailto:williamwen25@gmail.com">

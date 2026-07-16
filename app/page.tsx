@@ -197,7 +197,7 @@ export default function HomePage() {
         <div data-reveal>
           <h2>Curious since Grade 2, still building.</h2>
           <p>
-            I started coding in Grade 2 with Scratch and have since explored
+            I started programming in Grade 2 with Scratch and have since explored
             Python, Java, HTML, CSS, JavaScript, TypeScript, C++, AP Computer
             Science A, full-stack web, game development, and small-form-factor
             hardware.

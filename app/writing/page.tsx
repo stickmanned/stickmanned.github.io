@@ -11,11 +11,7 @@ export default function WritingPage() {
     <main className="page-shell">
       <section className="page-hero">
         <p className="kicker">Writing</p>
-        <h1>Essays, short stories, books, and notes.</h1>
-        <p>
-          From competition essays to self-published books — the ideas behind
-          the projects, written down.
-        </p>
+        <h1>Essays, short stories, books, notes, & more</h1>
       </section>
 
       <WritingGrid writings={writingEntries} />
