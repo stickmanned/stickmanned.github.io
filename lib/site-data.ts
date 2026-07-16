@@ -48,10 +48,33 @@ export type CaseStudy = Project & {
   changelog?: { date: string; note: string }[];
 };
 
-export type SocialIcon = "github" | "youtube" | "discord" | "mail";
+export type SocialIcon =
+  | "github"
+  | "linkedin"
+  | "instagram"
+  | "youtube"
+  | "discord"
+  | "mail";
 
-export const socials: { label: string; href: string; icon: SocialIcon }[] = [
+export const socials: {
+  label: string;
+  href: string;
+  icon: SocialIcon;
+  display?: string;
+}[] = [
   { label: "GitHub", href: "https://github.com/stickmanned", icon: "github" },
+  {
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/in/william-wen-9371633bb/",
+    icon: "linkedin",
+    display: "William Wen",
+  },
+  {
+    label: "Instagram",
+    href: "https://www.instagram.com/stickmanned/",
+    icon: "instagram",
+    display: "@stickmanned (William Wen)",
+  },
   {
     label: "YouTube / FHC Tech",
     href: "https://www.youtube.com/@fhctech",

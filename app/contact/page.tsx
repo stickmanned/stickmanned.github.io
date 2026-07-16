@@ -20,7 +20,7 @@ export default function ContactPage() {
         {socials.map((social) => (
           <a key={social.href} href={social.href} target="_blank" rel="noreferrer">
             <span>{social.label}</span>
-            {social.href}
+            {social.display ?? social.href}
           </a>
         ))}
       </div>
