@@ -27,7 +27,7 @@ export function ConstellationHead() {
   useEffect(() => {
     const mount = mountRef.current;
     if (!mount) return;
-    // The constellation is hidden under 761px; never fetch the model there.
+    // The constellation is hidden on mobile; avoid fetching the 3D model.
     if (!window.matchMedia("(min-width: 761px)").matches) return;
 
     let disposed = false;
@@ -95,12 +95,14 @@ export function ConstellationHead() {
         const center = box.getCenter(new THREE.Vector3());
         const scale = 1.9 / Math.max(size.x, size.y, size.z);
         const pivot = new THREE.Group();
-        model.position.copy(center).multiplyScalar(-1);
+        model.position.sub(center);
         pivot.add(model);
         pivot.scale.setScalar(scale);
         scene.add(pivot);
 
-        const reducedMotion = { matches: false };
+        const reducedMotion = window.matchMedia(
+          "(prefers-reduced-motion: reduce)",
+        );
 
         let baseYaw = 0;
         let isDragging = false;

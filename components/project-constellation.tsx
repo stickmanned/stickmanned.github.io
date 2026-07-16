@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import type { CSSProperties } from "react";
-import { useEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { featuredProjects } from "@/lib/site-data";
 import { ProjectIcon } from "@/components/icons";
 import { ConstellationHead } from "@/components/head-model";
@@ -14,7 +14,8 @@ const nodeMeta = [
     size: 58,
     radius: 228,
     angle: -12,
-    duration: 34,
+    duration: 42,
+    direction: "normal",
   },
   {
     slug: "blossom",
@@ -22,7 +23,8 @@ const nodeMeta = [
     size: 48,
     radius: 228,
     angle: 108,
-    duration: 34,
+    duration: 42,
+    direction: "normal",
   },
   {
     slug: "ai-nerf-aimbot",
@@ -30,7 +32,8 @@ const nodeMeta = [
     size: 54,
     radius: 228,
     angle: 228,
-    duration: 34,
+    duration: 42,
+    direction: "normal",
   },
   {
     slug: "ncase-m2",
@@ -38,7 +41,8 @@ const nodeMeta = [
     size: 50,
     radius: 328,
     angle: 48,
-    duration: 48,
+    duration: 58,
+    direction: "reverse",
   },
   {
     slug: "spacegoose",
@@ -46,7 +50,8 @@ const nodeMeta = [
     size: 46,
     radius: 328,
     angle: 168,
-    duration: 48,
+    duration: 58,
+    direction: "reverse",
   },
   {
     slug: "lamp-pro",
@@ -54,13 +59,18 @@ const nodeMeta = [
     size: 42,
     radius: 328,
     angle: 288,
-    duration: 48,
+    duration: 58,
+    direction: "reverse",
   },
 ];
 
 type OrbitStyle = CSSProperties &
   Record<
-    "--orbit-radius" | "--orbit-angle" | "--orbit-duration" | "--size",
+    | "--orbit-radius"
+    | "--orbit-angle"
+    | "--orbit-duration"
+    | "--orbit-direction"
+    | "--size",
     string
   >;
 
@@ -70,87 +80,94 @@ type ConstellationStyle = CSSProperties & {
   "--constellation-scale": string;
 };
 
-/**
- * Compute the dynamic layout values for the constellation based on
- * the current viewport width.
- * Mathematically guarantees the rings won't cut off on the right
- * and won't overlap the hero text on the left.
- */
-function getConstellationLayout(viewportWidth: number) {
-  // If viewport is very small, early exit.
-  if (viewportWidth < 760) {
-    return { centerX: 50, centerY: 50, scale: 0, opacity: 0 };
-  }
+type ConstellationLayout = {
+  centerX: number;
+  centerY: number;
+  scale: number;
+  visible: boolean;
+};
 
-  // The container max-width is 1180px, centered on the screen.
-  const containerMaxWidth = 1180;
-  const leftMargin = viewportWidth > containerMaxWidth ? (viewportWidth - containerMaxWidth) / 2 : 0;
-  
-  // Left padding is clamp(18px, 4vw, 44px)
-  const leftPadding = Math.max(18, Math.min(44, viewportWidth * 0.04));
-  
-  // The visual width of the text column (aligned with container max-width 520px)
-  const textWidth = 520;
-  
-  // Spacing gap between text and constellation elements to prevent proximity crowding
-  const gap = 55;
-  
-  // Calculate the exact right edge of the text in pixels relative to viewport
-  const textRightEdge = leftMargin + leftPadding + textWidth + gap;
-  
-  // The max radius of the orbiting project nodes is 328px + icon overhang.
-  const projectRadius = 380; 
-  
-  // Padding from the right screen edge
-  const rightPadding = 30;
-
-  // Calculate the scale required to exactly fit between the text and the right edge.
-  let scale = (viewportWidth - textRightEdge - rightPadding) / (projectRadius * 2);
-  
-  // Cap at 1.0 so it doesn't get massive on ultra-wide screens
-  if (scale > 1) {
-    scale = 1;
-  }
-  
-  // If the required scale is too small, it means the space is too cramped.
-  // Hide it completely.
-  if (scale < 0.6) {
-    return { centerX: 50, centerY: 50, scale: 0, opacity: 0 };
-  }
-  
-  // Place the center next to the text column with the minimal gap.
-  const centerX = leftMargin + leftPadding + textWidth + gap + (projectRadius * scale);
-
-  const containerWidth = Math.min(viewportWidth, containerMaxWidth);
-  const relativeCenterX = centerX - leftMargin;
-
-  return { 
-    centerX: (relativeCenterX / containerWidth) * 100, // Percentage of the parent container
-    centerY: 54, 
-    scale,
-    opacity: 1
-  };
-}
+// Outer orbit (328px) + the largest outer node radius (25px) + a small
+// anti-aliasing buffer. Using the real footprint keeps the constellation as
+// large as possible without letting it touch adjacent content.
+const PROJECT_EXTENT = 356;
+const MIN_SCALE = 0.58;
+const MOBILE_BREAKPOINT = 760;
 
 export function ProjectConstellation() {
   const ref = useRef<HTMLDivElement>(null);
-  const [layout, setLayout] = useState({ centerX: 84, centerY: 54, scale: 1, opacity: 1 });
+  const [layout, setLayout] = useState<ConstellationLayout>({
+    centerX: 82,
+    centerY: 50,
+    scale: 0.74,
+    visible: false,
+  });
 
-  useEffect(() => {
-    function update() {
-      setLayout(getConstellationLayout(window.innerWidth));
+  useLayoutEffect(() => {
+    const constellation = ref.current;
+    const heroInner = constellation?.parentElement;
+    const heroCopy = heroInner?.querySelector<HTMLElement>(".hero-copy");
+    if (!constellation || !heroInner || !heroCopy) return;
+    const hero = heroInner;
+    const copy = heroCopy;
+
+    let frame = 0;
+
+    function measure() {
+      frame = 0;
+      if (window.innerWidth <= MOBILE_BREAKPOINT) {
+        setLayout((current) => ({ ...current, visible: false }));
+        return;
+      }
+
+      const heroRect = hero.getBoundingClientRect();
+      const copyRect = copy.getBoundingClientRect();
+      const heroStyles = getComputedStyle(hero);
+      const rightPadding = Number.parseFloat(heroStyles.paddingRight) || 0;
+      const gap = Math.max(42, Math.min(52, window.innerWidth * 0.035));
+      const availableLeft = copyRect.right + gap;
+      const availableRight = heroRect.right - rightPadding;
+      const availableWidth = Math.max(0, availableRight - availableLeft);
+      const scale = Math.min(1, availableWidth / (PROJECT_EXTENT * 2));
+
+      if (scale < MIN_SCALE) {
+        setLayout((current) => ({ ...current, visible: false }));
+        return;
+      }
+
+      const centerX = (availableLeft + availableRight) / 2 - heroRect.left;
+      setLayout({
+        centerX: (centerX / heroRect.width) * 100,
+        centerY: 50,
+        scale,
+        visible: true,
+      });
     }
-    update(); // Initial calculation
-    window.addEventListener("resize", update);
-    return () => window.removeEventListener("resize", update);
+
+    function scheduleMeasure() {
+      if (frame) cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(measure);
+    }
+
+    const observer = new ResizeObserver(scheduleMeasure);
+    observer.observe(hero);
+    observer.observe(copy);
+    window.addEventListener("resize", scheduleMeasure, { passive: true });
+    measure();
+
+    return () => {
+      if (frame) cancelAnimationFrame(frame);
+      observer.disconnect();
+      window.removeEventListener("resize", scheduleMeasure);
+    };
   }, []);
 
   const containerStyle: ConstellationStyle = {
     "--orbit-center-x": `${layout.centerX}%`,
     "--orbit-center-y": `${layout.centerY}%`,
     "--constellation-scale": `${layout.scale}`,
-    opacity: layout.opacity,
-    transition: "transform 0.3s ease-out, opacity 0.3s ease-out",
+    opacity: layout.visible ? 1 : 0,
+    visibility: layout.visible ? "visible" : "hidden",
   };
 
   return (
@@ -159,6 +176,7 @@ export function ProjectConstellation() {
       className="constellation depth-2"
       data-depth="2"
       aria-label="Project constellation"
+      aria-hidden={!layout.visible}
       style={containerStyle}
     >
       <div className="depth-ring ring-a" aria-hidden="true" />
@@ -181,6 +199,7 @@ export function ProjectConstellation() {
                 "--orbit-radius": `${node.radius}px`,
                 "--orbit-angle": `${node.angle}deg`,
                 "--orbit-duration": `${node.duration}s`,
+                "--orbit-direction": node.direction,
                 "--size": `${node.size}px`,
               } as OrbitStyle
             }
