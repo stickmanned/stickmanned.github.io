@@ -29,12 +29,15 @@
   --border: rgba(var(--line-rgb), 0.09);
   --border-strong: rgba(var(--line-rgb), 0.16);
   --max: 1180px;
-  --font-space-grotesk: "Space Grotesk";
-  --font-space-mono: "Space Mono";
+  --font-heading: var(--font-space-grotesk-loaded), "Space Grotesk", sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-space-mono: var(--font-space-mono-loaded), "Space Mono";
 }
 
 /* Light Blue theme: airy sky surfaces with a deep blue accent. */
 [data-theme="light-blue"] {
+  --font-heading: var(--font-newsreader-loaded), "Newsreader", Georgia, "Times New Roman", serif;
+  --font-body: var(--font-lora-loaded), "Lora", Georgia, "Times New Roman", serif;
   --bg: #e9f1f9;
   --panel: #ffffff;
   --panel-2: #f3f8fd;
@@ -63,6 +66,8 @@
 /* White theme: monochrome take on the original dark theme — black
    background, with white standing in for the lime accent. */
 [data-theme="white"] {
+  --font-heading: var(--font-geist-loaded), "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-body: var(--font-geist-loaded), "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --bg: #000000;
   --panel: #0c0c0c;
   --panel-2: #131313;
@@ -97,7 +102,7 @@ body {
   margin: 0;
   color: var(--text);
   background: transparent;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -151,12 +156,10 @@ body {
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.4s ease;
-  background: radial-gradient(
-    var(--cursor-size) var(--cursor-size) at var(--cursor-x, 50%) var(--cursor-y, 50%),
-    rgba(var(--accent-rgb), var(--cursor-alpha)),
-    rgba(var(--cyan-rgb), calc(var(--cursor-alpha) * 0.46)) 42%,
-    transparent 68%
-  );
+  background: radial-gradient(var(--cursor-size) var(--cursor-size) at var(--cursor-x, 50%) var(--cursor-y, 50%),
+      rgba(var(--accent-rgb), var(--cursor-alpha)),
+      rgba(var(--cyan-rgb), calc(var(--cursor-alpha) * 0.46)) 42%,
+      transparent 68%);
 }
 
 @media (pointer: coarse) {
@@ -251,7 +254,7 @@ main#top::before {
 .brand {
   gap: 11px;
   text-decoration: none;
-  font-family: var(--font-space-grotesk), sans-serif;
+  font-family: var(--font-heading);
   font-weight: 600;
   font-size: 15px;
 }
@@ -426,12 +429,10 @@ a[href]:not(.constellation-node)::after,
   pointer-events: none;
   opacity: calc(var(--cursor-proximity) * 0.72);
   background:
-    radial-gradient(
-      150px circle at var(--cursor-local-x) var(--cursor-local-y),
+    radial-gradient(150px circle at var(--cursor-local-x) var(--cursor-local-y),
       rgba(var(--accent-rgb), 0.24),
       rgba(var(--cyan-rgb), 0.08) 44%,
-      transparent 70%
-    ),
+      transparent 70%),
     linear-gradient(135deg, rgba(var(--line-rgb), 0.045), transparent 44%);
   transition: opacity 0.12s ease;
 }
@@ -469,7 +470,7 @@ a[href] {
   --link-highlight-inset: 0;
 }
 
-a[href]:not(.accent-button):not(.quiet-button):not(.knowledge-node):not(.constellation-node)::before {
+a[href]:not(.accent-button):not(.quiet-button):not(.knowledge-node):not(.constellation-node):not(.desktop-nav a)::before {
   content: "";
   position: absolute;
   right: var(--link-highlight-inset);
@@ -480,16 +481,14 @@ a[href]:not(.accent-button):not(.quiet-button):not(.knowledge-node):not(.constel
   border-radius: 999px;
   pointer-events: none;
   opacity: 0;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(var(--cyan-rgb), 0.75) 20%,
-    var(--accent) 46%,
-    rgba(var(--line-rgb), 0.96) 52%,
-    var(--accent) 58%,
-    rgba(var(--cyan-rgb), 0.75) 80%,
-    transparent 100%
-  );
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(var(--cyan-rgb), 0.75) 20%,
+      var(--accent) 46%,
+      rgba(var(--line-rgb), 0.96) 52%,
+      var(--accent) 58%,
+      rgba(var(--cyan-rgb), 0.75) 80%,
+      transparent 100%);
   background-size: 220% 100%;
   box-shadow:
     0 0 8px rgba(var(--accent-rgb), 0.62),
@@ -501,8 +500,8 @@ a[href]:not(.accent-button):not(.quiet-button):not(.knowledge-node):not(.constel
     opacity 0.16s ease;
 }
 
-a[href]:not(.accent-button):not(.quiet-button):not(.knowledge-node):not(.constellation-node):hover::before,
-a[href]:not(.accent-button):not(.quiet-button):not(.knowledge-node):not(.constellation-node):focus-visible::before {
+a[href]:not(.accent-button):not(.quiet-button):not(.knowledge-node):not(.constellation-node):not(.desktop-nav a):hover::before,
+a[href]:not(.accent-button):not(.quiet-button):not(.knowledge-node):not(.constellation-node):not(.desktop-nav a):focus-visible::before {
   opacity: 1;
   transform: scaleX(1);
   transform-origin: left center;
@@ -513,16 +512,65 @@ a[href]:not(.accent-button):not(.quiet-button):not(.knowledge-node):not(.constel
   text-shadow: 0 0 18px rgba(var(--accent-rgb), 0.3);
 }
 
-:where(
-  .project-card,
+/* Button links and desktop navigation use a softly glowing full perimeter,
+   with a brighter pulse travelling continuously around that border. */
+@property --button-border-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+:where(a.accent-button[href], a.quiet-button[href], .desktop-nav a[href])::before {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  z-index: 3;
+  padding: 2px;
+  border-radius: calc(8px + 3px);
+  pointer-events: none;
+  opacity: 0;
+  background:
+    conic-gradient(from var(--button-border-angle),
+      transparent 0deg 205deg,
+      rgba(var(--cyan-rgb), 0.94) 236deg,
+      rgba(var(--line-rgb), 1) 258deg,
+      var(--accent) 282deg,
+      transparent 324deg 360deg),
+    linear-gradient(135deg,
+      rgba(var(--accent-rgb), 0.68),
+      rgba(var(--cyan-rgb), 0.42) 50%,
+      rgba(var(--accent-rgb), 0.68));
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  filter:
+    drop-shadow(0 0 4px rgba(var(--accent-rgb), 0.82)) drop-shadow(0 0 11px rgba(var(--cyan-rgb), 0.42));
+  transform: scale(0.97);
+  transition:
+    opacity 0.18s ease,
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:where(a.accent-button[href], a.quiet-button[href], .desktop-nav a[href]):hover::before,
+:where(a.accent-button[href], a.quiet-button[href], .desktop-nav a[href]):focus-visible::before {
+  opacity: 1;
+  transform: scale(1);
+  animation: button-border-orbit 1.35s linear infinite;
+}
+
+:where(.project-card,
   .writing-cards a,
   .writing-grid a,
   .contact-list a,
   .desktop-nav a,
   .mobile-menu a,
   .social-link,
-  .brand
-) {
+  .brand) {
   --link-highlight-bottom: 2px;
   --link-highlight-inset: 10%;
 }
@@ -536,13 +584,25 @@ a[href]:focus-visible {
   from {
     background-position: 115% 0;
   }
+
   to {
     background-position: -85% 0;
   }
 }
 
+@keyframes button-border-orbit {
+  to {
+    --button-border-angle: 360deg;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  a[href]:not(.accent-button):not(.quiet-button):not(.knowledge-node):not(.constellation-node)::before {
+  a[href]:not(.accent-button):not(.quiet-button):not(.knowledge-node):not(.constellation-node):not(.desktop-nav a)::before {
+    animation: none;
+    transition-duration: 0.01ms;
+  }
+
+  :where(a.accent-button[href], a.quiet-button[href], .desktop-nav a[href])::before {
     animation: none;
     transition-duration: 0.01ms;
   }
@@ -624,15 +684,16 @@ a[href]:focus-visible {
 h1,
 h2,
 h3 {
-  font-family: var(--font-space-grotesk), sans-serif;
+  font-family: var(--font-heading);
   color: var(--text-strong);
   letter-spacing: 0;
 }
 
 .hero h1 {
   margin: 0 0 22px;
-  font-size: clamp(3.4rem, 7vw, 5.4rem);
+  font-size: clamp(3.4rem, 6vw, 4.8rem);
   line-height: 0.98;
+  white-space: nowrap;
 }
 
 .hero-lede {
@@ -680,17 +741,18 @@ h3 {
 }
 
 .constellation {
-  /* --orbit-center-x, --orbit-center-y, --constellation-scale are set by JS */
-  --orbit-center-x: 84%;
-  --orbit-center-y: 54%;
-  --constellation-scale: 1;
+  --orbit-center-x: 82%;
+  --orbit-center-y: 50%;
+  --constellation-scale: 0.7;
   position: absolute;
   inset: 0;
   z-index: 2;
   pointer-events: none;
   transform: scale(var(--constellation-scale));
   transform-origin: var(--orbit-center-x) var(--orbit-center-y);
-  transition: transform 0.3s ease-out;
+  transition:
+    opacity 0.24s ease,
+    transform 0.3s ease-out;
 }
 
 .constellation::before,
@@ -713,24 +775,18 @@ h3 {
 }
 
 .constellation::after {
-  width: 780px;
-  height: 780px;
-  top: calc(var(--orbit-center-y) - 390px);
-  left: calc(var(--orbit-center-x) - 390px);
-  border: 1px solid rgba(var(--cyan-rgb), 0.055);
-  filter: blur(1px);
-  opacity: 0.45;
+  display: none;
 }
 
 .depth-ring {
   position: absolute;
   top: var(--orbit-center-y);
   left: var(--orbit-center-x);
-  border: 1px solid rgba(var(--line-rgb), 0.11);
+  border: 2px solid rgba(var(--line-rgb), 0.35);
   border-radius: 50%;
   box-shadow:
-    inset 0 0 64px rgba(var(--accent-rgb), 0.028),
-    0 0 50px rgba(var(--cyan-rgb), 0.025);
+    inset 0 0 64px rgba(var(--accent-rgb), 0.06),
+    0 0 50px rgba(var(--cyan-rgb), 0.06);
   transform: translate3d(-50%, -50%, 0);
 }
 
@@ -742,13 +798,11 @@ h3 {
 .ring-b {
   width: 660px;
   height: 660px;
-  opacity: 0.6;
+  opacity: 0.9;
 }
 
-/* 3D head at the centre of the orbit rings. Sits below the project
-   nodes in DOM order; only the circular canvas takes pointer events
-   (for drag-to-rotate), and its 170px radius stays well inside the
-   228px node orbit, so links, labels, and hover states are unaffected. */
+/* 3D head shares the rings' exact center and scales with the entire
+   constellation, staying safely inside the inner project orbit. */
 .constellation-head {
   position: absolute;
   top: var(--orbit-center-y);
@@ -790,6 +844,7 @@ h3 {
   transform: rotate(var(--orbit-angle));
   transform-origin: 0 0;
   animation: project-orbit var(--orbit-duration) linear infinite;
+  animation-direction: var(--orbit-direction);
   will-change: transform;
 }
 
@@ -799,9 +854,10 @@ h3 {
   flex-direction: column;
   align-items: center;
   gap: 7px;
-  transform: translateX(var(--orbit-radius)) rotate(calc(-1 * var(--orbit-angle)));
+  transform: translateX(var(--orbit-radius)) rotate(calc(-1 * var(--orbit-angle))) translate(-50%, -50%);
   transform-origin: 0 0;
   animation: project-counter-orbit var(--orbit-duration) linear infinite;
+  animation-direction: var(--orbit-direction);
   will-change: transform;
 }
 
@@ -897,16 +953,16 @@ h3 {
 .stats-band strong {
   display: block;
   color: var(--text-strong);
-  font-family: var(--font-space-grotesk), sans-serif;
+  font-family: var(--font-heading);
   font-size: 2.5rem;
   line-height: 1;
 }
 
-.stats-band strong span + * {
+.stats-band strong span+* {
   color: var(--accent);
 }
 
-.stats-band div > span {
+.stats-band div>span {
   display: block;
   margin-top: 7px;
   color: var(--muted);
@@ -951,13 +1007,15 @@ h3 {
 }
 
 .section-heading h2 {
-  max-width: 740px;
+  /* Use the full available row width so headings stay on one line when there
+     is space, and only wrap once the viewport is genuinely too narrow. */
+  max-width: 100%;
   margin: 0;
   font-size: clamp(2rem, 4.4vw, 3.1rem);
   line-height: 1.04;
 }
 
-.section-heading > span {
+.section-heading>span {
   max-width: 350px;
   color: var(--muted);
   line-height: 1.6;
@@ -1096,7 +1154,7 @@ h3 {
   background: rgba(var(--line-rgb), 0.018);
 }
 
-.capability-grid article > span {
+.capability-grid article>span {
   display: block;
   margin-bottom: 14px;
   color: var(--accent);
@@ -1975,7 +2033,7 @@ h3 {
   padding: 16px 0;
   border-bottom: 1px solid var(--border);
   color: var(--text);
-  font-family: var(--font-space-grotesk), sans-serif;
+  font-family: var(--font-heading);
   font-size: 2rem;
   text-decoration: none;
 }
@@ -2086,11 +2144,13 @@ h3 {
 }
 
 @keyframes sweep {
+
   0%,
   100% {
     transform: translateX(-35%);
     opacity: 0.16;
   }
+
   50% {
     transform: translateX(35%);
     opacity: 0.42;
@@ -2098,6 +2158,7 @@ h3 {
 }
 
 @keyframes frame-energy {
+
   0%,
   100% {
     background-position:
@@ -2106,6 +2167,7 @@ h3 {
       76% 100%;
     opacity: 0.72;
   }
+
   50% {
     background-position:
       62% 0,
@@ -2119,17 +2181,20 @@ h3 {
   from {
     transform: translate3d(-1.2%, 0, 0) scale(1);
   }
+
   to {
     transform: translate3d(1.4%, -1.1%, 0) scale(1.03);
   }
 }
 
 @keyframes constellation-glow {
+
   0%,
   100% {
     opacity: 0.52;
     transform: scale(0.98);
   }
+
   50% {
     opacity: 0.78;
     transform: scale(1.02);
@@ -2140,6 +2205,7 @@ h3 {
   from {
     transform: rotate(var(--orbit-angle));
   }
+
   to {
     transform: rotate(calc(var(--orbit-angle) + 360deg));
   }
@@ -2147,19 +2213,30 @@ h3 {
 
 @keyframes project-counter-orbit {
   from {
-    transform: translateX(var(--orbit-radius)) rotate(calc(-1 * var(--orbit-angle)));
+    transform: translateX(var(--orbit-radius)) rotate(calc(-1 * var(--orbit-angle))) translate(-50%, -50%);
   }
+
   to {
-    transform: translateX(var(--orbit-radius)) rotate(calc(-360deg - var(--orbit-angle)));
+    transform: translateX(var(--orbit-radius)) rotate(calc(-360deg - var(--orbit-angle))) translate(-50%, -50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .constellation::before,
+  .constellation-node,
+  .constellation-node-shell {
+    animation-play-state: paused;
   }
 }
 
 @keyframes graph-pulse {
+
   0%,
   100% {
     opacity: 0.55;
     transform: scale(0.97);
   }
+
   50% {
     opacity: 0.9;
     transform: scale(1.02);
@@ -2199,6 +2276,7 @@ h3 {
     opacity: 0;
     transform: translateY(16px);
   }
+
   to {
     opacity: 1;
     transform: none;
@@ -2280,7 +2358,9 @@ h3 {
 }
 
 .writing-intro {
-  max-width: 640px;
+  /* Let the heading use the available row width so it stays on one line when
+     there is space, wrapping only when the viewport is too narrow. */
+  max-width: 100%;
 }
 
 .writing-intro h2 {
@@ -2294,6 +2374,7 @@ h3 {
 }
 
 @media (max-width: 900px) {
+
   .desktop-nav,
   .key-button,
   .nav-actions .small {
@@ -2310,8 +2391,6 @@ h3 {
     top: 0;
     max-width: 460px;
   }
-
-  /* constellation responsive scaling is now handled by JS */
 
   .selected-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2372,7 +2451,7 @@ h3 {
   }
 
   .hero h1 {
-    font-size: 3.5rem;
+    font-size: clamp(2.75rem, 14vw, 3.5rem);
   }
 
   .knowledge-graph {
@@ -2383,7 +2462,7 @@ h3 {
     display: block;
   }
 
-  .section-heading > span {
+  .section-heading>span {
     display: block;
     margin-top: 12px;
   }
@@ -2475,9 +2554,11 @@ h3 {
   0% {
     transform: translate3d(0, 0, 0) scale(1);
   }
+
   50% {
     transform: translate3d(6vw, -4vh, 0) scale(1.12);
   }
+
   100% {
     transform: translate3d(-4vw, 5vh, 0) scale(0.94);
   }
@@ -2543,23 +2624,23 @@ h3 {
 }
 
 /* Content settles in just after the container, lightly staggered. */
-.music-player-body > * {
+.music-player-body>* {
   animation: music-item-in 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-.music-player-body > *:nth-child(1) {
+.music-player-body>*:nth-child(1) {
   animation-delay: 0.05s;
 }
 
-.music-player-body > *:nth-child(2) {
+.music-player-body>*:nth-child(2) {
   animation-delay: 0.1s;
 }
 
-.music-player-body > *:nth-child(3) {
+.music-player-body>*:nth-child(3) {
   animation-delay: 0.14s;
 }
 
-.music-player-body > *:nth-child(4) {
+.music-player-body>*:nth-child(4) {
   animation-delay: 0.18s;
 }
 
@@ -2589,11 +2670,9 @@ h3 {
   width: 100%;
   height: 100%;
   color: var(--muted-2);
-  background: linear-gradient(
-    135deg,
-    rgba(var(--line-rgb), 0.14),
-    rgba(var(--line-rgb), 0.04)
-  );
+  background: linear-gradient(135deg,
+      rgba(var(--line-rgb), 0.14),
+      rgba(var(--line-rgb), 0.04));
 }
 
 .music-art-fallback svg {
@@ -2731,6 +2810,7 @@ h3 {
     opacity: 0;
     transform: translateY(14px) scale(0.94);
   }
+
   to {
     opacity: 1;
     transform: none;
@@ -2742,6 +2822,7 @@ h3 {
     opacity: 1;
     transform: none;
   }
+
   to {
     opacity: 0;
     transform: translateY(10px) scale(0.96);
@@ -2753,6 +2834,7 @@ h3 {
     opacity: 0;
     transform: translateY(6px);
   }
+
   to {
     opacity: 1;
     transform: none;
@@ -2764,6 +2846,7 @@ h3 {
     opacity: 0;
     transform: scale(0.6);
   }
+
   to {
     opacity: 1;
     transform: none;
@@ -2771,6 +2854,7 @@ h3 {
 }
 
 @media (max-width: 480px) {
+
   .music-player,
   .music-fab {
     right: 12px;
@@ -2843,7 +2927,7 @@ h3 {
   pointer-events: none;
 }
 
-.gallery-hud-top > * {
+.gallery-hud-top>* {
   pointer-events: auto;
 }
 
@@ -2934,7 +3018,7 @@ h3 {
   margin: 6px 0 10px;
   font-size: 1.3rem;
   color: var(--text-strong);
-  font-family: var(--font-space-grotesk), sans-serif;
+  font-family: var(--font-heading);
 }
 
 .gallery-panel-kicker {
