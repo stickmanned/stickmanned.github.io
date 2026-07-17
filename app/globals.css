@@ -1643,10 +1643,15 @@ h3 {
   line-height: 1;
 }
 
-.case-hero p {
+.case-hero p:not(.kicker) {
   color: var(--muted-2);
   font-size: 1.15rem;
   line-height: 1.65;
+  margin: 0 0 24px;
+}
+
+.case-hero .tag-row {
+  margin-bottom: 24px;
 }
 
 .case-hero figure {

@@ -142,7 +142,7 @@ export const featuredProjects: Project[] = [
     categories: ["Featured", "Games"],
     tags: ["Godot", "GDScript", "Game Jam"],
     blurb:
-      "A Godot platformer I helped build for Juice 2025, with score-gated planets, juice powerups, inventory, weapons, and a final Doom Duck boss.",
+      "A Godot platformer built for Hack Club's Juice game jam, with planets, juice powerups, inventory, weapons, and a final Doom Duck boss.",
   },
   {
     slug: "lamp-pro",
@@ -688,7 +688,7 @@ export const caseStudies: CaseStudy[] = [
   },
   {
     ...featuredProjects[1],
-    eyebrow: "Chrome extension / productivity game",
+    eyebrow: "Chrome extension / Equinox Vancouver Hackathon",
     summary:
       "I built and published a Chrome extension that turns focus time into a tiny garden: you plant a tree, stay away from blocked sites, earn coins, and use those coins to grow a larger, stranger forest.",
     links: [
@@ -986,25 +986,25 @@ export const caseStudies: CaseStudy[] = [
       {
         title: "Overview",
         body: [
-          "SpaceGoose started as a Hack Club Juice 2025 game-jam project with a direct premise: play as a goose, travel through space, collect what you can, and eventually get the Golden Egg back from Doom Duck.",
-          "The repo shows a real Godot 4.4 project rather than a one-screen prototype. It has a main menu, level selector, persistent inventory, score-gated progression, multiple world scenes, custom pixel-art sprites, juice powerups, a weapon pickup, bullets and fireballs, hazards, teleporters, pause handling, and a final boss scene.",
-          "I am describing this as a collaborative game-jam build because the repository lives under Fraser Hack Club and has many feature branches and pull requests. My write-up focuses on the parts I can verify from the project files instead of pretending the README contains a polished devlog.",
+          "SpaceGoose is one of the most memorable games I build, started as a Hack Club Juice 2025 game-jam project. You play as a goose, travel through space, collect what you can such as bread and eggs, and eventually get the Golden Egg back from Doom Duck, which is the main objective of the game.",
+          "The game has a main menu, level selector, persistent inventory, score-gated progression, multiple world scenes, custom pixel-art sprites, juice powerups, a weapon pickup, bullets and fireballs, hazards, teleporters, pause handling, and a final boss scene.",
+          "SpaceGoose is a collaborative game-jam build built with my friends Paya and Harry. Because the repository lives under Fraser Hack Club and has many feature branches and pull requests from both me and my friends, I will summarize what we did together as a team.",
         ],
       },
       {
-        title: "What I Built",
+        title: "What We Built",
         body: [
-          "I worked on a 2D platformer loop where movement, collection, survival, and level progression all feed into each other. The player goose can walk, jump, double-jump, crouch, glide, interact with level exits, collect eggs and bread for score, lose eggs on death, and carry progress between runs through an inventory save file.",
-          "The game is organized around a sequence of level scenes listed in `global.gd`. The tracked progression path includes 16 playable level entries, moving from early Earth-style stages into Moon, Mars, asteroid, and final boss areas. Score requirements gate later stages, so collecting items and finishing levels matters beyond just reaching the exit.",
-          "The more playful systems are the juice powerups. Apple juice boosts speed, grape juice grants timed invincibility with a separate timer display, and orange juice works with the gun system by reloading fireballs when the player has picked up the weapon.",
+          "We worked on a 2D platformer loop where movement, collection, survival, and level progression all feed into each other. The player goose can walk, jump, double-jump, crouch, glide, interact with level exits, collect eggs and bread for score, lose eggs on death, and carry progress between runs through an inventory save file.",
+          "The game is organized around a sequence of level scenes, with each level being a different planet or part of the same planet, such as 3 levels on the moon. The tracked progression path includes 16 playable level entries, moving from early Earth-style stages into Moon, Mars, asteroid, and final boss areas. Score requirements gate later stages, so you will have to complete the same level multiple times to progress.",
+          "The more playful systems are the juice powerups. Apple juice boosts speed, grape juice grants timed invincibility with a separate timer display and a cool rainbow effect on the goose, and orange juice works with the gun system by reloading fireballs when the player has picked up the weapon.",
         ],
       },
       {
-        title: "My Process",
+        title: "The Process",
         body: [
-          "I started from the core platformer feeling: the goose had to be readable, responsive, and funny without becoming impossible to control. That meant tuning speed, jump velocity, crouching, wall or invincibility jumps, gravity, and animation states so the character could move through long tile-based levels and tight obstacle sections.",
-          "Once the movement loop existed, I built outward into progression. I connected pickups to inventory counts, score, HUD labels, and persistent storage, then used that score to decide when the next level should load and when the level selector should appear instead. That made the game feel less like disconnected scenes and more like one campaign.",
-          "The final pass was about making the game feel complete enough to ship for a jam: menus, level selection, pause handling, help-sign toggles, juice UI, export presets for Windows, Linux, and web, and release tags in the repo leading up to `v1.2.1`.",
+          "We started from the core platformer feeling, with the very first stages based off a Godot platform tutorial. As the game went on, it became our own thing, and we built on that foundation. The goose had to stand out, responsive, and funny-looking without becoming impossible to control. That meant tuning speed, jump velocity, crouching, wall or invincibility jumps, gravity (the hardest part by far), and animation states so it could move through long tile-based levels and tight obstacle sections.",
+          "Once the movement loop existed and tuned, We built outward into progression. We connected pickups to inventory counts, score, HUD labels, and local storage, then used that score to decide when the next level should load and when the level selector should appear instead. That made the game feel less like disconnected scenes and more like one campaign through the stars.",
+          "The final pass was about making the game feel complete enough to ship for the game jam: menus, level selection, pause handling, help-sign toggles, juice UI, export presets for Windows, Linux, and web.",
         ],
       },
       {
@@ -1022,28 +1022,35 @@ export const caseStudies: CaseStudy[] = [
         ],
       },
       {
-        title: "Systems I Worked Through",
+        title: "Art/Music",
+        body: [
+          "Me, Paya, and Harry all contributed to the visual assets and animations, including the sprites for the goose and the final boss Doom Duck. I worked mainly on each map's enviornments and the enemies.",
+          "We used the sound effects from YouTube and Meme Soundboard, while Paya created the OSTs for the Boss and main theme.",
+        ],
+      },
+      {
+        title: "Systems",
         body: [
           "The inventory system became the backbone. It stores eggs, bread, apple juice, orange juice, grape juice, score, current level, and whether the Golden Egg has been collected. That data is fetched when the main menu or a level loads, updated when items are collected or used, and committed before level transitions or game-over states.",
-          "The level flow uses a central list of scene paths and score requirements. When I finish a level, leftover time converts into score, the game checks whether I have enough score for the next level, and then either loads the next scene or sends me to the level selector. That kept progression explicit and easier to debug.",
+          "The level flow uses a central list of scene paths and score requirements. When you finish a level, leftover time converts into score, the game checks whether you have enough score for the next level, and then either loads the next scene or sends you to the level selector. That kept progression explicit and easier to debug.",
           "The powerup system sits on top of the same inventory. Juice items spawn in levels, animate as collectables, and then trigger different player effects through a small action map: speed for apple, fireball ammo for orange, and invincibility for grape.",
-          "The weapon system is intentionally simple but useful: the gun stays hidden until picked up, rotates toward the mouse, reloads, tracks ammo, shoots bullet or fireball scenes from a barrel marker, and shakes when empty. That gave the boss fight and later levels a different rhythm from pure platforming.",
-          "For Doom Duck, the repo shows a boss with health, chase behavior, jumps, spawned enemy ducks, body and head hit detection, rage/golden states, and a Golden Egg spawn on defeat. I treated that as the endgame moment rather than just another hazard.",
+          "The weapon system is intentionally simple but useful: the gun stays hidden until picked up when you are at the mars level, rotates toward the mouse, reloads, tracks ammo, shoots bullet or fireball scenes from a barrel marker, and shakes when empty. That gave the boss fight and later levels a different rhythm from pure platforming.",
+          "For the Doom Duck, I created it as a boss with health, chase behavior, jumps, spawned enemy ducks, body and head hit detection, rage/golden states, and a Golden Egg spawn on defeat. I created that as the final boss fight moment rather than just another static hazard.",
         ],
       },
       {
         title: "Challenges",
         body: [
+          "The main challenge was the hour requirement. To participate in the Juice game jam, you must work at least 100 hours. That said, we had to work at least 2 hours a day since we only had about 2-3 months to complete the game and ship. This resulted in us spending excess time on features that we could have just cut to save time if we were not tracked for our progress; nevertheless, the game still remained fully functional with minimal bugs, and we managed to go to Shanghai for the game jam. ",
           "The hardest part was keeping a jam game from collapsing under its own ideas. A platformer with inventory, score gates, powerups, weapons, teleports, camera sections, menus, and a boss can get messy quickly, especially when scenes are being added in parallel.",
-          "One challenge was state. The player, main scene, level selector, camera, juice menu, and inventory file all need to agree about the current level and current items. I handled that by putting shared values in `Global`, saving inventory to JSON, and re-fetching inventory at important transitions.",
-          "Another challenge was camera and level scale. The project uses long levels, sublevel teleports, level-specific camera settings, and a chunk-management path, so I had to think beyond one static screen. Teleporters update both player position and camera section data so moving between parts of a world does not break the view.",
-          "The repo also shows the normal rough edges of a jam project: debug prints, old branch names, a minimal README, and some duplicate or experimental scene files. I am keeping those out of the portfolio copy because they are not the point, but I also do not want to pretend the repo is cleaner than it is.",
+          "Another challenge was state. The player, main scene, level selector, camera, juice menu, and inventory file all need to agree about the current level and current items. We handled that by putting shared values in `Global`, saving inventory to JSON, and re-fetching inventory at important transitions.",
+          "A challenge which occurs during collaboration was Git. We all had different ideas on the best way to utilize Git, so we had to spend a lot of time figuring out our Git workflow, such as how we were going to handle version control/branches, how we were going to split up the work, and how we were going to manage the codebase.",
         ],
       },
       {
         title: "What I Learned",
         body: [
-          "I learned that game development is mostly systems agreeing with each other. The moment I added persistent inventory, every other part of the game had to respect it: pickups, UI labels, death, level completion, score gates, menus, and boss rewards.",
+          "I learned that game development is mostly systems agreeing with each other, and sometimes, collaboration may result in additional challenges and conflicts. The moment we added persistent inventory, every other part of the game had to respect it: pickups, UI labels, death, level completion, score gates, menus, and boss rewards.",
           "I also learned how much polish comes from small transitions. The finish sequence hides the goose, plays a blastoff animation and sound, counts remaining time into score, commits inventory, and then changes level. That kind of sequence makes progress feel earned.",
           "Most of all, SpaceGoose taught me how to ship inside constraints. A jam build does not have infinite time for architecture, but it still needs enough structure that new levels, items, and mechanics can be added without everything becoming impossible to reason about.",
         ],
@@ -1057,7 +1064,7 @@ export const caseStudies: CaseStudy[] = [
       },
     ],
     galleryHeading: {
-      title: "Repo Images",
+      title: "Gallery",
       centered: true,
     },
     gallery: [

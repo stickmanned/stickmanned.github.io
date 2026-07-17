@@ -954,28 +954,14 @@ export function ProjectGallery({
           x: number,
           z: number,
           y: number,
-          alongX: boolean,
-          aims: [number, number][],
+          _alongX: boolean,
+          _aims: [number, number][],
         ) {
           addSunburstLight(x, z, y);
-          aims.forEach((aim, i) => {
-            const t = aims.length === 1 ? 0 : i / (aims.length - 1) - 0.5;
-            const fx = x + (alongX ? t * 2 : 0);
-            const fz = z + (alongX ? 0 : t * 2);
-            const fy = y - 0.14;
-            const spot = new THREE.SpotLight(
-              0xfff1e0,
-              50,
-              32,
-              Math.PI / 6.5,
-              0.45,
-              1.35,
-            );
-            spot.position.set(fx, fy, fz);
-            spot.target.position.set(aim[0], 1.9, aim[1]);
-            scene.add(spot);
-            scene.add(spot.target);
-          });
+          // Single point light for even diffusion across the entire room
+          const point = new THREE.PointLight(0xfff1e0, 18, 30, 1.6);
+          point.position.set(x, y - 0.2, z);
+          scene.add(point);
         }
 
         // Rug, bench, corner planters and chandelier(s) for one room.
@@ -1222,8 +1208,8 @@ export function ProjectGallery({
         // sky-to-floor hemisphere. Direction and drama come from the
         // per-room skylight fills and the track spots; artwork is unlit
         // material so it stays fully readable.
-        scene.add(new THREE.AmbientLight(0xffffff, 0.25));
-        const hemisphere = new THREE.HemisphereLight(0xffffff, 0xbfb9ae, 0.15);
+        scene.add(new THREE.AmbientLight(0xffffff, 0.45));
+        const hemisphere = new THREE.HemisphereLight(0xffffff, 0xbfb9ae, 0.3);
         scene.add(hemisphere);
 
         // ---- Walkable area -----------------------------------------------
