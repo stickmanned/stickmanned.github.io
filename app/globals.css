@@ -66,8 +66,8 @@
 /* White theme: monochrome take on the original dark theme — black
    background, with white standing in for the lime accent. */
 [data-theme="white"] {
-  --font-heading: var(--font-geist-loaded), "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-body: var(--font-geist-loaded), "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-heading: var(--font-geist-sans), sans-serif;
+  --font-body: var(--font-geist-sans), sans-serif;
   --bg: #000000;
   --panel: #0c0c0c;
   --panel-2: #131313;
@@ -2962,6 +2962,30 @@ h3 {
   font-size: 0.78rem;
   line-height: 1.5;
   backdrop-filter: blur(6px);
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.gallery-hint-close {
+  opacity: 0;
+  transition: opacity 0.2s ease, color 0.2s ease;
+  background: none;
+  border: none;
+  color: var(--muted-2);
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+  margin-top: -2px;
+}
+
+.gallery-hint:hover .gallery-hint-close {
+  opacity: 1;
+}
+
+.gallery-hint-close:hover {
+  color: var(--fg);
 }
 
 .gallery-touch-controls {
