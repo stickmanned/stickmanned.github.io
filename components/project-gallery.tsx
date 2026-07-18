@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import type { MutableRefObject, PointerEvent as ReactPointerEvent } from "react";
 import { useRouter } from "next/navigation";
 import type { Project } from "@/lib/site-data";
 
@@ -25,8 +26,11 @@ const ART_W = 1.7;
 const ART_H = 1.275;
 const MOVE_SPEED = 3.4; // walking pace
 const LOOK_SENSITIVITY = 0.0028;
+const TOUCH_LOOK_SENSITIVITY = 0.0034; // touch drags cover less screen than mouse deltas, so a bit more gain
 const PITCH_LIMIT = 1.0; // ~57° up/down — enough to view art, no disorientation
 const PLAYER_MARGIN = 0.55; // keep-out distance from walls
+const JOYSTICK_RADIUS = 34; // px the handle can travel from centre
+const JOYSTICK_DEAD_ZONE = 0.15; // fraction of radius ignored before movement starts
 // One consistent light-green carpet across every room and theme.
 const CARPET_COLOR = 0x9dc18b;
 
@@ -287,6 +291,80 @@ function roofHeightAt(rect: Rect, x: number, z: number) {
   return WALL_HEIGHT + (peak - WALL_HEIGHT) * t;
 }
 
+// Roblox-style floating movement stick, fixed in the lower-left corner.
+// Writes directly into `vectorRef` on every pointer move (no React state
+// for the vector itself) so the render loop can read it every frame without
+// this component re-rendering. `active` is the only piece of UI state.
+function VirtualJoystick({
+  vectorRef,
+}: {
+  vectorRef: MutableRefObject<{ forward: number; strafe: number }>;
+}) {
+  const baseRef = useRef<HTMLDivElement>(null);
+  const handleRef = useRef<HTMLDivElement>(null);
+  const pointerIdRef = useRef<number | null>(null);
+  const originRef = useRef({ x: 0, y: 0 });
+  const [active, setActive] = useState(false);
+
+  function updateFromClient(clientX: number, clientY: number) {
+    const dx = clientX - originRef.current.x;
+    const dy = clientY - originRef.current.y;
+    const dist = Math.hypot(dx, dy);
+    const clamped = Math.min(dist, JOYSTICK_RADIUS);
+    const angle = Math.atan2(dy, dx);
+    const hx = Math.cos(angle) * clamped;
+    const hy = Math.sin(angle) * clamped;
+    if (handleRef.current) {
+      handleRef.current.style.transform = `translate(${hx}px, ${hy}px)`;
+    }
+    const t = clamped / JOYSTICK_RADIUS;
+    const norm = t < JOYSTICK_DEAD_ZONE ? 0 : (t - JOYSTICK_DEAD_ZONE) / (1 - JOYSTICK_DEAD_ZONE);
+    vectorRef.current.strafe = norm * Math.cos(angle);
+    // Screen Y grows downward; forward is up (negative dy).
+    vectorRef.current.forward = -norm * Math.sin(angle);
+  }
+
+  function onPointerDown(event: ReactPointerEvent<HTMLDivElement>) {
+    if (pointerIdRef.current !== null) return;
+    pointerIdRef.current = event.pointerId;
+    const rect = baseRef.current!.getBoundingClientRect();
+    originRef.current = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+    setActive(true);
+    try {
+      event.currentTarget.setPointerCapture(event.pointerId);
+    } catch {
+      // Pointer capture is a nicety; dragging still works without it.
+    }
+    updateFromClient(event.clientX, event.clientY);
+  }
+  function onPointerMove(event: ReactPointerEvent<HTMLDivElement>) {
+    if (pointerIdRef.current !== event.pointerId) return;
+    updateFromClient(event.clientX, event.clientY);
+  }
+  function endTouch(event: ReactPointerEvent<HTMLDivElement>) {
+    if (pointerIdRef.current !== event.pointerId) return;
+    pointerIdRef.current = null;
+    setActive(false);
+    vectorRef.current.forward = 0;
+    vectorRef.current.strafe = 0;
+    if (handleRef.current) handleRef.current.style.transform = "translate(0px, 0px)";
+  }
+
+  return (
+    <div
+      ref={baseRef}
+      className={`gallery-joystick${active ? " is-active" : ""}`}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={endTouch}
+      onPointerCancel={endTouch}
+      aria-hidden="true"
+    >
+      <div ref={handleRef} className="gallery-joystick-handle" />
+    </div>
+  );
+}
+
 /**
  * Full-screen 3D art-gallery view of the projects, laid out hub-and-spoke:
  * a central Featured room with four doorways — Hardware (N), Web (E),
@@ -314,8 +392,8 @@ export function ProjectGallery({
     () => typeof window !== "undefined" && !window.matchMedia("(pointer: fine)").matches,
   );
   const [showHint, setShowHint] = useState(true);
-  // -1 back / 0 idle / 1 forward, driven by the on-screen touch buttons.
-  const touchMoveRef = useRef(0);
+  // -1..1 per axis, driven by the on-screen virtual joystick.
+  const joystickInputRef = useRef({ forward: 0, strafe: 0 });
 
   // Keep the ref in sync and manage focus: into the panel when it opens,
   // back to a visible control when it closes (otherwise focus falls onto
@@ -334,7 +412,11 @@ export function ProjectGallery({
   // panel first if one is open, otherwise exits the gallery.
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
+    const previousOverscroll = document.documentElement.style.overscrollBehavior;
     document.body.style.overflow = "hidden";
+    // Chrome's pull-to-refresh triggers on document-level overscroll even
+    // when the body itself can't scroll, so it needs its own opt-out.
+    document.documentElement.style.overscrollBehavior = "none";
     function onKeyDown(event: KeyboardEvent) {
       if (event.key !== "Escape") return;
       if (activeRef.current) {
@@ -346,6 +428,7 @@ export function ProjectGallery({
     window.addEventListener("keydown", onKeyDown);
     return () => {
       document.body.style.overflow = previousOverflow;
+      document.documentElement.style.overscrollBehavior = previousOverscroll;
       window.removeEventListener("keydown", onKeyDown);
     };
   }, [onExit]);
@@ -1248,7 +1331,12 @@ export function ProjectGallery({
         // ---- Controls -------------------------------------------------
         const keysDown = new Set<string>();
         const velocity = new THREE.Vector3();
-        let looking = false;
+        // The pointerId currently driving camera look — desktop right-click
+        // drag or a touch drag on the right half of the screen (the left
+        // half is reserved for the movement joystick). Tracking by id
+        // rather than a boolean lets a look-drag and a joystick touch run
+        // at once without either one clobbering the other.
+        let lookPointerId: number | null = null;
         let lastPointerX = 0;
         let lastPointerY = 0;
         // The camera's default forward is -Z, toward the Hardware room.
@@ -1305,35 +1393,52 @@ export function ProjectGallery({
           keysDown.delete(event.code);
         }
 
+        function startLook(event: PointerEvent) {
+          lookPointerId = event.pointerId;
+          lastPointerX = event.clientX;
+          lastPointerY = event.clientY;
+          try {
+            renderer.domElement.setPointerCapture(event.pointerId);
+          } catch {
+            // Pointer capture is a nicety; dragging still works without it.
+          }
+        }
         function onPointerDown(event: PointerEvent) {
-          // Right button pans on desktop; any touch drag pans on mobile.
-          if (event.button === 2 || event.pointerType === "touch") {
-            looking = true;
-            lastPointerX = event.clientX;
-            lastPointerY = event.clientY;
-            try {
-              renderer.domElement.setPointerCapture(event.pointerId);
-            } catch {
-              // Pointer capture is a nicety; dragging still works without it.
-            }
+          // Right button pans on desktop.
+          if (event.button === 2) {
+            startLook(event);
+            return;
+          }
+          // A touch drag on the right half of the screen pans on mobile —
+          // the left half is reserved for the joystick (which lives on a
+          // separate DOM element and never reaches this handler) so only
+          // one look-drag touch is ever tracked at a time.
+          if (
+            event.pointerType === "touch" &&
+            lookPointerId === null &&
+            event.clientX >= window.innerWidth / 2
+          ) {
+            startLook(event);
           }
         }
         function onPointerMove(event: PointerEvent) {
-          if (looking) {
+          if (event.pointerId === lookPointerId) {
             const dx = event.clientX - lastPointerX;
             const dy = event.clientY - lastPointerY;
             lastPointerX = event.clientX;
             lastPointerY = event.clientY;
-            yaw -= dx * LOOK_SENSITIVITY;
-            pitch -= dy * LOOK_SENSITIVITY;
+            const sensitivity =
+              event.pointerType === "touch" ? TOUCH_LOOK_SENSITIVITY : LOOK_SENSITIVITY;
+            yaw -= dx * sensitivity;
+            pitch -= dy * sensitivity;
             pitch = Math.max(-PITCH_LIMIT, Math.min(PITCH_LIMIT, pitch));
           } else if (event.pointerType !== "touch") {
             setHovered(raycastAt(event.clientX, event.clientY));
           }
         }
         function onPointerUp(event: PointerEvent) {
-          if (looking) {
-            looking = false;
+          if (event.pointerId === lookPointerId) {
+            lookPointerId = null;
             if (renderer.domElement.hasPointerCapture(event.pointerId)) {
               renderer.domElement.releasePointerCapture(event.pointerId);
             }
@@ -1353,13 +1458,25 @@ export function ProjectGallery({
           renderer.setSize(window.innerWidth, window.innerHeight);
         }
 
+        // touch-action: none stops iOS/Android's own pan & pinch-zoom
+        // handling on the canvas; preventDefault on touchmove is a
+        // belt-and-suspenders backstop for older/quirky browser builds
+        // where touch-action alone doesn't fully suppress the gesture.
         renderer.domElement.style.touchAction = "none";
+        function onTouchMove(event: TouchEvent) {
+          event.preventDefault();
+        }
+        mount.addEventListener("touchmove", onTouchMove, { passive: false });
         window.addEventListener("keydown", onKeyDown);
         window.addEventListener("keyup", onKeyUp);
         window.addEventListener("resize", onResize);
         renderer.domElement.addEventListener("pointerdown", onPointerDown);
         window.addEventListener("pointermove", onPointerMove);
         window.addEventListener("pointerup", onPointerUp);
+        // A touch gesture (e.g. an OS edge-swipe) can cancel mid-drag
+        // instead of firing pointerup — without this, lookPointerId would
+        // stay latched to a dead touch and camera look would silently die.
+        window.addEventListener("pointercancel", onPointerUp);
         renderer.domElement.addEventListener("click", onClick);
         renderer.domElement.addEventListener("contextmenu", onContextMenu);
 
@@ -1377,10 +1494,11 @@ export function ProjectGallery({
           const keyForward =
             (keysDown.has("KeyW") || keysDown.has("ArrowUp") ? 1 : 0) -
             (keysDown.has("KeyS") || keysDown.has("ArrowDown") ? 1 : 0) +
-            touchMoveRef.current;
+            joystickInputRef.current.forward;
           const keyStrafe =
             (keysDown.has("KeyD") || keysDown.has("ArrowRight") ? 1 : 0) -
-            (keysDown.has("KeyA") || keysDown.has("ArrowLeft") ? 1 : 0);
+            (keysDown.has("KeyA") || keysDown.has("ArrowLeft") ? 1 : 0) +
+            joystickInputRef.current.strafe;
 
           // Grounded walking: heading comes from yaw only, never pitch, so
           // looking up at a frame doesn't lift the visitor off the floor.
@@ -1488,11 +1606,13 @@ export function ProjectGallery({
         cleanup = () => {
           cancelAnimationFrame(rafId);
           delete (window as unknown as Record<string, unknown>).__galleryDebug;
+          mount.removeEventListener("touchmove", onTouchMove);
           window.removeEventListener("keydown", onKeyDown);
           window.removeEventListener("keyup", onKeyUp);
           window.removeEventListener("resize", onResize);
           window.removeEventListener("pointermove", onPointerMove);
           window.removeEventListener("pointerup", onPointerUp);
+          window.removeEventListener("pointercancel", onPointerUp);
           renderer.domElement.removeEventListener("pointerdown", onPointerDown);
           renderer.domElement.removeEventListener("click", onClick);
           renderer.domElement.removeEventListener("contextmenu", onContextMenu);
@@ -1554,16 +1674,16 @@ export function ProjectGallery({
       </div>
 
       {status === "ready" && showHint && (
-        <div className="gallery-hint" aria-hidden="true">
+        <div className={`gallery-hint${isTouch ? " gallery-hint--touch" : ""}`} aria-hidden="true">
           <span>
             {isTouch
-              ? "Drag to look around • Use the arrows to walk • Tap a frame for details"
+              ? "Left joystick — walk • Drag the right side — look around • Tap a frame for details"
               : "WASD / arrows — walk • Hold right-click — look around • Click a frame — details • Esc — close / exit"}
           </span>
-          <button 
-            type="button" 
-            className="gallery-hint-close" 
-            onClick={() => setShowHint(false)} 
+          <button
+            type="button"
+            className="gallery-hint-close"
+            onClick={() => setShowHint(false)}
             aria-label="Dismiss hint"
           >
             ×
@@ -1571,28 +1691,7 @@ export function ProjectGallery({
         </div>
       )}
 
-      {isTouch && status === "ready" && (
-        <div className="gallery-touch-controls">
-          <button
-            type="button"
-            aria-label="Walk forward"
-            onPointerDown={() => (touchMoveRef.current = 1)}
-            onPointerUp={() => (touchMoveRef.current = 0)}
-            onPointerCancel={() => (touchMoveRef.current = 0)}
-          >
-            ▲
-          </button>
-          <button
-            type="button"
-            aria-label="Walk backward"
-            onPointerDown={() => (touchMoveRef.current = -1)}
-            onPointerUp={() => (touchMoveRef.current = 0)}
-            onPointerCancel={() => (touchMoveRef.current = 0)}
-          >
-            ▼
-          </button>
-        </div>
-      )}
+      {isTouch && status === "ready" && <VirtualJoystick vectorRef={joystickInputRef} />}
 
       {active && (
         <aside
