@@ -76,6 +76,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Script id="theme-init" strategy="beforeInteractive">
           {'try{var t=localStorage.getItem("site-theme");if(t==="light-blue"||t==="white")document.documentElement.setAttribute("data-theme",t)}catch(e){}'}
         </Script>
+        {/* Mark JS as available before first paint so [data-reveal] only
+            starts hidden (see globals.css) when it's actually going to be
+            animated back in. Without this, no-JS visitors would be stuck
+            looking at a permanently invisible page. */}
+        <Script id="js-detect" strategy="beforeInteractive">
+          {'document.documentElement.classList.add("js")'}
+        </Script>
       </head>
       <body>
         <SiteFrame>{children}</SiteFrame>

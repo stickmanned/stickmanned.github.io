@@ -1,7 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { caseStudies, projectBySlug } from "@/lib/site-data";
+import { caseStudies, projectBySlug, allProjects } from "@/lib/site-data";
+
+function slugify(text: string) {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -34,6 +41,15 @@ export default async function ProjectCaseStudy({ params }: Props) {
     eyebrow: "Gallery",
     title: "Project evidence.",
   };
+
+  const cleanCategories = project.categories.filter((cat) => cat !== "Featured");
+  let similarProjects = allProjects.filter(
+    (p) => p.slug !== project.slug && p.categories.some((cat) => cleanCategories.includes(cat))
+  );
+  if (similarProjects.length === 0) {
+    similarProjects = allProjects.filter((p) => p.slug !== project.slug);
+  }
+  similarProjects = similarProjects.slice(0, 3);
 
   return (
     <main className="case-study">
@@ -69,40 +85,77 @@ export default async function ProjectCaseStudy({ params }: Props) {
       <section className="case-body">
         <aside>
           <span>{project.year}</span>
-          <strong>{project.categories.filter((category) => category !== "Featured").join(" / ")}</strong>
+          <strong>
+            {project.categories
+              .filter((category) => category !== "Featured")
+              .join(" / ")}
+          </strong>
+
+          <hr style={{ borderColor: 'var(--border)', margin: '16px 0', opacity: 0.5 }} />
+
+          <strong>Table of Contents</strong>
+          {project.sections.map((section) => {
+            const id = slugify(section.title);
+            return (
+              <a key={id} href={`#${id}`}>
+                {section.title}
+              </a>
+            );
+          })}
+
+          <hr style={{ borderColor: 'var(--border)', margin: '16px 0', opacity: 0.5 }} />
+
+          <strong>Similar Projects</strong>
+          {similarProjects.map((p) => (
+            <Link key={p.slug} href={p.href}>
+              {p.title}
+            </Link>
+          ))}
+
+          <hr style={{ borderColor: 'var(--border)', margin: '16px 0', opacity: 0.5 }} />
+
           <Link href="/projects/">All projects</Link>
         </aside>
         <div>
-          {project.sections.map((section) => (
-            <article key={section.title} className="case-section" data-reveal>
-              <h2>{section.title}</h2>
-              {section.body.map((paragraph) => (
-                <p key={paragraph}>{paragraph}</p>
-              ))}
-              {section.bullets ? (
-                <ul>
-                  {section.bullets.map((bullet) => (
-                    <li key={bullet}>{bullet}</li>
-                  ))}
-                </ul>
-              ) : null}
-              {section.links ? (
-                <div className="button-row">
-                  {section.links.map((link) =>
-                    link.href.startsWith("/") ? (
-                      <Link key={link.href} className="quiet-button" href={link.href}>
-                        {link.label}
-                      </Link>
-                    ) : (
-                      <a key={link.href} className="quiet-button" href={link.href} target="_blank" rel="noreferrer">
-                        {link.label}
-                      </a>
-                    )
-                  )}
-                </div>
-              ) : null}
-            </article>
-          ))}
+          {project.sections.map((section) => {
+            const id = slugify(section.title);
+            return (
+              <article key={section.title} id={id} className="case-section" data-reveal>
+                <h2>{section.title}</h2>
+                {section.body.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+                {section.bullets ? (
+                  <ul>
+                    {section.bullets.map((bullet) => (
+                      <li key={bullet}>{bullet}</li>
+                    ))}
+                  </ul>
+                ) : null}
+                {section.links ? (
+                  <div className="button-row">
+                    {section.links.map((link) =>
+                      link.href.startsWith("/") ? (
+                        <Link key={link.href} className="quiet-button" href={link.href}>
+                          {link.label}
+                        </Link>
+                      ) : (
+                        <a
+                          key={link.href}
+                          className="quiet-button"
+                          href={link.href}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {link.label}
+                        </a>
+                      )
+                    )}
+                  </div>
+                ) : null}
+              </article>
+            );
+          })}
         </div>
       </section>
 
