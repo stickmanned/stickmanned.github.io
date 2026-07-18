@@ -881,7 +881,7 @@ export const caseStudies: CaseStudy[] = [
     ...featuredProjects[2],
     eyebrow: "Computer vision hardware",
     summary:
-      "I built a computer-vision aiming prototype that connects a webcam, Python pose tracking, serial communication, and an Arduino-controlled pan/tilt mount for a Nerf turret.",
+      "I built a computer-vision sentry that uses a webcam, Python pose tracking, and controls an Arduino-powered pan/tilt mount for a Nerf turret.",
     links: [
       {
         label: "GitHub",
@@ -896,8 +896,8 @@ export const caseStudies: CaseStudy[] = [
       {
         title: "Overview",
         body: [
-          "This project was my attempt to make a Nerf blaster feel like it had its own vision system. The repo is small, but the core loop is real: a Python program watches the webcam, detects a person with MediaPipe Pose, chooses the nose landmark as the target, maps that screen position into servo angles, and sends those angles to an Arduino over serial.",
-          "The Arduino side receives those target angles and moves two servos, one for horizontal aim and one for vertical aim. The code does not include an automated trigger, so I describe this honestly as an aiming prototype rather than a fully self-firing turret.",
+          "This project was made for the Hack Club Scrapyard 2025 hackathon. The goal was to create a fun, but clunky project in less than 24 hours. Most People made websites and games, but me and my friend Harry decided to make something physical. The core of the project is a Python program that watches the webcam, detects a person, chooses the nose landmark as the target, maps that screen position into servo angles, and sends those angles to an Arduino for automatic aiming.",
+          "The Arduino side receives those target angles and moves two servos, one for horizontal aim and one for vertical aim. We tried to implement a trigger system, but did not succeed since the servos we had were too weak to pull the trigger on the Nerf gun.",
         ],
       },
       {
@@ -928,34 +928,25 @@ export const caseStudies: CaseStudy[] = [
         ],
       },
       {
-        title: "Control Loop",
-        body: [
-          "The Arduino sketch starts both servos at 90 degrees and reports that default as `DEFAULT,90,90`. When it receives a new `x,y` command, it parses the values, constrains X between 30 and 150 degrees, and constrains Y between 80 and 100 degrees.",
-          "I handled servo motion gradually instead of instantly jumping to the target. The Arduino moves each axis toward the new angle in small steps, using 2-degree increments when it is far away and 1-degree increments when it gets close, with a 10 ms delay inside the movement loop. That makes the motion smoother and reduces abrupt mechanical twitching.",
-          "The Python side also avoids spamming repeated commands by remembering the previous X and Y angles. It only sends a new serial command when the mapped target angle changes, with a short 50 ms pause after each send.",
-        ],
-      },
-      {
         title: "Challenges",
         body: [
-          "The main challenge was translating camera coordinates into physical movement. The camera sees a flat frame, but the servos move through constrained angles, and the useful range is not symmetrical. The code reflects that by inverting the horizontal mapping and keeping the vertical range narrow.",
+          "The main challenge was trying to organize everything together. We brought a plethora of stuff for the hackathon, such as the nerf gun and a RC car. Figuring out what to make was a challenge in itself. Eventually we settled on the Nerf turret, but the coding part had it's own challenges. One of them was translating camera coordinates into physical movement. The camera sees a flat frame, but the servos move through constrained angles, and the useful range is not symmetrical. The code reflects that by inverting the horizontal mapping and keeping the vertical range narrow.",
           "Another challenge was making the software and hardware agree about their starting point. Instead of hardcoding everything only on the Python side, the program asks the Arduino for its default position before calculating limits. That handshake made the system easier to reason about while testing.",
-          "There are also limits in the current version. The repo does not show ballistic compensation, target prediction, automatic firing, or a finished enclosure. It is a working aiming loop and a strong prototype, but not a completed productized turret.",
         ],
       },
       {
         title: "What I Learned",
         body: [
-          "This project taught me that robotics code has to be written with the physical system in mind. A detection model can update quickly, but servos need limits, smoothing, and a control protocol that does not flood the microcontroller.",
-          "I also learned the value of visible debugging. Drawing the target point on the OpenCV frame made it much easier to see whether the vision system was wrong, the mapping was wrong, or the servo movement was wrong.",
-          "As a portfolio project, this matters because it shows I can connect AI-style perception to hardware actuation. It is not just a model running in a notebook; it is software that talks to a real controller and moves a real mechanism.",
+          "This project taught me that we can turn essentially 'scraps' of hardware into something amazing. I also learned how to integrate Arduino and a seperate Python script together as before the project, I only used the Arduino IDE for the programming portion of projects.",
+          "The coolest thing I learned by far from this project was the computer vision. Before this, I thought computer vision was out of reach since you need really powerful/expensive hardware to achieve good detection. Turns out, you can achieve pretty decent detection using just a webcam and python, with my laptop running the model quite well.",
         ],
       },
       {
-        title: "Final Result / Current Status",
+        title: "Final Result",
         body: [
-          "The final repo demonstrates a working webcam-to-servo aiming pipeline. Python detects the target, maps it into angles, and sends commands; the Arduino receives those commands, constrains them to safe ranges, and moves the pan/tilt servos smoothly.",
-          "What worked well was the end-to-end connection between MediaPipe tracking and Arduino motion. What I would improve next is the rest of the turret system: a more documented mechanical mount, calibration tools, target filtering, latency testing, and, if I wanted it to become a true automated Nerf system, a separately designed and safely controlled firing mechanism.",
+          "The final iteration demonstrates a working webcam-to-servo aiming pipeline. Python detects the target, maps it into angles, and sends commands; the Arduino receives those commands, constrains them to safe ranges, and moves the pan/tilt servos smoothly.",
+          "What worked well was the end-to-end connection between MediaPipe tracking and Arduino motion. What I would improve next is the rest of the turret system: a more documented mechanical mount, calibration tools, target filtering, latency testing, and, if I wanted it to become a true automated Nerf turret, a separately designed and safely controlled firing mechanism.",
+          "Overall, we had so much fun building this project and attending the hackathon. Although we did not win any prizes and awards, we had great times talking with peers interested with hardware and learned a lot more about hardware thanks to the executives from BCYDC, the organizers of the hackathon."
         ],
       },
     ],
