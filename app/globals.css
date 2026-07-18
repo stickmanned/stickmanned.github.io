@@ -1707,6 +1707,7 @@ h3 {
 
 .case-section {
   padding: 0 0 44px;
+  scroll-margin-top: 84px;
 }
 
 .case-section h2 {
@@ -2135,7 +2136,12 @@ h3 {
   justify-content: center;
 }
 
-[data-reveal] {
+/* Hidden-by-default reveal state only applies once JS has proven it can
+   run (the .js class is set by a blocking pre-paint script in layout.tsx)
+   and will animate elements back in via IntersectionObserver. Without
+   JS, [data-reveal] elements simply render at their natural opacity so
+   content is never stuck invisible. */
+.js [data-reveal] {
   opacity: 0;
   transform: translateY(28px);
   transition:
@@ -2143,7 +2149,7 @@ h3 {
     transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
-[data-reveal].is-visible {
+.js [data-reveal].is-visible {
   opacity: 1;
   transform: none;
 }
@@ -2885,10 +2891,55 @@ h3 {
   margin: 0;
 }
 
+.gallery-enter-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
 .gallery-enter-button {
   border-color: rgba(var(--accent-rgb), 0.4);
   color: var(--text);
   white-space: nowrap;
+  width: 100%;
+  transition: color 0.2s, border-color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.18s;
+}
+
+/* Give the button a glowing border and shadow on hover */
+.gallery-enter-wrapper:hover .gallery-enter-button,
+.gallery-enter-button:hover {
+  border-color: rgba(var(--accent-rgb), 0.85);
+  box-shadow: 0 0 12px rgba(var(--accent-rgb), 0.3);
+  background: rgba(var(--accent-rgb), 0.08);
+}
+
+.gallery-enter-tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  right: 0;
+  width: 220px;
+  padding: 8px 12px;
+  background: var(--panel-deep);
+  border: 1px solid rgba(var(--accent-rgb), 0.45); /* glowing accent border */
+  border-radius: 6px;
+  color: var(--text-soft);
+  font-family: var(--font-body), sans-serif; /* non-mono body font */
+  font-size: 12.5px;
+  line-height: 1.45;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(4px);
+  transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.2s;
+  pointer-events: none;
+  z-index: 100;
+  text-align: center;
+  box-shadow: 0 0 15px rgba(var(--accent-rgb), 0.15), 0 4px 12px rgba(0, 0, 0, 0.2); /* glowing shadow */
+}
+
+.gallery-enter-wrapper:hover .gallery-enter-tooltip,
+.gallery-enter-button:focus-visible + .gallery-enter-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
 }
 
 /* Full-screen overlay above the site nav (nav tops out at z-index 430). */
@@ -2897,6 +2948,11 @@ h3 {
   inset: 0;
   z-index: 500;
   background: var(--bg);
+  /* Backstop for the JS documentElement toggle: stops scroll chaining to
+     the page behind the overlay (pull-to-refresh, rubber-banding). Not
+     touch-action: none here — .gallery-panel needs its own scroll to keep
+     working, and touch-action intersects with ancestors. */
+  overscroll-behavior: none;
 }
 
 .gallery-canvas,
@@ -2993,25 +3049,71 @@ h3 {
   color: var(--fg);
 }
 
-.gallery-touch-controls {
-  position: absolute;
-  bottom: 76px;
-  right: 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+/* On touch devices the joystick owns the lower-left corner, so the hint
+   moves under the top HUD instead — this is keyed off pointer capability
+   (isTouch), not viewport width, so it also applies on wide touch tablets. */
+.gallery-hint--touch {
+  bottom: auto;
+  top: 72px;
+  left: 18px;
 }
 
-.gallery-touch-controls button {
-  width: 56px;
-  height: 56px;
+/* Roblox-style floating movement stick, fixed lower-left. The drag-to-look
+   zone (right half of the screen) has no visual widget of its own — it's a
+   gesture, not a control, so it stays unobtrusive. */
+.gallery-joystick {
+  position: absolute;
+  left: max(18px, env(safe-area-inset-left));
+  bottom: max(18px, env(safe-area-inset-bottom));
+  width: 104px;
+  height: 104px;
+  border-radius: 50%;
+  background: rgba(var(--bg-rgb), 0.5);
   border: 1px solid var(--border-strong);
-  border-radius: 14px;
-  background: rgba(var(--bg-rgb), 0.72);
-  color: var(--text);
-  font-size: 1.3rem;
-  touch-action: none;
   backdrop-filter: blur(6px);
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.gallery-joystick.is-active {
+  background: rgba(var(--bg-rgb), 0.68);
+  border-color: rgba(var(--accent-rgb), 0.55);
+}
+
+.gallery-joystick-handle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 46px;
+  height: 46px;
+  margin: -23px 0 0 -23px;
+  border-radius: 50%;
+  background: rgba(var(--surface-rgb), 0.9);
+  border: 1px solid var(--border-strong);
+  transition: transform 0.15s ease-out, background 0.15s ease, border-color 0.15s ease;
+  will-change: transform;
+  pointer-events: none;
+}
+
+.gallery-joystick.is-active .gallery-joystick-handle {
+  background: rgba(var(--accent-rgb), 0.28);
+  border-color: var(--accent);
+}
+
+@media (min-width: 640px) {
+  .gallery-joystick {
+    width: 124px;
+    height: 124px;
+  }
+
+  .gallery-joystick-handle {
+    width: 54px;
+    height: 54px;
+    margin: -27px 0 0 -27px;
+  }
 }
 
 .gallery-panel {
@@ -3103,17 +3205,17 @@ h3 {
 @media (max-width: 640px) {
   .gallery-panel {
     top: auto;
-    bottom: 76px;
-    left: 18px;
-    right: 90px;
+    bottom: 18px;
+    /* Clears the joystick's footprint (104px wide + 18px inset) instead of
+       sitting on top of it. */
+    left: 150px;
+    right: 18px;
     width: auto;
     max-height: 46vh;
     padding: 18px;
   }
 
   .gallery-hint {
-    bottom: auto;
-    top: 72px;
     font-size: 0.72rem;
   }
 }

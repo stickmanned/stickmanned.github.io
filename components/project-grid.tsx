@@ -36,13 +36,18 @@ export function ProjectGrid({ projects }: { projects: Project[] }) {
             </button>
           ))}
         </div>
-        <button
-          type="button"
-          className="sort-button gallery-enter-button"
-          onClick={() => setGalleryOpen(true)}
-        >
-          🖼️ Enter Gallery
-        </button>
+        <div className="gallery-enter-wrapper">
+          <button
+            type="button"
+            className="sort-button gallery-enter-button"
+            onClick={() => setGalleryOpen(true)}
+          >
+            Enter Gallery
+          </button>
+          <span className="gallery-enter-tooltip">
+            Browse my projects in an interactive 3D virtual art gallery.
+          </span>
+        </div>
       </div>
       {galleryOpen && (
         <ProjectGallery projects={projects} onExit={() => setGalleryOpen(false)} />
