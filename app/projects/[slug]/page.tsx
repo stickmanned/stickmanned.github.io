@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { caseStudies, projectBySlug, allProjects } from "@/lib/site-data";
+import { caseStudies, projectBySlug, allProjects, type ProjectCategory } from "@/lib/site-data";
 
 function slugify(text: string) {
   return text
@@ -42,7 +42,7 @@ export default async function ProjectCaseStudy({ params }: Props) {
     title: "Project evidence.",
   };
 
-  const cleanCategories = project.categories.filter((cat) => cat !== "Featured");
+  const cleanCategories: ProjectCategory[] = project.categories.filter((cat) => cat !== "Featured");
   let similarProjects = allProjects.filter(
     (p) => p.slug !== project.slug && p.categories.some((cat) => cleanCategories.includes(cat))
   );
