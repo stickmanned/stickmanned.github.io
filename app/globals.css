@@ -66,8 +66,9 @@
 /* White theme: monochrome take on the original dark theme — black
    background, with white standing in for the lime accent. */
 [data-theme="white"] {
-  --font-heading: var(--font-geist-sans), sans-serif;
-  --font-body: var(--font-geist-sans), sans-serif;
+  --font-heading: var(--font-geist-sans), system-ui, sans-serif;
+  --font-body: var(--font-geist-sans), system-ui, sans-serif;
+  --font-space-mono: var(--font-geist-mono), monospace;
   --bg: #000000;
   --panel: #0c0c0c;
   --panel-2: #131313;
@@ -2905,11 +2906,13 @@ h3 {
 }
 
 /* Give the button a glowing border and shadow on hover */
-.gallery-enter-wrapper:hover .gallery-enter-button,
-.gallery-enter-button:hover {
-  border-color: rgba(var(--accent-rgb), 0.85);
-  box-shadow: 0 0 12px rgba(var(--accent-rgb), 0.3);
-  background: rgba(var(--accent-rgb), 0.08);
+@media (hover: hover) {
+  .gallery-enter-wrapper:hover .gallery-enter-button,
+  .gallery-enter-button:hover {
+    border-color: rgba(var(--accent-rgb), 0.85);
+    box-shadow: 0 0 12px rgba(var(--accent-rgb), 0.3);
+    background: rgba(var(--accent-rgb), 0.08);
+  }
 }
 
 .gallery-enter-tooltip {
@@ -2935,7 +2938,14 @@ h3 {
   box-shadow: 0 0 15px rgba(var(--accent-rgb), 0.15), 0 4px 12px rgba(0, 0, 0, 0.2); /* glowing shadow */
 }
 
-.gallery-enter-wrapper:hover .gallery-enter-tooltip,
+@media (hover: hover) {
+  .gallery-enter-wrapper:hover .gallery-enter-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+}
+
 .gallery-enter-button:focus-visible + .gallery-enter-tooltip {
   opacity: 1;
   visibility: visible;

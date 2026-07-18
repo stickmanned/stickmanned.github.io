@@ -6,7 +6,7 @@ import {
   Space_Mono,
 } from "next/font/google";
 import { GeistSans } from "geist/font/sans";
-import Script from "next/script";
+import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 import { SiteFrame } from "@/components/site-frame";
 
@@ -56,6 +56,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const fontVariables = [
     GeistSans.variable,
+    GeistMono.variable,
     lora.variable,
     newsreader.variable,
     spaceGrotesk.variable,
@@ -73,16 +74,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     >
       <head>
         {/* Apply the stored theme before first paint to avoid a flash. */}
-        <Script id="theme-init" strategy="beforeInteractive">
-          {'try{var t=localStorage.getItem("site-theme");if(t==="light-blue"||t==="white")document.documentElement.setAttribute("data-theme",t)}catch(e){}'}
-        </Script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=localStorage.getItem("site-theme");if(t==="light-blue"||t==="white")document.documentElement.setAttribute("data-theme",t)}catch(e){}`
+          }}
+        />
         {/* Mark JS as available before first paint so [data-reveal] only
             starts hidden (see globals.css) when it's actually going to be
             animated back in. Without this, no-JS visitors would be stuck
             looking at a permanently invisible page. */}
-        <Script id="js-detect" strategy="beforeInteractive">
-          {'document.documentElement.classList.add("js")'}
-        </Script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `document.documentElement.classList.add("js")`
+          }}
+        />
       </head>
       <body>
         <SiteFrame>{children}</SiteFrame>
