@@ -62,30 +62,30 @@ export const socials: {
   icon: SocialIcon;
   display?: string;
 }[] = [
-  { label: "GitHub", href: "https://github.com/stickmanned", icon: "github" },
-  {
-    label: "LinkedIn",
-    href: "https://www.linkedin.com/in/william-wen-9371633bb/",
-    icon: "linkedin",
-    display: "William Wen",
-  },
-  {
-    label: "Instagram",
-    href: "https://www.instagram.com/stickmanned/",
-    icon: "instagram",
-    display: "@stickmanned (William Wen)",
-  },
-  {
-    label: "YouTube / FHC Tech",
-    href: "https://www.youtube.com/@fhctech",
-    icon: "youtube",
-  },
-  {
-    label: "Discord",
-    href: "https://discordapp.com/users/911011264120119336/",
-    icon: "discord",
-  },
-];
+    { label: "GitHub", href: "https://github.com/stickmanned", icon: "github" },
+    {
+      label: "LinkedIn",
+      href: "https://www.linkedin.com/in/william-wen-9371633bb/",
+      icon: "linkedin",
+      display: "William Wen",
+    },
+    {
+      label: "Instagram",
+      href: "https://www.instagram.com/stickmanned/",
+      icon: "instagram",
+      display: "@stickmanned (William Wen)",
+    },
+    {
+      label: "YouTube / FHC Tech",
+      href: "https://www.youtube.com/@fhctech",
+      icon: "youtube",
+    },
+    {
+      label: "Discord",
+      href: "https://discordapp.com/users/911011264120119336/",
+      icon: "discord",
+    },
+  ];
 
 export const featuredProjects: Project[] = [
   {
