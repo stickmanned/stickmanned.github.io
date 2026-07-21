@@ -40,6 +40,31 @@ I am really proud of the knowledge graph I made, which are bubbles that bounce a
 
 Last but not least, I added an interactive 3D art gallery to show off my projects in a never seen before 3D view. The user can interact with each project and walk around, just like how a real gallery would.
 
+## Setup & Running Locally
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/stickmanned/stickmanned.github.io.git
+   cd stickmanned.github.io
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Run the development server:**
+   ```bash
+   npm run dev
+   ```
+   Open [http://localhost:3000](http://localhost:3000) in your browser to see the site.
+
+4. **Build for production (static export):**
+   ```bash
+   npm run build
+   ```
+   The static site output will be generated in the `out/` folder.
+
 ## AI Use
 AI was used as a tool in the process of building this website, not as the main focus. I used it to help me migrate from static HTML/CSS to React/Next.js, and implement the 3D gallery as it was tedious work for me to do all that by hand. It also helped me when I had errors and problems in my code since i'm just getting the hang of React and Next.js. Everything else was done by myself, including the design work, the code of the pages, and all the written content of the website.
 
